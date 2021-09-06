@@ -2,6 +2,8 @@
 
 [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=ryan-mcclue&layout=compact)](https://github.com/anuraghazra/github-readme-stats)
 
+
+## Make Software Enjoyable to Use!
 * Avoid [unrestrained](http://ws.apache.org/xmlrpc/apidocs/org/apache/xmlrpc/server/RequestProcessorFactoryFactory) and premature abstractions
 * Write clear and manageable comments
 * Don't use exceptions
@@ -19,4 +21,3 @@
 * Understand the hardware your working with, e.g. cache, cores, SIMD, FPU, GPU, etc.
 * Computers aren't wonderful abstractions we wish they were
 
-## Make Software Enjoyable to Use!
