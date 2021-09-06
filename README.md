@@ -19,4 +19,4 @@
 * Understand the hardware your working with, e.g. cache, cores, SIMD, FPU, GPU, etc.
 * Computers aren't wonderful abstractions we wish they were
 
-#### Make Software Enjoyable to Use!
+## Make Software Enjoyable to Use!
