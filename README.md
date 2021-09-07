@@ -15,9 +15,10 @@
 * Say yes to type systems
 * Say no to garbage collection
 * Refactoring is essential
+* Resources should be handled in aggregates
 * Every solution has a cost-benefit
 * Complexity creates bugs
 * If you don't have any functionality, you don't have a design problem
-* Understand the hardware your working with, e.g. cache, cores, SIMD, FPU, GPU, etc.
+* Understand the system your working with, e.g. OS, cache, cores, SIMD, FPU, GPU, etc.
 * Computers aren't wonderful abstractions we wish they were
 
