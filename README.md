@@ -12,6 +12,7 @@
 * Refrain from excessive data hiding and inheritance
 * Program to solve a specific problem
 * A good engineer is self critical
+* Favour debugger-driven development
 * Say yes to type systems
 * Say no to garbage collection
 * Refactoring is essential
