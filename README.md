@@ -17,7 +17,7 @@
 * Say no to garbage collection
 * Refactoring is essential
 * Resources should be handled in aggregates
-* Every solution has a cost-benefit
+* Every action involves a trade-off
 * Complexity creates bugs
 * If you don't have any functionality, you don't have a design problem
 * Understand the system your working with, e.g. OS, cache, cores, SIMD, FPU, GPU, etc.
