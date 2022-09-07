@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+mkdir -p build
+
+active_src='desktop'
+
+pandoc src/"$active_src".md --pdf-engine=xelatex -o build/"$active_src".pdf
+
+pdftoppm -jpeg -r 300 build/"$active_src".pdf build/"$active_src".jpeg
+
+# xdg-open "$file".jpeg-1.jpg

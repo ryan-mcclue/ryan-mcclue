@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: zlib-acknowledgement
+
+*
+
+!*/
+
+!.gitignore
+
+!README.md
+
+!src/**/*.md
+
+!misc/build
+!misc/upload-google-photos

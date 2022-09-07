@@ -1,0 +1,89 @@
+#!/bin/bash
+
+set -e
+
+# TODO(Ryan): Replace with environment variables in CI
+
+
+internal_print_authorisation_key_link()
+{
+  # NOTE(Ryan): Obtained from Google OAuth Discovery Document
+  # https://accounts.google.com/.well-known/openid-configuration
+  local endpoint="https://accounts.google.com/o/oauth2/v2/auth"
+  # IMPORTANT(Ryan): Deprecated
+  # local redirect_uri="urn:ietf:wg:oauth:2.0:oob"
+  local redirect_uri="http://localhost:1/"
+  # NOTE(Ryan): https://developers.google.com/identity/protocols/oauth2/scopes 
+  local scope="https://www.googleapis.com/auth/photoslibrary"
+  local response_type="code"
+
+  printf "Obtain authorisation code from the following link:\n"
+  printf "$endpoint?client_id=$CLIENT_ID&redirect_uri=$redirect_uri\
+&scope=$scope&response_type=$response_type\n"
+
+  printf "\nIMPORTANT: CODE WILL BE OBTAINED FROM ADDRESS BAR ON FAILED WEBPAGE SCREEN!\n"
+}
+
+internal_generate_access_token()
+{
+  local endpoint="https://oauth2.googleapis.com/token"
+  local redirect_uri="http://localhost:1/"
+
+  curl --silent --request POST \
+  --data "code=$AUTH_CODE&client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET\
+&redirect_uri=$redirect_uri&grant_type=authorization_code" \
+  "$endpoint"
+}
+
+# https://developers.google.com/photos/library/reference/rest
+upload_photo()
+{
+  # NOTE(Ryan): Refresh access token
+  local endpoint="https://oauth2.googleapis.com/token"
+  local access_token=$(curl --silent --request POST \
+  --data "client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET\
+&refresh_token=$REFRESH_TOKEN&grant_type=refresh_token" \
+"$endpoint" | jq '.access_token')
+
+  # NOTE(Ryan): Upload photo bytes
+  local endpoint="https://photoslibrary.googleapis.com/v1/uploads"
+  curl --silent --request POST \
+  --header "Authorization: Bearer $access_token" \
+  --header 'Content-type: application/octet_stream' \
+  --header 'X-Goog-Upload-Content-Type: image/jpeg' \
+  --header 'X-Goog-Upload-Protocol: raw' \
+  --data-binary '@file.jpg'
+  "$endpoint"
+
+local media_json='{
+   "newMediaItems": [ 
+   {
+     "description": "photo-upload-description",
+     "simpleMediaItem": {
+        "fileName": "photo-filename",
+        "uploadToken": "$upload_token"
+      }
+    }
+  ] 
+}'
+
+  # NOTE(Ryan): Create media item from photo bytes 
+  local endpoint="https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate"
+  curl --silent --request POST \
+  --header 'Content-type: application/json' \
+  --header "Authorization: Bearer $access_token" \
+  --data "$media_json"
+  "$endpoint"
+
+}
+
+# internal_print_authorisation_key_link
+# internal_generate_access_token
+
+recent_git_commit_hash=$(git rev-parse HEAD)
+files_changed_in_previous_commit=$(git diff-tree --no-commit-id --name-only -r $recent_git_commit_hash)
+for file_changed in $files_changed_in_previous_commit; do
+  if [ "${file_changed: -4}" == ".jpeg" ]; then
+    upload_photo "$file_changed"
+  fi
+done
