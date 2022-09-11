@@ -2,23 +2,20 @@
 
 set -e
 
-mkdir -p upload build
+# IMPORTANT(Ryan): Every jpeg file in photos directory will be uploaded to Google Photos.
+# Google Photos API only permits uploading. No deleting.
+# ∴, the contents of the photos directory should always be considered to prevent duplicates
+# being uploaded.
+rm -rf photos
+mkdir -p build photos
 
 input_md='desktop.md'
-output_pdf="${input_md}"
 
-# if file already exists in upload starting with same name, delete
-output_jpeg=""
+output_pdf="${input_md%%.md}.pdf"
+output_jpeg="${input_md%%.md}.jpeg"
 
-pandoc src/"$input_md" --pdf-engine=xelatex -o build/"$input_md".pdf
+pandoc src/"$input_md" --pdf-engine=xelatex -o build/"$output_pdf"
 
-pdftoppm -jpeg -r 300 build/"$input_md".pdf build/"$input_md".jpeg
-
-# IMPORTANT(Ryan): Every jpeg file in upload directory will be uploaded to Google Photos.
-# Google Photos API only permits uploading. No deleting.
-# ∴, the contents of the upload directory should always be considered to prevent duplicates
-# being uploaded.
-
-
+pdftoppm -jpeg -r 300 build/"$output_pdf" photos/"$output_jpeg"
 
 # xdg-open "$file".jpeg-1.jpg

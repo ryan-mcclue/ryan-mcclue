@@ -12,3 +12,5 @@
 
 !misc/build
 !misc/upload-google-photos
+
+!photos/**/*.jpg

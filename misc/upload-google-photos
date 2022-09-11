@@ -2,11 +2,23 @@
 
 set -e
 
-# TODO(Ryan): Replace with environment variables in CI
-CLIENT_ID=$(jq '.installed.client_id' credentials.json)
-CLIENT_SECRET=$(jq '.installed.client_secret' credentials.json)
+# IMPORTANT(Ryan): Will be environment variables on CI machine
+if [ -z "$CLIENT_ID" ]; then
+  CLIENT_ID=$(jq '.client_id' misc/credentials.json)
+fi
 
-internal_print_authorisation_key_link()
+if [ -z "$CLIENT_SECRET" ]; then
+  CLIENT_SECRET=$(jq '.client_secret' misc/credentials.json)
+fi
+
+if [ -z "$REFRESH_TOKEN" ]; then
+  REFRESH_TOKEN=$(jq '.refresh_token' misc/credentials.json)
+fi
+
+AUTH_CODE=$(jq '.auth_code' misc/credentials.json)
+
+
+__print_authorisation_key_link()
 {
   # NOTE(Ryan): Obtained from Google OAuth Discovery Document
   # https://accounts.google.com/.well-known/openid-configuration
@@ -25,7 +37,7 @@ internal_print_authorisation_key_link()
   printf "\nIMPORTANT: CODE WILL BE OBTAINED FROM ADDRESS BAR ON FAILED WEBPAGE SCREEN!\n"
 }
 
-internal_generate_access_token()
+__generate_tokens()
 {
   local endpoint="https://oauth2.googleapis.com/token"
   local redirect_uri="http://localhost:1/"
@@ -37,14 +49,8 @@ internal_generate_access_token()
 }
 
 # https://developers.google.com/photos/library/reference/rest
-upload_photo()
+upload_photos()
 {
-  if [ ! $# -eq 1 ]; then
-    printf "Error: upload_photo() expected file as argument\n" >&2
-  fi
-
-  local image_to_upload="$1"
-
   # NOTE(Ryan): Refresh access token
   local endpoint="https://oauth2.googleapis.com/token"
   local access_token=$(curl --silent --request POST \
@@ -52,45 +58,46 @@ upload_photo()
 &refresh_token=$REFRESH_TOKEN&grant_type=refresh_token" \
 "$endpoint" | jq '.access_token')
 
-  # NOTE(Ryan): Upload photo bytes
-  local endpoint="https://photoslibrary.googleapis.com/v1/uploads"
-  curl --silent --request POST \
-  --header "Authorization: Bearer $access_token" \
-  --header 'Content-type: application/octet_stream' \
-  --header 'X-Goog-Upload-Content-Type: image/jpeg' \
-  --header 'X-Goog-Upload-Protocol: raw' \
-  --data-binary "@$image_to_upload"
-  "$endpoint"
+  if [ ! $? -eq 0 ]; then
+    printf "Error: Unable to retrieve refresh access token\n" >&2
+  fi
 
-local media_json="{
-   'newMediaItems': [ 
-   {
-     'description': 'photo-upload-description',
-     'simpleMediaItem': {
-        'fileName': \"$image_to_upload\",
-        'uploadToken': \"$upload_token\"
-      }
-    }
-  ] 
-}"
+  for photo in photos/*; do
+    # NOTE(Ryan): Upload photo bytes
+    local endpoint="https://photoslibrary.googleapis.com/v1/uploads"
+    curl --silent --request POST \
+    --header "Authorization: Bearer $access_token" \
+    --header 'Content-type: application/octet_stream' \
+    --header 'X-Goog-Upload-Content-Type: image/jpeg' \
+    --header 'X-Goog-Upload-Protocol: raw' \
+    --data-binary "@$photo"
+    "$endpoint"
 
-  # NOTE(Ryan): Create media item from photo bytes 
-  local endpoint="https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate"
-  curl --silent --request POST \
-  --header 'Content-type: application/json' \
-  --header "Authorization: Bearer $access_token" \
-  --data "$media_json"
-  "$endpoint"
+    local photo_remove_base="${photo##*/}"
+    local photo_name="${photo_remove_base%%jpeg-1.jpg}"
 
+    local media_json="{
+       \"newMediaItems\": [ 
+       {
+         \"description\": \"$photo_name spec information\",
+         \"simpleMediaItem\": {
+            \"fileName\": \"$photo_name\",
+            \"uploadToken\": \"$upload_token\"
+          }
+        }
+      ] 
+    }"
+    
+    # NOTE(Ryan): Create media item from photo bytes 
+    local endpoint="https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate"
+    curl --silent --request POST \
+    --header 'Content-type: application/json' \
+    --header "Authorization: Bearer $access_token" \
+    --data "$media_json"
+    "$endpoint"
+  done
 }
 
-# internal_print_authorisation_key_link
-# internal_generate_access_token
-
-recent_git_commit_hash=$(git rev-parse HEAD)
-files_changed_in_previous_commit=$(git diff-tree --no-commit-id --name-only -r $recent_git_commit_hash)
-for file_changed in $files_changed_in_previous_commit; do
-  if [ "${file_changed: -4}" == ".jpeg" ]; then
-    upload_photo "$file_changed"
-  fi
-done
+# __print_authorisation_key_link
+# __tokens
+# upload_photos
