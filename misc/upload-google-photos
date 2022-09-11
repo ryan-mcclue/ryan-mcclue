@@ -3,7 +3,8 @@
 set -e
 
 # TODO(Ryan): Replace with environment variables in CI
-
+CLIENT_ID=$(jq '.installed.client_id' credentials.json)
+CLIENT_SECRET=$(jq '.installed.client_secret' credentials.json)
 
 internal_print_authorisation_key_link()
 {
@@ -38,6 +39,12 @@ internal_generate_access_token()
 # https://developers.google.com/photos/library/reference/rest
 upload_photo()
 {
+  if [ ! $# -eq 1 ]; then
+    printf "Error: upload_photo() expected file as argument\n" >&2
+  fi
+
+  local image_to_upload="$1"
+
   # NOTE(Ryan): Refresh access token
   local endpoint="https://oauth2.googleapis.com/token"
   local access_token=$(curl --silent --request POST \
@@ -52,20 +59,20 @@ upload_photo()
   --header 'Content-type: application/octet_stream' \
   --header 'X-Goog-Upload-Content-Type: image/jpeg' \
   --header 'X-Goog-Upload-Protocol: raw' \
-  --data-binary '@file.jpg'
+  --data-binary "@$image_to_upload"
   "$endpoint"
 
-local media_json='{
-   "newMediaItems": [ 
+local media_json="{
+   'newMediaItems': [ 
    {
-     "description": "photo-upload-description",
-     "simpleMediaItem": {
-        "fileName": "photo-filename",
-        "uploadToken": "$upload_token"
+     'description': 'photo-upload-description',
+     'simpleMediaItem': {
+        'fileName': \"$image_to_upload\",
+        'uploadToken': \"$upload_token\"
       }
     }
   ] 
-}'
+}"
 
   # NOTE(Ryan): Create media item from photo bytes 
   local endpoint="https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate"

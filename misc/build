@@ -2,12 +2,23 @@
 
 set -e
 
-mkdir -p build
+mkdir -p upload build
 
-active_src='desktop'
+input_md='desktop.md'
+output_pdf="${input_md}"
 
-pandoc src/"$active_src".md --pdf-engine=xelatex -o build/"$active_src".pdf
+# if file already exists in upload starting with same name, delete
+output_jpeg=""
 
-pdftoppm -jpeg -r 300 build/"$active_src".pdf build/"$active_src".jpeg
+pandoc src/"$input_md" --pdf-engine=xelatex -o build/"$input_md".pdf
+
+pdftoppm -jpeg -r 300 build/"$input_md".pdf build/"$input_md".jpeg
+
+# IMPORTANT(Ryan): Every jpeg file in upload directory will be uploaded to Google Photos.
+# Google Photos API only permits uploading. No deleting.
+# ∴, the contents of the upload directory should always be considered to prevent duplicates
+# being uploaded.
+
+
 
 # xdg-open "$file".jpeg-1.jpg
