@@ -3,6 +3,8 @@ USART:
 SPI:
 I2C:
 
+New 3D V-NAND memory (vertically stacked NAND)
+
 Investigate cache coherency protocols, e.g. MOSI, MESI 
 
 armv7-m cortex-m4 STM32F429zi @ 180MHz
