@@ -3,6 +3,8 @@ USART:
 SPI:
 I2C:
 
+Photos of packet structure for UDP, TCP and IP
+
 New 3D V-NAND memory (vertically stacked NAND)
 
 Investigate cache coherency protocols, e.g. MOSI, MESI 
