@@ -3,6 +3,8 @@ USART:
 SPI:
 I2C:
 
+DisplayPort has superior bandwidth to HDMI
+
 Photos of packet structure for UDP, TCP and IP
 
 New 3D V-NAND memory (vertically stacked NAND)
