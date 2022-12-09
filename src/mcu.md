@@ -1,4 +1,5 @@
-UART: 9600 baud (symbols per second; in case of digital≡ bps) (1 start bit, 8 data bits, no parity bit, 1 stop bit) ∴ effective data rate is less than bit transmission rate 
+UART: 9600 baud (symbols per second; in case of digital≡ bps) (1 start bit, 8 data bits, no parity bit, 1 stop bit) 
+∴ effective data rate is less than bit transmission rate 
 USART: 
 SPI:
 I2C:
