@@ -1,8 +1,6 @@
-**20.04** (xlib (MIT), xfce4, terminator, pulseaudio)
+**20.04** (xlib (MIT), xfce4, pulseaudio)
 
-ranger, rofi, fsearch
-
-HD Graphics 620, 300MHz, vulkan x.x
+bash, terminator, ranger, fsearch
 
 fat32 ESP (grub 2.04)
 
@@ -23,6 +21,8 @@ TDP: 15W, 64 byte cache line
 ***L3***: 3MiB (12-way, 42 cycle)
 
 ***SSE4.2, AVX2, FMA3, VT-x***
+
+HD Graphics 620, 300MHz
 
 
 **2 * 4GB LPDDR3 DIMM** *@ 1867MHz*

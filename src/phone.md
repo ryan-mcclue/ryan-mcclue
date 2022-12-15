@@ -1,11 +1,10 @@
 how many atmospheres?
 
-EMUI 5.0.4 (android 7.0)   
+EMUI 5.0.4 (android 7.0 (Apache))   
 
 linux 4.1.18 (aarch64, AAPCS)
 
 ART 2.1.0
-
 
 **ARMv8-A-ARM Cortex-A53 Kirin 655** *@ 2.5GHz*
 
