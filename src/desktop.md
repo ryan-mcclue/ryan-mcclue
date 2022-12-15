@@ -1,5 +1,7 @@
 **20.04** (xlib (MIT), xfce4, terminator, pulseaudio)
+
 ranger, rofi, fsearch
+
 HD Graphics 620, 300MHz, vulkan x.x
 
 fat32 ESP (grub 2.04)
