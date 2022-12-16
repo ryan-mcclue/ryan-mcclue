@@ -4,7 +4,7 @@ bash, terminator, ranger, fsearch
 
 fat32 ESP (grub 2.04)
 
-ext4 linux 5.15.0 (GPLv2, x86-64, SysV, CFS)
+ext4 linux 5.15.0 (GPLv2, x86-64, SystemV, CFS, systemd)
 
 gcc 9.4.0 (GPLv3), ldd/glibc 2.31 (LGPL)
 
