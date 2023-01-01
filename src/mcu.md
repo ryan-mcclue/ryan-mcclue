@@ -4,6 +4,8 @@ USART:
 SPI:
 I2C:
 
+TODO: common ELF header values (and sections)
+
 (embedded systems seem to be red team friendly)
 
 DisplayPort has superior bandwidth to HDMI
