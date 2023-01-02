@@ -14,7 +14,11 @@ input_md='desktop.md'
 output_pdf="${input_md%%.md}.pdf"
 output_jpeg="${input_md%%.md}.jpeg"
 
-pandoc src/"$input_md" --pdf-engine=xelatex -o build/"$output_pdf"
+# NOTE(Ryan): These variables are what could appear in a latex yaml header
+# NOTE(Ryan): Possible font sizes are 8pt, 9pt, 10pt, 11pt, 12pt, 14pt, 17pt, 20pt
+pandoc -V documentclass=extarticle -V fontsize=20pt -V pagestyle=empty \
+  -V geometry:margin=1cm \
+  src/"$input_md" --pdf-engine=xelatex -o build/"$output_pdf"
 
 pdftoppm -jpeg -r 300 build/"$output_pdf" photos/"$output_jpeg"
 

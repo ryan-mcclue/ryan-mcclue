@@ -1,3 +1,12 @@
+<!---
+---
+documentclass: extarticle
+fontsize: 20pt
+pagestyle: empty
+geometry: "left=1cm,right=1cm,top=1cm,bottom=1cm"
+---
+ Possible sizes are 8pt, 9pt, 10pt, 11pt, 12pt, 14pt, 17pt, 20pt -->
+
 **20.04** (xlib (MIT), xfce4, pulseaudio)
 
 bash, terminator, ranger, fsearch, pureref
@@ -22,8 +31,9 @@ TDP: 15W, 64 byte cache line
 
 ***SSE4.2, AVX2, FMA3, VT-x***
 
-HD Graphics 620, 300MHz
+HD Graphics 620, 300MHz, shared memory, HEVC + VP9 codecs
 
+LiPo 51W/hr battery
 
 **2 * 4GB LPDDR3 DIMM** *@ 1867MHz*
 
@@ -32,5 +42,3 @@ HD Graphics 620, 300MHz
 1080p LED IPS, 720p camera
 
 HDMI-A, USB-C, USB-A, audio-barrel-jack
-
-(battery information)
