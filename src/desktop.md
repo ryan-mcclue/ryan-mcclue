@@ -4,9 +4,9 @@ bash, terminator, ranger, fsearch, pureref
 
 fat32 ESP (grub 2.04)
 
-ext4 linux 5.15.0 (x86-64, SystemV, CFS, systemd, ELF, .so)
+ext4 linux 5.15.0 (x86-64, SystemV, CFS, systemd, ELF)
 
-gcc 9.4.0 (GPL), ldd/glibc 2.31 (LGPL)
+gcc 9.4.0 (GPL), ld/glibc 2.31 (LGPL)
 
 **x86-64-TSO Kaby Lake** *@2.5GHz*
 
@@ -32,3 +32,5 @@ HD Graphics 620, 300MHz
 1080p LED IPS, 720p camera
 
 HDMI-A, USB-C, USB-A, audio-barrel-jack
+
+(battery information)
