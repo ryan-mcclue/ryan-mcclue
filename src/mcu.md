@@ -1,31 +1,58 @@
-UART: 9600 baud (symbols per second; in case of digital≡ bps) (1 start bit, 8 data bits, no parity bit, 1 stop bit) 
-∴ effective data rate is less than bit transmission rate 
-USART: 
-SPI:
-I2C:
-
-TODO: common ELF header values (and sections)
-
-(embedded systems seem to be red team friendly)
-
-DisplayPort has superior bandwidth to HDMI
-
-Photos of packet structure for UDP, TCP and IP
-
-New 3D V-NAND memory (vertically stacked NAND)
-
-Investigate cache coherency protocols, e.g. MOSI, MESI 
-
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
 
-SRAM (less power and quicker)
+UART, USART, SPI, I2C
+
+documentation:
+There are of course international standards (IEC 60601, or IEC 62304) that you have 
+to follow in order to get your device CE/FDA approval.
+These standards usually require to provide a lot of documentation and to pass a 
+series of tests in order to verify that your device is working as intended 
+and it's not dangerous.
+
+list sensor components used here, e.g. trimpot
 
 APB and AHB are specific to arm mcus?
 NVIC unit is specific to cortex-m
 
+could even be simplex (one way only)
+full-duplex can still be serial, requiring at least two wires (duplex meaning bidirectional)
+serial (synchronous with clock data; asynchronous) + parallel 
+
+Fast Fourier Transform (FFTs) are often used with DACs to create a spectrum analyser which allows for subsequent beat detection?
+FFT divides samples into frequency buckets
+logarithmic scale employed in spectrum analyser to account for high frequency range 
+being more greatly separated than low frequency
+
+Modern OS will have code memory write protected for security reasons. 
+Bare metal can do this however
+
+IMPORTANT: for a preemptive multitasking kernel like linux, 
+a call to pthread_yeild() (allow other threads to run on CPU)
+is not necessary. however, for embedded, maybe
+
 How is clock speed of cpu in datasheet related to configuring the clock/timer crystal?
 I think these are external oscillators
+
+#if QADD8_ARM_DSP_ASM == 1
+    asm volatile( "uqadd8 %0, %0, %1" : "+r" (i) : "r" (j));
+    return i;
+#endif
+
+
+LIN protocol for vehicles (seems to be a host of protocols specific to automotives)
+
+trimpot a.k.a potentiometer
+
+MEMS (micro-electromechanical systems) motion sensor
+
+TODO: using in-built security features of chip, e.g. AES-256
+
+buck converter steps down DC-DC voltage, while stepping up current
+(various step-down mechanisms in relation to AC/DC and voltage/current)
+
+although bluetooth LE say 50m distance, a repeater can be used (and really for any RF)
+
 
 falling/rising edge interrupt dependant on pull up/down configuration
 
@@ -142,4 +169,5 @@ unique 96bit identifier
 FMC (flexible memory controller) for SRAM (flexible in that it can also support SDRAM, Flash, etc.) 
 
 Some projects could have multiple MCUs on a single board
-This could be because one MCU might be bit-banging (implement in software over hardware) a particular interface 
+This could be because one MCU might be bit-banging (implement in software over hardware) 
+a particular interface 

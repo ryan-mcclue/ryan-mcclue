@@ -9,7 +9,7 @@ set -e
 rm -rf photos
 mkdir -p build photos
 
-input_md='desktop.md'
+input_md='mcu.md'
 
 output_pdf="${input_md%%.md}.pdf"
 output_jpeg="${input_md%%.md}.jpeg"

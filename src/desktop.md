@@ -1,4 +1,4 @@
-**x86-64-TSO Kaby Lake** *@2.5GHz*
+**x86-64-TSO-MESI Kaby Lake** *@2.5GHz*
 
 mod. Harvard CISC little, 2 cores, 2 hyper, 1 NUMA
 
