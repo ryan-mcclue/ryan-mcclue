@@ -22,9 +22,29 @@ We will then manually set bus speeds etc.
 take the settings shown and put that in manually in code)
 HAL generated is not exactly performant, however useful for setting things up.
 However, probably due register direct for interrupts as want performance out of the box
+https://youtu.be/nV2bKRD0dcw?list=UULFRTB9vgpY9ZvecX_9yV9bjQ&t=1145
 
 
 462 DMIPS
+
+CAN (Controller Area Network) is a CSMA/CD (Carrier Sense Multiple Access/Collision Detection) to allow
+electronic subsystems to be connected and interact in a network.
+So, each node on the bus must wait for a period of inactivity before attempting to send a message
+CAN FD (flexible data-rate) allows for higher bandwidth
+
+### MOTORS:
+AC vs DC motor
+synchronous vs ... (PMSM permanent magnet synchronous motor)
+induction motors?
+brushless motor?
+stepper motor?
+Outside of PWM, other control signals for motors applicable to designing motor controllers?
+(H-Bridge could also drive motor as well as PWM?)
+Is PWM only for DC motors?
+
+TODO: where are MOSFETS used? In motors?
+
+TODO: PID controller?
 
 SDHC (Secure Digital High Capacity, i.e. up to 32GB) card by 
 SDIO (secure digital I/O card adds wireless transmission to SD card?) in DMA 4bits mode
