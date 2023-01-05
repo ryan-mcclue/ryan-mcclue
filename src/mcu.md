@@ -3,9 +3,30 @@ DSP, FPU
 
 GPIO
 
+CubeMX as just project configuration.
+CubeIDE more encompassing, i.e. a superset
+Rather depressingly it's better than CCS (TI) or MPLab (Microchip), 
+particularly for pin-out configuration
+Why strive towards libopencm3
+
+Experience with GUI, e.g. workspaces, differentiating board revisions, 
+board selection (board type discovery kit, mcu name), .ioc (initialisation files)
+Default sets up GPIO, NVIC and SYS (system manager controller?)
+Clock conf
+Max out the HCLK in the clock diagram as we are not running off battery.
+The clock diagram helps find solutions of values of PLLs and dividers/scalers.
+Also shows how clocks laid out on the device and what busses etc. (there are quite a few of them)
+We choose the HSE 25MHz crystal on the board and run this through the PLL.
+We will then manually set bus speeds etc.  
+(page useful if say I want this speed on the peripheral, how can I acheive that?
+take the settings shown and put that in manually in code)
+HAL generated is not exactly performant, however useful for setting things up.
+However, probably due register direct for interrupts as want performance out of the box
+
+
 462 DMIPS
 
-R/W SDHC (Secure Digital High Capacity, i.e. up to 32GB) card by 
+SDHC (Secure Digital High Capacity, i.e. up to 32GB) card by 
 SDIO (secure digital I/O card adds wireless transmission to SD card?) in DMA 4bits mode
 
 UART, USART (how does this relate a virtual COM port?), SPI, I2C
@@ -68,7 +89,6 @@ Vee (emitter, ground)
 RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
 internal mcu oscillators typically RC, so subject to frequency variability
 
-Max out the HCLK in the clock diagram as we are not running off battery.
 Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
@@ -350,7 +370,8 @@ may be an external one already
 external oscillators will also appear in schematic
 
 clock configuration diagram very useful from cube ide
-when working in power efficient systems, want to know how to change sysclock and peripheral clock speeds
+when working in power efficient systems, 
+want to know how to change sysclock and peripheral clock speeds
 
 using HAL, might have to replace later because slow or too general purpose.
 also, HAL might not adhere to particular safety standards like MISRA
