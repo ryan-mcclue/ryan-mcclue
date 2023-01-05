@@ -1,7 +1,230 @@
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
 
-UART, USART, SPI, I2C
+GPIO
+
+462 DMIPS
+
+R/W SDHC (Secure Digital High Capacity, i.e. up to 32GB) card by 
+SDIO (secure digital I/O card adds wireless transmission to SD card?) in DMA 4bits mode
+
+UART, USART (how does this relate a virtual COM port?), SPI, I2C
+
+VGA (Video Graphics Array) is a connector but also refers to a resolution of 640x480
+WVGA (Wide) is a resolution of 800x480
+
+does board have low drop-out regulator onboard so can pass 5V to 3.3V?
+
+MIPI (mobile industry processor interface) developed DSI. 
+DSI just display. Also, DSI use less power as HDMI is something extra the LCD controller
+must convert to to something it understands like DSI, so powering HDMI to DSI convertor.
+
+what is TPM (trusted platform module) for embedded?
+
+Growth of 'enviro sensor kits', i.e. test air quality etc. to create smart home or garden
+Growth of 'IoT' sensor kits/smart home
+Growth of 'AI sensors'
+(Perhaps more relevent to me is power/energy and automation and sensing)
+Growth of 'IoT' sensor kits
+Growth of sensor compounding, e.g. video now with LiDAR to detect depth, 
+gesture detection sensor
+
+Marketing refers to some MCU work that react to environment as physical computing
+
+Might see GNSS + INS (inertial navigation system; i.e using IMU as well)
+
+Whole area in power management (also leads onto safety regulations, e.g. SIL power management) 
+
+how to overclock and underclock?
+how are these different to adjusting clock scalers?
+
+investigate cpu fault handling: https://github.com/tobermory/faultHandling-cortex-m
+
+TODO: working with thumb instructions
+why not always use?
+
+TODO: bootloader
+
+The CPU architecture will have an exception (a cpu interrupt) model. 
+Here, reset behaviour will be defined.
+as often harvard archicture
+different evaluation boards use different ICDI (in-circuit debug interfaces) 
+to flash through SWD via usb-b
+e.g. texas instruments use stellaris, stm32 ST-link
+To avoid unknown state, 
+drive with external source, e.g. ground or voltage.
+
+Pull-up/down resistors are to used for unconnected input pins to avoid floating state
+So, a pull-down will have the pin (when in an unconnected state) to ground, i.e. 0V when switch is not on
+
+IMPORTANT: Although enabling internal resistors, 
+must look at board schematic as external resistors might overrule
+
+Vdd (drain, power supply to chip)
+Vcc (collector, subsection of chip, i.e. supply voltage of circuit)
+Vss (sink, ground)
+Vee (emitter, ground)
+
+RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
+internal mcu oscillators typically RC, so subject to frequency variability
+
+Max out the HCLK in the clock diagram as we are not running off battery.
+Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
+SYSCLK is what would use to calculate cpu instruction cycles.
+
+a clock is an oscillator with a counter that records number of cycles since being initialised
+
+Crystal generates stable frequency
+PLL is type of clock circuit that allows for high frequency, reliable clock generation (setup also affords easy clock duplication and clock manipulation)
+So, PLL system could have RC or crystal input
+Feeding into it is a reference input (typically a crystal oscillator) which goes into a voltage controlled oscillator to output frequency
+The feedback of the output frequency into the initial phase detector can be changed
+Adding dividers/pre-scalers into this circuit allows to get programmable voltage.
+So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
+
+1. **Documentation**
+   Generalities such as *Debug Interface* or *Procedure Call Standard*
+   Architecture specifics such as *armv7m*
+   Micro-architecture specifics such as *cortex-m4*
+   Micro-controller specifics such as *stm32f429zi*
+   Board specifics such as pin-out diagram and schematic
+2. **BSP**
+   This can be done via an IDE such as STM32CubeMX to create an example project Makefile.
+   Alternatively can be done via a command line application such as libopencm3.
+3. **Targets**
+   Disable hardware fpu instructions and enable libgloss for simulator. Ensure main() call ordering mock test working 
+   Enable nano libc with no system calls for target
+4. **Flashing and Debugging**
+   Coordinate *JLink/STLink* probe and board pin-outs
+   Ascertain board debug firmware and determine if reflashing required, e.g. *STLinkReflash*
+   Preferable to use debugger software such as *Ozone* that automates flashing.
+   If not, determine flash software such as *JLinkExe*, *stlink-tools*, *openocd*, *nrfjprog* etc.
+   Coordinate debugger software such as *QTCreator* with qemu gdb server
+5. **Hardware Tools**
+   Measure voltage, current, resistance/continuity/diode with multimeter?
+   Oscilloscope for ...
+   Logic analyser for, SPI and I2C
+
+(HSPI is high speed parallel interface)
+
+6. **Protocol**
+  USB port probably in-built serial port
+
+Seems that IAR compiler produces smaller, faster code than gcc?
+
+UART is protocol for sending/recieving bits. 
+RS232 specifies voltage levels
+
+first step in embedded debugging commandments;
+thou shalt check voltage 
+(e.g. check 5V going to LCD by placing multimeter on soldered pin heads)
+
+is power profiler kit specific to each board necessary, e.g. nordic, stm32?
+
+stm32 datasheet and reference manual (documents of different depths about same mcu) nomenclature
+will have 'Application Notes' that detail specific features like CCM RAM
+datasheet will often be related to a family, e.g. stm32f429xx.
+therefore, at the front will have a table comparing memory, number of gpios, etc. for particulars
+
+AXIM, AHB and APB ARM specific
+will have a bus matrix (which allows different peripherals to communicate via master and slave ports by requesting and sending data)
+off this, have AHB (higher frequency and higher bandwidth).
+like to think of AHB as host bus as it feeds into APBs via a bridge. APB1 normally half frequency of APB2
+we can see that DMA can go directly to APB without going through bus matrix
+So, relevent for speed and clock concerns going through which bus?
+Also to know if we are DMA'ing something and CPUing something, they
+are not going to be fighting on the same bus, i.e. spread out load
+lower power peripherals on lower frequency busses?
+this level of knowledge further emphasises need to know hardware to understand what is going on
+
+arm SoC block diagram (datasheet), see d-bus and i-bus to RAM
+introduce things like CCM (core coupled cache) 
+and ART (adaptive real-time accelerator) that add some more harvard like instruction things
+essentially, more busses instead of more cores like in x86, 
+(i.e. a lot more than just a CPU to be concerned with)
+also have more debug hardware
+
+A real time scheduling algorithm is deterministic (not necessarily fast), i.e. it absolutely must
+(soft time is it should)
+(real time processing means virtually immediately)
+So, a higher priority task will preempt lower priority tasks
+FreeRTOS will have a default idle task created by the kernel that is always running
+(this idle task gives indication of a low-power mode for free?)
+
+middleware extends OS functionality, drivers give OS functionality
+
+freeRTOS makes money through some commercial licenses (with support), 
+middleware (tcp/ip stacks, cli etc.)
+
+TODO: setting freeRTOS interrupt priorities is sometimes done wrong?
+tasks are usually infinite loops
+
+freeRTOS is more barebones (only 3 files) and effectively just a scheduler (so has timers, priorities) 
+and communication primitives between threads
+In most embedded programs, sensors are monitored periodically. Time and functionality are closely related 
+For small programs super loop is fine.
+However, when creating large programs, this time dependency greatly increases complexity.
+So, a priority based real-time scheduler can be used to reduce this time complexity. 
+(priority over time-slice more efficient in most cases, as if not operating, can go to sleep)
+In addition, schedular allows for logical separation of components (concurrent team development) 
+Also allows easy utilisation of changing hardware, e.g. multiple processor cores
+COTS (commercial-off-the-shelf) as opposed to bespoke
+
+what would a segfault ➞ coredump look like on bare-metal?
+
+function reentrant if can be swapped out and its execution rentered
+functions that operate on global structures and employ lock-based sychronisation (could encounter deadlocks if called from signal handler) (and are thread-safe)
+like malloc and printf are not reentrant 
+
+synchronisation constructs:
+* lock (only one thread access at a time)
+* mutex (lock that can be shared by multiple processes)
+* semaphore (can allow many threads access at a time)
+
+embedded systems special purpose, constrained, 
+often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
+challenges are testabilty and software/hardware comprimises for optimisation problem solving, e.g. bit-banging or cheap mcu, external timer or in-built timer, adding hardware increases power consumption, e.g. ray tracing card or just rasterisation, big.LITTLE clusters
+1/4 scalar performance for 1/2 power consumption good tradeoff
+
+verification: requirements
+validation: does it solve problem
+authenticate: identity
+authorise: privelege
+
+DC motor: raw PWM signal and ground
+signal controls speed
+high rpm, continous rotation (e.g. fans, cars)
+servo: dc-motor + gearing set + control circuit + position sensor
+signal controls position
+limited to 180°
+accurate rotation (e.g. robot arms)
+stepper:
+can be made to move precise well defined 'steps', i.e. jumps between electromagnets
+position fundamental (e.g. 3D printers)
+
+A channel in a sensor is quantity measured. 
+So an acceleration sensor could have 3 channels, 1 for each axes
+
+TODO: amplifiers, e.g. class-D etc. 
+MEMs accelerometers for vibration detection in cars
+
+Digital laser dust sensor (particulates in the air). PM1 being worst as most fine
+TODO: DC vs stepper motor?
+TODO: what is the use case for a motor driver such as L298 Dual H-Bridge Motor Driver
+and Tic T500 USB Multi-Interface Stepper Motor Controller (circuitry without MCU?)
+driver lines are diode protected from back EMF?
+
+TODO: protocol oscilloscope inspection
+TODO: multimeter uses, power reading etc.
+
+I2C developed by Phillips to allow multiple chips on a board to communicate with only 3 wires 
+(id is passed on bus)
+(number of devices is limited by address space; typically 128 addresses?)
+
+price difference between a shape drawable display and character display?
+i.e. is TFT not as clear as IPS?
+
+TODO: perhaps important typical registers, e.g. interrupt register setting
 
 documentation:
 There are of course international standards (IEC 60601, or IEC 62304) that you have 
