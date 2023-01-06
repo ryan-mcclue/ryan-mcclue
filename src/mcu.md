@@ -17,6 +17,7 @@ board selection (board type discovery kit, mcu name), .ioc (initialisation files
 adding files in with GUI to have them 'differentiated',
 dragging out tab to have split code view,
 project configuration to alter include paths for release and debug builds,
+project setting tab indentation
 
 Default sets up GPIO, NVIC and SYS (system manager controller?)
 Max out the HCLK in the clock diagram as we are not running off battery.
@@ -61,7 +62,11 @@ However for exception handlers do.
 IMPORTANT: If in C++, have to extern "C" exception handler functions
 )
 
+RCC (reset clock control)
+
 boot.cpp for clocks, caches, etc. i.e. before processing super-loop
+* initialising Icache and Dcache mean allocating into more than actually turning on?
+* turn on ART
 
 setup.hpp for interrupt/dma priorities, include HAL files, alternate function listing
 
@@ -74,7 +79,7 @@ standard is important, e.g. cubeide does not support #pragma once
 Debugging:
 Green LED as a heartbeat so know haven't locked up
 Red LED is encountered exception
-https://youtu.be/nV2bKRD0dcw?t=4533
+https://youtu.be/nV2bKRD0dcw?t=5410
 
 462 DMIPS
 
@@ -174,6 +179,9 @@ Adding dividers/pre-scalers into this circuit allows to get programmable voltage
 So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
 
 1. **Documentation**
+   * reference manual --> mcu
+   * datasheet --> board
+   * programming manual --> cortex
    Generalities such as *Debug Interface* or *Procedure Call Standard*
    Architecture specifics such as *armv7m*
    Micro-architecture specifics such as *cortex-m4*
