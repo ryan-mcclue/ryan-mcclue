@@ -1,5 +1,3 @@
-On startup will call ResetHandler interrupt. 
-Look in startup.s variant
 
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
@@ -17,7 +15,8 @@ Why strive towards libopencm3
 Experience with GUI, e.g. workspaces, differentiating board revisions, 
 board selection (board type discovery kit, mcu name), .ioc (initialisation files),
 adding files in with GUI to have them 'differentiated',
-dragging out tab to have split code view
+dragging out tab to have split code view,
+project configuration to alter include paths for release and debug builds,
 
 Default sets up GPIO, NVIC and SYS (system manager controller?)
 Max out the HCLK in the clock diagram as we are not running off battery.
@@ -35,14 +34,47 @@ QSPI (for additional flash), RTC, RNG, SD (implement FATfs), TIM, SPI, UART, EXT
 
 Interrupt handler required for systick?
 
+Comments:
+header comment allows easy glance to obtain any context specific information about file
+function comment same deal, however only use if not obvious
+series of statement comments, e.g. // System initialise
+
 So we can see at a glance:
-header comment,
-handlers.cpp for interrupt and exception handlers (are they the same?), 
-(seems that exception handlers are first few in startup vector until Systick_Handler?)
-(setting up exception handlers first as important to allow writing code?)
-boot.cpp for clocks, caches etc,
+handlers.cpp for interrupt and exception handlers 
+(
+An exception is a condition that changes normal flow of program>
+in ARM, interrupt is a type of exception. 
+synchronous will fire immediately after instruction,
+asynchronous don't fire immediately 
+an exception could be pending even if disabled
+Cortex-M defines essential reserved exceptions:
+* Reset: Called on startup
+* NMI
+* Hardfault: Catch all for dereferencing NULL, out-of-bounds memory, divide-by-zero
+(however finer grain control in say armv8-m like MemManage, BusFault etc.)
+* SVCall: svc instruction
+* PendSV and SysTick: Triggered by software typically used in schedulers (put in HAL_IncTick())
+External interrupts, as in external to core, e.g. to DMA start from 16.
+Configured with NVIC peripheral
+External interrupts will typically be implemented as weak symbols, so no need to define them
+However for exception handlers do.
+IMPORTANT: If in C++, have to extern "C" exception handler functions
+)
+
+boot.cpp for clocks, caches, etc. i.e. before processing super-loop
+
 setup.hpp for interrupt/dma priorities, include HAL files, alternate function listing
 
+Look in startup.s file
+Copy over exception labels and make functions into handlers.cpp
+
+IMPORTANT: Various compilers shipped with various IDEs is perhaps when coding to the C
+standard is important, e.g. cubeide does not support #pragma once
+
+Debugging:
+Green LED as a heartbeat so know haven't locked up
+Red LED is encountered exception
+https://youtu.be/nV2bKRD0dcw?t=4533
 
 462 DMIPS
 
