@@ -1,3 +1,6 @@
+On startup will call ResetHandler interrupt. 
+Look in startup.s variant
+
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
 
@@ -7,12 +10,16 @@ CubeMX as just project configuration.
 CubeIDE more encompassing, i.e. a superset
 Rather depressingly it's better than CCS (TI) or MPLab (Microchip), 
 particularly for pin-out configuration
+Many quirks, e.g. MSP meaning MCU support package which is like HAL startup
 Why strive towards libopencm3
+(also automatically adds libc)
 
 Experience with GUI, e.g. workspaces, differentiating board revisions, 
-board selection (board type discovery kit, mcu name), .ioc (initialisation files)
+board selection (board type discovery kit, mcu name), .ioc (initialisation files),
+adding files in with GUI to have them 'differentiated',
+dragging out tab to have split code view
+
 Default sets up GPIO, NVIC and SYS (system manager controller?)
-Clock conf
 Max out the HCLK in the clock diagram as we are not running off battery.
 The clock diagram helps find solutions of values of PLLs and dividers/scalers.
 Also shows how clocks laid out on the device and what busses etc. (there are quite a few of them)
@@ -21,8 +28,20 @@ We will then manually set bus speeds etc.
 (page useful if say I want this speed on the peripheral, how can I acheive that?
 take the settings shown and put that in manually in code)
 HAL generated is not exactly performant, however useful for setting things up.
-However, probably due register direct for interrupts as want performance out of the box
-https://youtu.be/nV2bKRD0dcw?list=UULFRTB9vgpY9ZvecX_9yV9bjQ&t=1145
+However, probably use register direct for interrupts as want performance out of the box
+With HAL, typically enable what drivers we want in source, 
+e.g. ADC, DMA2D, SDRAM (additional ram), DSI, LTDC (LCD TFT Display Controller),
+QSPI (for additional flash), RTC, RNG, SD (implement FATfs), TIM, SPI, UART, EXTI
+
+Interrupt handler required for systick?
+
+So we can see at a glance:
+header comment,
+handlers.cpp for interrupt and exception handlers (are they the same?), 
+(seems that exception handlers are first few in startup vector until Systick_Handler?)
+(setting up exception handlers first as important to allow writing code?)
+boot.cpp for clocks, caches etc,
+setup.hpp for interrupt/dma priorities, include HAL files, alternate function listing
 
 
 462 DMIPS
