@@ -1,3 +1,5 @@
+Chips found on board are USB-UART chip and low dropout voltage regulator (meaning can work even if supply and load voltages are very close)
+
 UWD (ultra-wideband) is short range RF used to detect people and devices
 ESP32 has an MMU, unlike Cortex-M
 Xtensa ISA -> Tensilica cpu -> EspressIf ESP32 mcu
@@ -30,3 +32,11 @@ However, are all schematics shown indicative of this 'minimum system'?
 
 ESP-IDF (EspressIf IoT Development Framework) which is primarily a python virtual environment with lots of packages
 to faciliate configuration, library retrieval, building, flashing, etc.
+
+$(get_idf) sets up path
+$(idf.py set-target esp32) will do a cmake --configure
+$(idf.py menuconfig) is like linux kernel kconfig and will generate a sdkconfig
+$(idf.py build) generate large number of drivers, as well as a bootloader, partition table and application binary 
+$(idf.py -p /dev/ttyUSB0 monitor)
+IMPORTANT: Issue on Ubuntu serial flashing driver whereby the particular RS232 signals aren't being sent properly to
+put the chip into programming mode, so have to hold down Boot button
