@@ -7,6 +7,9 @@ Good as cheap for sufficiently high speed baseband (one channel) WiFi and Blueto
 Useful for video and audio streaming (comes with compression audio codecs to transmit via bluetooth)
 Can be used as an OTT (over-the-top) device, i.e. connect something to the Internet
 
+By default, esp32 uses FreeRTOS to manage dual-core and other peripherals
+Main task runs app_main() 
+
 Small amount of RAM < 1MB, e.g. wanting to do some real-time processing on chip can use QSPI to use more flash and ram
 (So, most MCU with small number of memory, more can be added)
 
@@ -37,6 +40,12 @@ $(get_idf) sets up path
 $(idf.py set-target esp32) will do a cmake --configure
 $(idf.py menuconfig) is like linux kernel kconfig and will generate a sdkconfig
 $(idf.py build) generate large number of drivers, as well as a bootloader, partition table and application binary 
-$(idf.py -p /dev/ttyUSB0 monitor)
+$(idf.py -p /dev/ttyUSB0 monitor) (add user to dialout group)
 IMPORTANT: Issue on Ubuntu serial flashing driver whereby the particular RS232 signals aren't being sent properly to
 put the chip into programming mode, so have to hold down Boot button
+
+infrared is heat. LED can give of narrow band of infrared.
+Therefore, can be used as an IR remote control that requires line of sight.
+Hence RMT (remote control reciever) refers to infrared
+
+TODO: What are ESP-IDF Components and how to integrate them with Component Manager
