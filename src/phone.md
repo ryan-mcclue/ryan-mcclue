@@ -1,14 +1,6 @@
-how many atmospheres?
+**ARMv8-A-ARM-MOESI Cortex-A53 Kirin 655** *@ 2.5GHz*
 
-EMUI 5.0.4 (android 7.0 (Apache))   
-
-linux 4.1.18 (aarch64, AAPCS)
-
-ART 2.1.0
-
-**ARMv8-A-ARM Cortex-A53 Kirin 655** *@ 2.5GHz*
-
-mod. harvard risc bi
+mod. Harvard RISC bi
 
 big.LITTLE 4 @ 2.1GHz, 4 @ 1.8GHz
 
@@ -19,6 +11,12 @@ TDP: 5W, 64 byte cache line
 ***L2***: 128KiB-2MB (shared)
 
 ***VFPv4, NEON, DSP, virt***
+
+EMUI 5.0.4 (android 7.0 (Apache))   
+
+linux 4.1.18 (aarch64, AAPCS)
+
+ART 2.1.0
 
 
 **3GB LPDDR3 microDIMM** *@ 933MHz*

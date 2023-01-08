@@ -2,6 +2,8 @@
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
 
+TODO: What is CMSIS?
+
 GPIO
 
 CubeMX as just project configuration.
