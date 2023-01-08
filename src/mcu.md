@@ -89,16 +89,14 @@ So, each node on the bus must wait for a period of inactivity before attempting 
 CAN FD (flexible data-rate) allows for higher bandwidth
 
 ### MOTORS:
-AC vs DC motor
-synchronous vs ... (PMSM permanent magnet synchronous motor)
-induction motors?
-brushless motor?
-stepper motor?
-Outside of PWM, other control signals for motors applicable to designing motor controllers?
-(H-Bridge could also drive motor as well as PWM?)
-Is PWM only for DC motors?
+Phase refers to how many electromagnet bars in rotor, e.g. 3-phase each placed at 120°
+AC typically induction motor. Synchronous or asynchronous, i.e. whether the shaft rotates in sync with the polarity changes in the rotor 
+DC can be brushed or brushless. Brushes are connected to electrodes on the end of the shaft to magentise sections of the rotor as the shaft rotates.
+Brushless requires ESC to mimic AC pulses
+Stepper brushless most precise movement requiring stepper controller
+Servo motor can be AC or DC that provides feedback so can move to a particular position with PWM
 
-TODO: where are MOSFETS used? In motors?
+TODO: where are MOSFETS used?
 
 TODO: PID controller?
 
