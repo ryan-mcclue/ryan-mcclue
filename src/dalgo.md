@@ -53,7 +53,30 @@ heap_min_sift_down(u32 index, u32 *array)
   Store standalone parent node pointer
   Child nodes stored in a doubly linked list
   Therefore, store managing first and last pointers with child node next and prev pointers 
-  - BST, B-Tree, Red-Black tree, Splay Tree, AVL Tree?
+  Complete tree has all 'h-1' levels are filled, and last level filled from left to right
+  Balanced tree has each node's subtree's differing in height by no more than 1 (O(logn)) 
+  Full/perfect tree has all nodes filled 
+  - BST:
+    Each node at most degree 2.
+    Nodes of left subtree have values less than node, so definitionally require distinct values.
+  - B-Tree: 
+    Self balancing multiway search tree
+    Nodes store a number of keys, i.e. values based on order of tree
+    Order 'm' has each node with at most 'm' children, i.e. 'm' comparison points and 'm-1' keys
+    If on insertion into leaf node violates order, than will create new parent node based on median comparison point.
+    Used in databases to speed up disk access, e.g. with say order 500
+    This is because of large number of children results in lower tree height, so less disk accesses
+    So, use with huge number of items or items that are grouped together
+  - Red-Black tree:
+    Most popular search balanaced binary search tree implementation
+    Has concept of external nodes, which are just left or right pointers that are null (so different to child node)
+    Root node is black
+    Each red node has black child nodes
+    The black depth is same for each leaf node. It's the number of black nodes (including external node, excluding root node) 
+  - AVL Tree:
+    Another popular search balanaced binary search tree implementation
+    Faster lookups than red-black as stricter rules around rebalancing, however results in slower insertions and removals
+  - Splay Tree, 2-3-4 Tree
 hierarchical data, faster searching is added boon
 Ordered use self-balancing red-black-tree yielding logarithmic time
 * Graph:
@@ -69,7 +92,7 @@ This is why C++ STL uses hybrid introsort
   - O(n²) preferable for small lists
 insertion/bubble/selection
   - O(nlogn) divide-and-conquer  for medium
-merge/quick/heap
+merge/quick/heap (qsort() is quick-sort)
   - O(n) for large
 radix
 

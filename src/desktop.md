@@ -12,7 +12,7 @@ TDP: 15W, 64 byte cache line
 
 ***SSE4.2, AVX2, FMA3, VT-x***
 
-HD Graphics 620, 300MHz, shared memory, HEVC + VP9 codecs
+HD Graphics 620, 300MHz, shared memory, opengl, HEVC + VP9 codecs
 
 **20.04** (xlib (MIT), xfce4, pulseaudio, no-RAID)
 

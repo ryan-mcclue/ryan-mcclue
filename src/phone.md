@@ -14,9 +14,11 @@ TDP: 5W, 64 byte cache line
 
 EMUI 5.0.4 (android 7.0 (Apache))   
 
-linux 4.1.18 (aarch64, AAPCS)
+linux 4.1.18 (aarch64, AAPCS64)
 
 ART 2.1.0
+
+Mali-T830, MMU, L2 cache, OpenGL ES, OpenCL, Vulkan, Renderscript
 
 
 **3GB LPDDR3 microDIMM** *@ 933MHz*

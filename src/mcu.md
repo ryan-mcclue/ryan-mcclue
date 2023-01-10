@@ -4,6 +4,13 @@ DSP, FPU
 
 TODO: What is CMSIS?
 
+TODO: documentation writing to allow for standards compliance?
+TODO: remote debugging/profiling
+TODO: power optimisation
+TODO: formal verification and systems testing
+
+TODO: time (https://handmade.network/education#time)
+
 GPIO
 
 CubeMX as just project configuration.
