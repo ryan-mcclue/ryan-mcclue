@@ -348,11 +348,6 @@ could even be simplex (one way only)
 full-duplex can still be serial, requiring at least two wires (duplex meaning bidirectional)
 serial (synchronous with clock data; asynchronous) + parallel 
 
-Fast Fourier Transform (FFTs) are often used with DACs to create a spectrum analyser which allows for subsequent beat detection?
-FFT divides samples into frequency buckets
-logarithmic scale employed in spectrum analyser to account for high frequency range 
-being more greatly separated than low frequency
-
 Modern OS will have code memory write protected for security reasons. 
 Bare metal can do this however
 

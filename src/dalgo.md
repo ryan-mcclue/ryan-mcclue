@@ -75,10 +75,13 @@ heap_min_sift_down(u32 index, u32 *array)
     The black depth is same for each leaf node. It's the number of black nodes (including external node, excluding root node) 
   - AVL Tree:
     Another popular search balanaced binary search tree implementation
-    Faster lookups than red-black as stricter rules around rebalancing, however results in slower insertions and removals
-  - Splay Tree, 2-3-4 Tree
+    Balance threshold calculated by `left-subtree-height - right-subtree-height`.
+    So, if left heavy, i.e. > 1, will do a right rotation.
+    Rotations change 2 node positions, and then swap around children to adhere to BST invariants
+    Faster lookups than red-black as maintains balance threshold of 1.
+    However results in slower insertions and removals
+  - Splay Tree (recently accessed), 2-3-4 Tree (B-Tree is variation of this), KD Tree (nearest neighbour), Quadtree, Octree 
 hierarchical data, faster searching is added boon
-Ordered use self-balancing red-black-tree yielding logarithmic time
 * Graph:
   Adjacency list has each vertex store a linked list of all the edges it connects to
   Therefore, better for sparse graphs than adjacency matrix
