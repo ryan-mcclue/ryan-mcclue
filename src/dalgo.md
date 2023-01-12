@@ -80,8 +80,18 @@ heap_min_sift_down(u32 index, u32 *array)
     Rotations change 2 node positions, and then swap around children to adhere to BST invariants
     Faster lookups than red-black as maintains balance threshold of 1.
     However results in slower insertions and removals
-  - Splay Tree (recently accessed), 2-3-4 Tree (B-Tree is variation of this), KD Tree (nearest neighbour), Quadtree, Octree 
-hierarchical data, faster searching is added boon
+  - KD Tree:
+    Binary tree
+    Breaks up space for 'k' dimensions
+    'k' represents number of elements per node
+    Each depth alternates what node element the BST invariant is applied to
+    This has the effect of dividing into partial spaces.
+    Therefore, will have to unwind to find actual nearest neighbour
+    Useful for calculating nearest neighbour for static structures that don't update frequently
+  - Quadtree/Octree 
+    Perform spatial partitioning of 2D or 3D space respectively
+    Multiway search tree, so number of direct children is 2ⁿ (where 'n' is number of dimensions) 
+  - Splay Tree (recently accessed), 2-3-4 Tree (B-Tree is variation of this), hierarchical data, faster searching is added boon
 * Graph:
   Adjacency list has each vertex store a linked list of all the edges it connects to
   Therefore, better for sparse graphs than adjacency matrix
