@@ -35,6 +35,9 @@ heap_min_sift_down(u32 index, u32 *array)
 
 * Array: search O(n)
   - Heap:
+    The parent node is greater/less than all its child nodes
+    Binary has 2 children, binomial has many
+    Binary heap used to implement priority queues to allow for logarithmic insertion/deletion
 * Hashing: insert O(1)
   Hashing function different for strings and integers.
   Fixed array of buckets, where the index of an element is obtained by modulo'ing hash value.
@@ -50,6 +53,7 @@ heap_min_sift_down(u32 index, u32 *array)
 * Doubly Linked List: deletion O(1) 
   managing first and last pointers with node next and prev pointers
 * Tree: search O(logn)
+  Cannot have cycles
   Store standalone parent node pointer
   Child nodes stored in a doubly linked list
   Therefore, store managing first and last pointers with child node next and prev pointers 
@@ -67,6 +71,7 @@ heap_min_sift_down(u32 index, u32 *array)
     Used in databases to speed up disk access, e.g. with say order 500
     This is because of large number of children results in lower tree height, so less disk accesses
     So, use with huge number of items or items that are grouped together
+    A 2-3-4 Tree is a B-Tree of order 4
   - Red-Black tree:
     Most popular search balanaced binary search tree implementation
     Has concept of external nodes, which are just left or right pointers that are null (so different to child node)
@@ -91,10 +96,14 @@ heap_min_sift_down(u32 index, u32 *array)
   - Quadtree/Octree 
     Perform spatial partitioning of 2D or 3D space respectively
     Multiway search tree, so number of direct children is 2ⁿ (where 'n' is number of dimensions) 
-  - Splay Tree (recently accessed), 2-3-4 Tree (B-Tree is variation of this), hierarchical data, faster searching is added boon
+  - Splay Tree
+    Inbalanced binary search tree, i.e. no extra operations performed on insertion and deletion
+    On a search, the accessed node is rotated to the root node. 
+    This makes for recently accessed nodes to retrieved fast.
 * Graph:
   Adjacency list has each vertex store a linked list of all the edges it connects to
   Therefore, better for sparse graphs than adjacency matrix
+  Isomorphic means that there exists at least one with elements in same order 
 
 * Sorting:
 Important to keep in mind we are executing on a physical machine and that

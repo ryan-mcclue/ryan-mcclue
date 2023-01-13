@@ -21,11 +21,13 @@ Many quirks, e.g. MSP meaning MCU support package which is like HAL startup
 Why strive towards libopencm3
 (also automatically adds libc)
 
+https://youtu.be/PPGUGhoma1g?list=UULFRTB9vgpY9ZvecX_9yV9bjQ&t=1416
+
 Experience with GUI, e.g. workspaces, differentiating board revisions, 
 board selection (board type discovery kit, mcu name), .ioc (initialisation files),
 adding files in with GUI to have them 'differentiated',
 dragging out tab to have split code view,
-project configuration to alter include paths for release and debug builds,
+project properties to alter include and source paths for release and debug builds,
 project setting tab indentation,
 Right-click 'open declaration' to inspect source,
 Gives simple one click flash and debugger,
@@ -103,7 +105,6 @@ standard is important, e.g. cubeide does not support #pragma once
 Debugging:
 Green LED as a heartbeat so know haven't locked up
 Red LED is encountered exception
-https://youtu.be/nV2bKRD0dcw?t=5410
 
 462 DMIPS
 
