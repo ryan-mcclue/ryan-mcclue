@@ -25,7 +25,7 @@ ADC:
 * ENOB (Effective Number Of Bits)?
 
 TIMER:
-* Direction  
+* Direction
 
 CubeMX as just project configuration.
 CubeIDE more encompassing, i.e. a superset
