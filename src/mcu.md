@@ -9,7 +9,7 @@ TODO: remote debugging/profiling
 TODO: power optimisation
 TODO: formal verification and systems testing
 
-GPIO
+GPIO:
 * Pin
 * Output/Input
 * Push-Pull
@@ -20,6 +20,12 @@ INTERRUPT:
 (soft interrupt is when attached to an output)
 * Falling/Rising/Any
 * Per-pin or entire ISR
+
+ADC:
+* ENOB (Effective Number Of Bits)?
+
+TIMER:
+* Direction  
 
 CubeMX as just project configuration.
 CubeIDE more encompassing, i.e. a superset

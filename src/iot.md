@@ -8,11 +8,48 @@ lower case word prefix is constant?
 xQueueCreate() --> xQueueSendFromISR() --> xQueueRecieve() in task to periodically dequeue
 (FreeRTOS Queue makes copy of data. Seems only use this for ease-of-use?)
 
+SYNCHRONISATION:
+(designed for shared data across more than 1 thread)
+* lock (something that is acquired and released)
+differences about ownership?
+* semaphore (wait and signal) 
+counting semaphore, i.e. lock only when count gets to 0?
+binary semaphore, i.e. counting semaphore with count=1
+issues: accidental release (one thread keeps releasing instead of waiting),
+deadlock (waiting for something that never comes true)
+* mutex 
+similar to binary semaphore, excepts inroduces ownership
+so, another thread cannot unlock (solves certain issues with semaphores)
+will have thread put to sleep if cannot acquire, i.e. will not run for it's full quanta
+* spinlock:
+useful for kernel space
+involves a busy wait as oppose to putting CPU to sleep? (no context switching)
+so, CPU will constantly loop over and check if can acquire
+if locked only for a small amount of time, process of context switching by scheduler is slower than this 
+* hybrid mutex/spinlock
+most OSs implement them as something that will first behave as a mutex/spinlock and then after some time will revert to the other 
+
+
+* lock-free:
+use atomic hardware intrinsics to perform work and attempt to (with contention, some threads will repeatedly fail and try again) 
+commit this work to a 'visible state'
+a lock free program can never be stalled
+however, lock free sacrifices throughput for predictable latency 
+difficult to implement anything that isn't trivial, as only so many ways can work around using atomic_exchanges()
+
+even locks have to use hardware atomic primitives
 
 
 Chips found on board are USB-UART chip and low dropout voltage regulator (meaning can work even if supply and load voltages are very close)
 
 ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
+
+xtensa has unpublished ISA (however some esp32 moving to RISC-V), 
+closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
+however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
+less IO ports, bad ADC, higher power draw, tied to SDK for usage
+so not an option for control or most industrial applications
+
 
 UWD (ultra-wideband) is short range RF used to detect people and devices
 ESP32 has an MMU, unlike Cortex-M
