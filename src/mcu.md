@@ -9,9 +9,17 @@ TODO: remote debugging/profiling
 TODO: power optimisation
 TODO: formal verification and systems testing
 
-TODO: time (https://handmade.network/education#time)
-
 GPIO
+* Pin
+* Output/Input
+* Push-Pull
+* Alternate
+* Pull up/down
+
+INTERRUPT:
+(soft interrupt is when attached to an output)
+* Falling/Rising/Any
+* Per-pin or entire ISR
 
 CubeMX as just project configuration.
 CubeIDE more encompassing, i.e. a superset

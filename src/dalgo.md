@@ -32,6 +32,11 @@ heap_min_sift_down(u32 index, u32 *array)
 
 // create: iteratively sift down on parent nodes starting from end
 
+skip list, trie, fibonacci heap
+
+* Search/traversing: (seems to be mainly graph or tree orientated?)
+BFS, DFS, Djisktra, A*, Knuth-Morris, Prims, Floyd-Warshall
+(simple hash, simple checksum, Huffman encoding, greedy, non-greedy, dynamic programming, backtracing?)
 
 * Array: search O(n)
   - Heap:
@@ -118,8 +123,6 @@ merge/quick/heap (qsort() is quick-sort)
   - O(n) for large
 radix
 
-* Traversing: (seems to be mainly graph or tree orientated?)
-BFS, DFS, Djisktra
 
 
 TODO: what is dynamic programming?
