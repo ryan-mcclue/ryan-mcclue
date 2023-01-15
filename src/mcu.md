@@ -53,13 +53,27 @@ Data sending:
 
 USART has extra clock signal, so higher data rates as knows when to sample as oppose to having to inspect data
 
-serial (synchronous with clock data; asynchronous)
-UART: 9600 baud (symbols per second; in case of digital≡ bps) 
-(1 start bit, 8 data bits, no parity bit, 1 stop bit) 
-∴ effective data rate is less than bit transmission rate 
+9600-8N1 will have 9600 baud, 8 data bits, no parity bit, 1 start/stop bit
+Therefore, will have an effective data rate of 80%
+Typically LSB first
 * RS232, TTL specify voltage levels, i.e. hardware
 UART is protocol for sending/recieving bits. 
-* OSCILLOSCOPE-DECODING: 
+* RS232 OSCILLOSCOPE DECODING: 
+When idle, 3.3V 
+Start bit is low, stop bit is high
+Can see is a software decoder via: utility -> options -> installed
+math -> decoder1 -> (evt. table)
+(oscilloscope gave ringing as period was way to low at ns, wanted µs)
+oscilloscope with memory depth of 54Mpts can record a total of 54mil samples in its memory
+by default, as alter time scale, memory depth and sample rate automatically adjusted so that capture fills the screen
+acquire -> mem-depth
+increasing memory depth to max. will slow down scope
+
+I2C:
+Inter-Integrated Circuit
+* Serial
+* Half-duplex
+* Multi-master bus superiority over SPI as only SCL and SDA lines required
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
 
