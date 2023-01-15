@@ -9,6 +9,7 @@ TODO: remote debugging/profiling
 TODO: power optimisation
 TODO: formal verification and systems testing
 
+
 GPIO:
 * Pin
 * Output/Input
@@ -26,6 +27,44 @@ ADC:
 
 TIMER:
 * Direction
+
+USART:
+Universal Synchronous Asynchronous Receiver Transmitter.
+UART subset (asynchronous means no clock signal to synchronise bits)
+Serial
+Full-duplex
+UART is a hardware protocol designed for asynchronous data streams.
+Universal means various protocols
+The different protocols handled use different numbers of bits for detecting start and stop conditions, 
+presence or absence of a parity bit (and its polarity), and frame data lengths. 
+Typically you can specify 5,6,7 or 8 data bits per frame. 
+If someone were to insist that his/her data must be formatted into 4-bit frames, no existing UART chip would be able to handle it.
+
+FTDI is a semiconductor company.
+Prominent product is USB to UART chip 
+
+Referring to single wire:
+* Simplex has data flowing in one way only. Therefore is unidirectional
+* Half-Duplex can have data flowing in both directions, but only one at a time. Therefore is bidirectional
+* Full-Duplex can have data flowing in both directions at the same time
+Data sending:
+* Serial sends bits one after another
+* Parallel sends multiple bits at the same time 
+
+USART has extra clock signal, so higher data rates as knows when to sample as oppose to having to inspect data
+
+serial (synchronous with clock data; asynchronous)
+UART: 9600 baud (symbols per second; in case of digital≡ bps) 
+(1 start bit, 8 data bits, no parity bit, 1 stop bit) 
+∴ effective data rate is less than bit transmission rate 
+* RS232, TTL specify voltage levels, i.e. hardware
+UART is protocol for sending/recieving bits. 
+* OSCILLOSCOPE-DECODING: 
+
+Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
+
+Although oscilloscope for analog, can show ringing even for analog signals?
+
 
 CubeMX as just project configuration.
 CubeIDE more encompassing, i.e. a superset
@@ -261,8 +300,6 @@ So, a combination of stable crystal (however generate relatively slow signal, e.
 
 Seems that IAR compiler produces smaller, faster code than gcc?
 
-UART is protocol for sending/recieving bits. 
-RS232 specifies voltage levels
 
 first step in embedded debugging commandments;
 thou shalt check voltage 
