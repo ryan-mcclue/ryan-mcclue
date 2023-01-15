@@ -32,11 +32,22 @@ heap_min_sift_down(u32 index, u32 *array)
 
 // create: iteratively sift down on parent nodes starting from end
 
+Euclidean geometry are a set of rules laid out by Euclid that follow for geometry on a flat surface
+
 skip list, trie, fibonacci heap
 
 * Search/traversing: (seems to be mainly graph or tree orientated?)
-BFS, DFS, Djisktra, A*, Knuth-Morris, Prims, Floyd-Warshall
+Informed search is when we have a way to estimate how far away are we from our goal, i.e. have domain knowledge
+BFS, DFS (uninformed greedy memory efficient), Djisktra (BFS with weights), A* (Djikstra with heuristic), Knuth-Morris, Prims, Floyd-Warshall
+Bellman-Ford (non-greedy)
+
 (simple hash, simple checksum, Huffman encoding, greedy, non-greedy, dynamic programming, backtracing?)
+
+greedy algorithms memory efficient however not optimal, so balancing act
+greedy chooses next best option from what is available at the moment
+
+dynamic programming is breaking a problem into subproblems and working way up
+This involves storing the results of smaller problems and using them for results on bigger problems 
 
 * Array: search O(n)
   - Heap:
@@ -109,6 +120,7 @@ BFS, DFS, Djisktra, A*, Knuth-Morris, Prims, Floyd-Warshall
   Adjacency list has each vertex store a linked list of all the edges it connects to
   Therefore, better for sparse graphs than adjacency matrix
   Isomorphic means that there exists at least one with elements in same order 
+weighted DAG, 
 
 * Sorting:
 Important to keep in mind we are executing on a physical machine and that
