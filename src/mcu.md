@@ -13,6 +13,7 @@ One of my last technical interviews I botched because I was asked to draw a bloc
 Know how to read some timing diagrams also
 
 
+
 Shift register adds additional output or inputs to be added, i.e. saves pins
 It does this via converting between serial and parallel, 
 e.g SIPO (Serial-In Parallel-Out; LEDs), PISO (buttons)
@@ -75,7 +76,11 @@ Data sending:
 * Serial sends bits one after another 
   Serial offers space-economy, which also allows for better sheilding and cheaper, therefore better at long distances
   - Synchronous pairs data lines with clock signal, often faster
+    Could sample on falling or rising edge 
+    Setting speed isn't important, although there is maximum speed
   - Asynchronous requires more effort in sending data reliably, i.e. framing with 9600-8N1
+    No guarantee that both sides are running at the same rate
+    Extra hardware required, can result in garbage data if both sides baud doesn't match, doesn't scale for multiple devices
 * Parallel sends multiple bits at the same time. Typically involves a 'bus'
 
 
@@ -99,18 +104,31 @@ by default, as alter time scale, memory depth and sample rate automatically adju
 acquire -> mem-depth
 increasing memory depth to max. will slow down scope
 
+SPI:
+Serial Peripheral Interface
+* Short distance
+* Synchronous
+* Full-duplex
+* SCK, MISO, MOSI, SS pins
+The SS active-low pin used to select particular slave. 
+Therefore, each slave has it's own separate SS line.
+This makes signal routing on a PCB more difficult
+
 I2C:
 Inter-Integrated Circuit
+(Intel released SMBus I2C variant 10KHz-100KHz)
 * Serial
 * Synchronous
 * Half-duplex
 * Short distance
-* Multi-master (i.e. multiple masters and multiple slaves) bus superiority over SPI
+* Multi-master (i.e. multiple masters and multiple slaves) bus superiority over SPI. 
 * SCL, SDA lines
+more complex than SPI, less than UART
+modern I2C ultra-fast supports up to 5MHz, slave address size 10bit
+bus connections are open-drain, thereby faciliting each signal line having a pull-up resistor to
+restore signal to high when no device asserting it low
+(this may be built into sensor, however for multiple devices may have to manually add one)
 
-SPI:
-* Short distance
-* Synchronous
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
 
@@ -216,11 +234,10 @@ GPIO pins are implemented as tri-state buffer, i.e. 3 states
 Hi-Z means floating, i.e. no pull-up (to VCC) or pull-down resistor
 It allows multiple devices to share the same IO line
 
-A current sink provides ground connection
-Current is flowing into a pin
+A current sink means current is flowing into the pin
 
 GPIO push-pull has the ability to both source and sink current
-open-drain/open-collector can only sink current
+open-drain/open-collector can only sink current, i.e. can only drive signal line low
 
 High-drive GPIO are push-pull pins capable of providing more current than typical pins, e.g. for LED
 
