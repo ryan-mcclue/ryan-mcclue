@@ -34,7 +34,21 @@ heap_min_sift_down(u32 index, u32 *array)
 
 Euclidean geometry are a set of rules laid out by Euclid that follow for geometry on a flat surface
 
-skip list, trie, fibonacci heap
+skip list:
+consists of a series of lists
+each list will move along the lower list and randomly select to copy that node over or to skip it
+search path starts from the top of these lists in a greedy fashion, i.e. if cannot go further will move down a list
+searches of linked lists in O(logn)
+
+trie:
+prefix tree matcher
+each node will contain a flag that indicates if its a prefix or whole
+
+fibonacci heap:
+mergeable heap
+consists of unioned min-binomial-heaps
+big Oh is worse case
+amortised is average over a series of operations, i.e. worse case average over a series of operations
 
 * Search/traversing: (seems to be mainly graph or tree orientated?)
 Informed search is when we have a way to estimate how far away are we from our goal, i.e. have domain knowledge
@@ -63,6 +77,7 @@ This involves storing the results of smaller problems and using them for results
   - Set: just keys
   - Hashmap
 * Singly Linked List: search O(n)
+  constant time merging
   managing first and last pointers with node next pointer
   - Queue (priority queue?)
   - Stack
