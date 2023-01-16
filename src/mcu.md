@@ -9,6 +9,29 @@ TODO: remote debugging/profiling
 TODO: power optimisation
 TODO: formal verification and systems testing
 
+One of my last technical interviews I botched because I was asked to draw a block diagram for an embedded medical device.
+Know how to read some timing diagrams also
+
+
+Shift register adds additional output or inputs to be added, i.e. saves pins
+It does this via converting between serial and parallel, 
+e.g SIPO (Serial-In Parallel-Out; LEDs), PISO (buttons)
+Shift register will have chip enable pin
+
+
+LOGIC:
+Floating means voltage ranges will be between threshold values, and so no certainty as what result will be
+* TTL (Transistor-Transistor Logic) uses bipolar transistors
+Threshold voltage levels:
+  - Voh (minimum) 2.7V
+  - Vih 2V
+  - Vol (maximum) 0.4V
+  - Vil 0.8V
+* CMOS uses field effect transistors. Less power, more sensitive
+  - Voh (minimum) 2.4V
+  - Vih 2V
+  - Vol (maximum) 0.5V
+  - Vil 0.8V
 
 GPIO:
 * Pin
@@ -34,6 +57,7 @@ UART subset (asynchronous means no clock signal to synchronise bits)
 Serial
 Full-duplex
 UART is a hardware protocol designed for asynchronous data streams.
+TX, RX lines
 Universal means various protocols
 The different protocols handled use different numbers of bits for detecting start and stop conditions, 
 presence or absence of a parity bit (and its polarity), and frame data lengths. 
@@ -48,15 +72,21 @@ Referring to single wire:
 * Half-Duplex can have data flowing in both directions, but only one at a time. Therefore is bidirectional
 * Full-Duplex can have data flowing in both directions at the same time
 Data sending:
-* Serial sends bits one after another
-* Parallel sends multiple bits at the same time 
+* Serial sends bits one after another 
+  Serial offers space-economy, which also allows for better sheilding and cheaper, therefore better at long distances
+  - Synchronous pairs data lines with clock signal, often faster
+  - Asynchronous requires more effort in sending data reliably, i.e. framing with 9600-8N1
+* Parallel sends multiple bits at the same time. Typically involves a 'bus'
+
 
 USART has extra clock signal, so higher data rates as knows when to sample as oppose to having to inspect data
 
 9600-8N1 will have 9600 baud, 8 data bits, no parity bit, 1 start/stop bit
 Therefore, will have an effective data rate of 80%
 Typically LSB first
-* RS232, TTL specify voltage levels, i.e. hardware
+* RS232 (-13V - 13V), TTL (0V - 5V) specify voltage levels, i.e. hardware
+RS232 has higher voltage range for less noise susceptibility over long distances
+(in reality no modern RS232 uses these high voltages)
 UART is protocol for sending/recieving bits. 
 * RS232 OSCILLOSCOPE DECODING: 
 When idle, 3.3V 
@@ -72,8 +102,15 @@ increasing memory depth to max. will slow down scope
 I2C:
 Inter-Integrated Circuit
 * Serial
+* Synchronous
 * Half-duplex
-* Multi-master bus superiority over SPI as only SCL and SDA lines required
+* Short distance
+* Multi-master (i.e. multiple masters and multiple slaves) bus superiority over SPI
+* SCL, SDA lines
+
+SPI:
+* Short distance
+* Synchronous
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
 
