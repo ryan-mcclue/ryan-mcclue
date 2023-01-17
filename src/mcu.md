@@ -104,6 +104,11 @@ by default, as alter time scale, memory depth and sample rate automatically adju
 acquire -> mem-depth
 increasing memory depth to max. will slow down scope
 
+Use scope to check levels (logic analyser may just read 0), see if things look right,
+timing, noise, real-time, analogue
+
+logic analyser for long term patterns
+
 SPI:
 Serial Peripheral Interface
 * Short distance
