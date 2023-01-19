@@ -1,6 +1,8 @@
 As debugging is much harder on embedded, require more logging?
 Also, unit testing on host machine further reduces debugging difficulty
 
+Embedded looking through datasheets and deciding what registers and bits to set
+
 TODO: allocate a pin for generating pulses with microsecond widths to analyse in scope for debugging
 could just transmit line number to trace code?
 replaces printf-style debugging?
@@ -54,6 +56,12 @@ GPIO:
 * Pull up/down
 
 INTERRUPT:
+They are meant for real-time interaction as opposed to tasks.
+Typically, will just service interrupt flag and perhaps unlock a semaphore.
+A high priority interrupt associated with a high priority task
+Offload bus polling which might affect DMA controllers, lowers battery usage
+Polling can be deterministic, and if on very fast machine e.g. millions of IOPS (IO Operations Per Second) cost of context switching in interrupt not efficient
+So, interrupt when want to react instantly or want to be asleep
 (soft interrupt is when attached to an output)
 * Falling/Rising/Any
 * Per-pin or entire ISR
@@ -164,9 +172,21 @@ DAC:
 DAC coupled with OpAmp can act as dynamically adjustable current source
 Pressure and flow control devices, e.g. 4-20 (range between 4-20mA), 0-10 
 * Channels
-* Resolution
+* Resolution (like 8bit?)
 * Voltage reference? e.g. is power supply 3.3v than output max. is 3.3v?
+wave/function generator might be tied to RTC? 
+attenuation is opposite of amplification, e.g. amplitude attenuation
+wave phase is position of wave at a point in time, i.e. where wave is positioned in its cycle
 
+ADC:
+Although Nyquist states double sampling rate, with DSP tricks can lower required sampling rate to reduce power
+* Sampling rate
+* Resolution
+* Noise?
+* SAR?
+
+DMA:
+Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
 

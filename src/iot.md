@@ -1,3 +1,5 @@
+watchdog and power: https://www.youtube.com/@TheFabytm  
+
 FREERTOS:
 By default, esp32 uses FreeRTOS to manage dual-core and other peripherals
 Main task runs app_main() at which point if reaching superloop processing point
@@ -5,7 +7,7 @@ would include a vTaskDelay(1000 / portTICK_RATE_MS)
 
 naming prefix letter is return type?
 lower case word prefix is constant?
-xQueueCreate() --> xQueueSendFromISR() --> xQueueRecieve() in task to periodically dequeue
+xQueueCreate() --> xQueueIsFullFromISR()/xQueueRecieveFromISR()/xQueueSendFromISR() --> xQueueRecieve() in task to periodically dequeue
 (FreeRTOS Queue makes copy of data. Seems only use this for ease-of-use?)
 
 error handling: if (unlikely(res) != OK) ...
@@ -13,7 +15,7 @@ error handling: if (unlikely(res) != OK) ...
 Peripheral Workflow:
 * Interrupt populate FIFO queue
   Task check queue and perform particular operation
-* Task check peripheral specific queue
+* Task check peripheral specific queue, i.e. monitor task (type of tasks)
 
 TODO: do we add vTaskDelay() if we think task will not run frequently?
 
