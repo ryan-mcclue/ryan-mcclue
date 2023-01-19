@@ -30,10 +30,11 @@ Furthermore, ignores constants, e.g. Fibonacci heaps have large constant in thei
   Each slot will store the key. 
   The key will also contain the value of the key prior to hashing to allow for collision resolution
   - Set: just keys
+      - Bloom Filter
+        Probalistic set, in that it can only say if an element probably exists
+        This is because the storage of different keys may overlap with one another 
+        Greatly reduces storage space 
   - Hashmap
-  - TODO: Bloom Filter:
-    Hash map with multiple hashing functions.
-    reducing collisions for large data sets?
 * Singly Linked List: search O(n)
   Constant time merging
   Managing first and last pointers with node next pointer
@@ -104,8 +105,11 @@ Furthermore, ignores constants, e.g. Fibonacci heaps have large constant in thei
     Inbalanced binary search tree, i.e. no extra operations performed on insertion and deletion
     On a search, the accessed node is rotated to the root node. 
     This makes for recently accessed nodes to retrieved fast.
-  - TODO: Segment tree 
-  - TODO: Fenwick tree
+  - Fenwick tree
+    Also known as binary index tree, as uses bits of each index to determine how many elements to count up
+    For example, indices with 0th bit 1 will add only 1 element, indices with 1st bit 1 will add 2 elements, etc.
+    Considered a tree due to this indexing, although implemented as array
+    Used for range checks
 
 ## Algorithms
 greedy algorithms memory efficient however not optimal, so balancing act

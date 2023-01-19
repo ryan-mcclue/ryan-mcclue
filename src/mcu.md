@@ -103,6 +103,7 @@ If someone were to insist that his/her data must be formatted into 4-bit frames,
 FTDI is a semiconductor company.
 Prominent product is USB to UART chip 
 
+* Flow Control
 May implement hardware flow-control; how serial devices control amount of data transmitting, as often PC faster than MCU
 RTS (Request To Send), CTS (Clear To Send) will be wired to each other from opposite devices.
 When high, saying that can receive data, i.e. not busy with other tasks, buffer space available etc.
@@ -147,6 +148,11 @@ Use scope to check levels (logic analyser may just read 0), see if things look r
 timing, noise, real-time, analogue
 
 logic analyser for long term patterns
+
+DAC:
+DAC coupled with OpAmp can act as dynamically adjustable current source
+Pressure and flow control devices, e.g. 4-20 (range between 4-20mA), 0-10 
+* 
 
 
 

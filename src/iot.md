@@ -11,8 +11,11 @@ xQueueCreate() --> xQueueSendFromISR() --> xQueueRecieve() in task to periodical
 error handling: if (unlikely(res) != OK) ...
 
 Peripheral Workflow:
-Interrupt populate FIFO queue
-Task check queue and perform particular operation
+* Interrupt populate FIFO queue
+  Task check queue and perform particular operation
+* Task check peripheral specific queue
+
+TODO: do we add vTaskDelay() if we think task will not run frequently?
 
 IMPORTANT: as esp32 comes with default bootloader, it may use peripherals already, e.g. bootloader uses UART0
 
