@@ -1,3 +1,9 @@
+As debugging is much harder on embedded, require more logging?
+Also, unit testing on host machine further reduces debugging difficulty
+
+TODO: allocate a pin for generating pulses with microsecond widths to analyse in scope for debugging
+could just transmit line number to trace code?
+replaces printf-style debugging?
 
 armv7-m cortex-m4 STM32F429zi @ 180MHz
 DSP, FPU
@@ -13,6 +19,11 @@ TODO: formal verification and systems testing
 
 One of my last technical interviews I botched because I was asked to draw a block diagram for an embedded medical device.
 Know how to read some timing diagrams also
+
+An op-amp is a voltage amplifying device. 
+It cannot output more than the supply voltage, i.e. it has a power supply (these are normally left off circuit diagrams)
+Very versatile analog logic operations, e.g. voltage adder, comparator; hence name 'operational'
+Can also amplify/invert/maintain signal
 
 
 Shift register adds additional output or inputs to be added, i.e. saves pins
@@ -39,7 +50,7 @@ GPIO:
 * Pin
 * Output/Input
 * Push-Pull
-* Alternate
+* Alternate (uart, dac, xtal (clock-in say with function generator), clock-out, rtc, TODO: ...)
 * Pull up/down
 
 INTERRUPT:
@@ -152,8 +163,9 @@ logic analyser for long term patterns
 DAC:
 DAC coupled with OpAmp can act as dynamically adjustable current source
 Pressure and flow control devices, e.g. 4-20 (range between 4-20mA), 0-10 
-* 
-
+* Channels
+* Resolution
+* Voltage reference? e.g. is power supply 3.3v than output max. is 3.3v?
 
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
