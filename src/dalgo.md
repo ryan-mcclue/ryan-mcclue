@@ -125,9 +125,21 @@ Informed search is when we have a way to estimate how far away are we from our g
     - Insertion
     - Bubble
     - Selection
-  - O(nlogn) divide-and-conquer for medium
+  - O(nlogn) divide-and-conquer (typically recursive) for medium
     - Merge
+      Out-place
+      Divide into sub-arrays until 1 element sized.
+      Sort each sub-arrays and combine.
+      Logarithmic as dividing into sub-arrays creates a binary tree structure 
     - Quick (qsort() is quick-sort)
+      In-place meaning sorted items occupy same storage as original ones
+      Involves pivot point, i.e. a point 
+      When sorting, pivot point at end. 
+      Moving from left, find element larger than pivot.
+      Moving from right, find element smaller than pivot.
+      Swap them. When elements overlap, place pivot back where it started.
+      Can yield quadratic time if pivot point chosen poorly.
+      Pivot point normally chosen via median-of-3, i.e. sort 1st/middle/last element 
     - Heap 
   - O(n) for large
     - Radix
@@ -145,7 +157,7 @@ Each A* node has local and global goals, i.e. how close to end result
 TODO: multithreading!!!
 
 For embedded:
-* buffering techniques: zero-copy buffer, circular/ring buffer, bipartite buffer
+* buffering techniques: zero-copy buffer (direct to peripheral buffer), circular/ring buffer, bipartite buffer
 * bit-twiddling tricks: 
 * Usage and problems with DMAs, DMAs with and without cache coherency
 * persistent logs  
