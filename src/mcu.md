@@ -186,7 +186,40 @@ Although Nyquist states double sampling rate, with DSP tricks can lower required
 * SAR?
 
 DMA:
+
+DSP:
+Has analog (Fourier, Laplace, Convolution, analog filtering) and digital domain (Sampling theorem, aliasing, FIR, IIR, FFT)
+
+signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum
+
 Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
+Juypter notebook is a standard for embedding python code in a markdown style and presenting them 
+Conda can install postgresql as well as python packages
+Miniconda is distribution that primarily includes conda
+
+Time-invariant is one whose behaviour (response to inputs) does not change over time.
+
+Do we always deal with linear systems?
+
+Higher frequency (vibrations per second), higher pitch (what our ears actually percieve)
+
+An envelope (family of curves) describes the amplitude or changing level of the signal over time.
+So, could be thought of a smooth curve outlining wave's extremes
+
+Apodisation modifies mathematical function.
+Typically used to smooth discontinuities at start and end of wave
+
+Spectrum is frequency content of wave
+
+Low pass attenuates frequencies higher
+
+FFT algorithm underpins (Laplace is in similar breath to FFT?)
+Ears do something similar to spectral analysis, i.e. FFT?
+
+(FFT + Convolution Theory + LTI theory)
+* LTI system theory to characterise acoustics of space
+Then can convolve (combine 2 functions to create a 3rd) a wave with another to have the wave sound like it was played in the same room as the other
+
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
 
