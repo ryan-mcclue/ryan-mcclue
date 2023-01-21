@@ -1,6 +1,14 @@
 As debugging is much harder on embedded, require more logging?
 Also, unit testing on host machine further reduces debugging difficulty
 
+SIL (software-in-loop) mocks written for peripheral drivers?
+
+HIL is writing scripts (possible python PyVISA) to sequence external stimuli and measure/validate
+responses through benchtop instrumentation
+Could also use specific HIL machines like dSPACE 
+
+CI testing: https://www.youtube.com/watch?v=z_hWRif-f_Y&list=PL4cGeWgaBTe1uwiqIAc6fwPzPpvgPZI2J
+
 Embedded looking through datasheets and deciding what registers and bits to set
 
 TODO: allocate a pin for generating pulses with microsecond widths to analyse in scope for debugging
@@ -187,21 +195,34 @@ Although Nyquist states double sampling rate, with DSP tricks can lower required
 
 DMA:
 
+As any current carrying conductor produces a magnetic field,
+can use DC in wire of solenoid to actuate central metal rod
+
 DSP:
+Telephone lines use 3KHz-4KHz bandwidth anachronistic to analog days 
+
+RMS (Root Mean Square) is a mathematical method to determine average amount of energy over time of a varying signal 
+
 Has analog (Fourier, Laplace, Convolution, analog filtering) and digital domain (Sampling theorem, aliasing, FIR, IIR, FFT)
 
 signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum
+The samples may be in little-endian 16-bit mono
 
 Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
 Juypter notebook is a standard for embedding python code in a markdown style and presenting them 
 Conda can install postgresql as well as python packages
 Miniconda is distribution that primarily includes conda
+IPython is interactive computing environment, initially developed for Python
+(FFT implemented in numpy, scipy etc.)
 
 Time-invariant is one whose behaviour (response to inputs) does not change over time.
 
 Do we always deal with linear systems?
 
+
 Higher frequency (vibrations per second), higher pitch (what our ears actually percieve)
+Wavelength is distance wave shape repeats. Period is time between these
+Frequency is number of waves passing a point
 
 An envelope (family of curves) describes the amplitude or changing level of the signal over time.
 So, could be thought of a smooth curve outlining wave's extremes
@@ -209,12 +230,24 @@ So, could be thought of a smooth curve outlining wave's extremes
 Apodisation modifies mathematical function.
 Typically used to smooth discontinuities at start and end of wave
 
-Spectrum is frequency content of wave
+Low pass attenuates frequencies higher.
+Sounds muffled
 
-Low pass attenuates frequencies higher
+Spectrum is frequency content of wave.
+In a graph, height is amplitude/voltage/energy at that frequency
+Any signal can be represented as a sum of single-frequency components
 
-FFT algorithm underpins (Laplace is in similar breath to FFT?)
-Ears do something similar to spectral analysis, i.e. FFT?
+DFT (Discrete Fourier Transform) computes spectrum
+FFT is an efficient algorithm that implements DFT (Laplace is in similar breath to FFT?)
+Would also have real FFT and complex FFT
+
+DFT sees how much does each wave frequency component correlate to a sine wave of same frequency
+DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
+square and triangle waves will be sum of many sine waves
+
+Harmonic is a wave with frequency that is integer multiple of a baseline frequency
+The FFT will show various harmonics, e.g. could be only even/odd or both
+
 
 (FFT + Convolution Theory + LTI theory)
 * LTI system theory to characterise acoustics of space
