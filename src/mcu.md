@@ -205,7 +205,7 @@ RMS (Root Mean Square) is a mathematical method to determine average amount of e
 
 Has analog (Fourier, Laplace, Convolution, analog filtering) and digital domain (Sampling theorem, aliasing, FIR, IIR, FFT)
 
-signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum
+signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum (so can do inverse fft)
 The samples may be in little-endian 16-bit mono
 
 Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
@@ -234,7 +234,9 @@ Low pass attenuates frequencies higher.
 Sounds muffled
 
 Spectrum is frequency content of wave.
-In a graph, height is amplitude/voltage/energy at that frequency
+Height is a complex number that encodes magnitude/amplitude/voltage/energy and phase offset (where it started in the sinusoid) 
+at that frequency
+However, in a graph often only plot the magnitude as don't care about phase?
 Any signal can be represented as a sum of single-frequency components
 
 DFT (Discrete Fourier Transform) computes spectrum
@@ -255,6 +257,20 @@ It will be half of our sampling rate.
 Called folding as any harmonic above nyquist will 'fold' back into our range, e.g. if 5000Hz and is 6000Hz, will get 4000Hz
 Aliasing a form of undersampling resulting from converting something continuous into discrete, i.e. misidentify signal
 This is relevent for say a square wave, which may have 'base' frequency of 1KHz, but might have FFT up to 5KHz
+
+Could have a signal that has linearly-increasing frequency, e.g. a chirp from say A3-A5
+
+FFT limitation is that it cannot say how wave changed over time. It's holistic
+We can divide signal into segments and compute DFT on each segment to produce a Short Time Fourier Transform spectrograph
+This will show how frequencies changed over time in the signal
+
+Spectral leakage is when some energy of one frequency appears at another. 
+If duration multiple of period, then minimal leakage.
+Can also reduce by applying a window function (function that zero's out at some interval, e.g. hamming window)
+
+Smoothing like convolution?
+Good way to smooth out a noisy (random data not interested in actually recording) signal is to use a moving average
+https://youtu.be/SrJq2AzXZME?t=5577
 
 
 (FFT + Convolution Theory + LTI theory)
