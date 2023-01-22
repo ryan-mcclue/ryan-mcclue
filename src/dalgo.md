@@ -121,10 +121,17 @@ This involves storing the results of smaller problems and using them for results
 Informed search is when we have a way to estimate how far away are we from our goal, i.e. have domain knowledge
 
 * Sorting:
-  - O(n²) preferable for small lists
+  - O(n²) preferable for small lists or lists that are almost sorted
     - Insertion
-    - Bubble
+      Used most often
+      Working from left-to-right, develop an increasing 'sorted partition' as we move up an index 
+      Each iteration, compare the element when elements to its left and swap if required
     - Selection
+      Working from left-to-right as base element, find next element that is absolute minimum compared to this.
+      Swap items. Repeat on next index. Less memory swaps than insertion
+    - Bubble
+      Working from left-to-right, compare two elements and swap if out-of-order. 
+      Do so until reach end. Repeat on next index.
   - O(nlogn) divide-and-conquer (typically recursive) for medium
     - Merge
       Out-place

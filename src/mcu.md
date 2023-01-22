@@ -247,6 +247,14 @@ square and triangle waves will be sum of many sine waves
 
 Harmonic is a wave with frequency that is integer multiple of a baseline frequency
 The FFT will show various harmonics, e.g. could be only even/odd or both
+- high frequency components --> slow dropoff
+- low frequency components --> fast dropoff
+
+Nyquist/folding frequency is highest frequency that can be measured using sampled data
+It will be half of our sampling rate.
+Called folding as any harmonic above nyquist will 'fold' back into our range, e.g. if 5000Hz and is 6000Hz, will get 4000Hz
+Aliasing a form of undersampling resulting from converting something continuous into discrete, i.e. misidentify signal
+This is relevent for say a square wave, which may have 'base' frequency of 1KHz, but might have FFT up to 5KHz
 
 
 (FFT + Convolution Theory + LTI theory)
