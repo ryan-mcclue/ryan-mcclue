@@ -1,3 +1,6 @@
+TODO: further investigations
+https://www.youtube.com/@geneschroedertech7501
+
 As debugging is much harder on embedded, require more logging?
 Also, unit testing on host machine further reduces debugging difficulty
 
@@ -205,7 +208,7 @@ RMS (Root Mean Square) is a mathematical method to determine average amount of e
 
 Has analog (Fourier, Laplace, Convolution, analog filtering) and digital domain (Sampling theorem, aliasing, FIR, IIR, FFT)
 
-signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum (so can do inverse fft)
+Signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum (so can do inverse fft)
 The samples may be in little-endian 16-bit mono
 
 Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
@@ -219,7 +222,6 @@ Time-invariant is one whose behaviour (response to inputs) does not change over 
 
 Do we always deal with linear systems?
 
-
 Higher frequency (vibrations per second), higher pitch (what our ears actually percieve)
 Wavelength is distance wave shape repeats. Period is time between these
 Frequency is number of waves passing a point
@@ -230,7 +232,7 @@ So, could be thought of a smooth curve outlining wave's extremes
 Apodisation modifies mathematical function.
 Typically used to smooth discontinuities at start and end of wave
 
-Low pass attenuates frequencies higher.
+Low pass attenuates frequencies higher. (note that attenuate doesn't necessarily mean cutoff completely, however that is normally ideal)
 Sounds muffled
 
 Spectrum is frequency content of wave.
@@ -270,12 +272,31 @@ Can also reduce by applying a window function (function that zero's out at some 
 
 Smoothing like convolution?
 Good way to smooth out a noisy (random data not interested in actually recording) signal is to use a moving average
-https://youtu.be/SrJq2AzXZME?t=5577
+Moving average has window size say of 30 days, so 1-30 average, then 2-31 average etc.
+So, convolution smooths signal, i.e. smooths out harsh edges and acts as a 'sort-of?' low-pass filter on the frequencies
 
+convolution is operation behind FIR filter. moving average is a type of FIR filter
+issue with convolution is boundary conditions, i.e. what happens on boundary of signal?
+FIR reponse won't go on for ever
+
+convolution theorem states that convolution with a window in the time domain
+corresponds to multiplication by a filter in the frequency domain (this operation in frequency domain is nlogn not quadratic)
+so DFT(signal) * DFT(window) is better than convolving signal and window
+so, convolution involves more operations then simply multiplying like in a filter
+
+boxcar window is moving average?
+
+gaussian is normal distribution, i.e. bell curve.
+it gets better smoothing. smoothing like a low-pass filter?
+
+
+A LTI system if given the same input, will always give the same output 
+Also, two inputs added together is same as two outputs added together
 
 (FFT + Convolution Theory + LTI theory)
 * LTI system theory to characterise acoustics of space
-Then can convolve (combine 2 functions to create a 3rd) a wave with another to have the wave sound like it was played in the same room as the other
+Then can convolve (combine 2 functions to create a 3rd) a wave with another to have the wave sound like it was played 
+in the same room as the other
 
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type

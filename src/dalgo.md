@@ -148,8 +148,14 @@ Informed search is when we have a way to estimate how far away are we from our g
       Can yield quadratic time if pivot point chosen poorly.
       Pivot point normally chosen via median-of-3, i.e. sort 1st/middle/last element 
     - Heap 
+      First create max-heap and extract max.
+      Then adjust existing max-heap, which as almost ordered, is logarithmic time.
+      Repeat
   - O(n) for large
     - Radix
+      Sort on element radix/base, e.g. ones unit, then tens unit etc.
+      On each pass, copy elements into buckets and then copy back out
+      Cost of memory operations reason for applicibility
 
 * Search/traversing:
 for each algorithm, does it work on DAG?
