@@ -182,6 +182,7 @@ logic analyser for long term patterns
 DAC:
 DAC coupled with OpAmp can act as dynamically adjustable current source
 Pressure and flow control devices, e.g. 4-20 (range between 4-20mA), 0-10 
+As any current carrying conductor produces a magnetic field, can use DC in wire of solenoid to actuate central metal rod
 * Channels
 * Resolution (like 8bit?)
 * Voltage reference? e.g. is power supply 3.3v than output max. is 3.3v?
@@ -197,21 +198,54 @@ Although Nyquist states double sampling rate, with DSP tricks can lower required
 * SAR?
 
 DMA:
+Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
 
-As any current carrying conductor produces a magnetic field,
-can use DC in wire of solenoid to actuate central metal rod
 
 DSP:
+Higher frequency (number of waves passing a point), higher pitch (what our ears actually percieve)
+Wavelength is distance wave shape repeats. Period is time between these
+
+Any signal can be represented as a sum of single-frequency components.
+Spectrum is frequency content of a wave.
+DFT (Discrete Fourier Transform) computes spectrum.
+This spectrum contains the magnitude/amplitude/voltage/energy and phase offset at that frequency.
+However, in audio signals, often only plot the magnitude as phase is not overly domineering in perception.
+FFT is an efficient algorithm that implements DFT.
+Have real FFT and complex FFT implementations.
+
+Specifically, DFT sees how much does each wave frequency component correlate to a sine wave of same frequency
+DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
+square and triangle waves will be sum of many sine waves
+
+Harmonic is a wave with frequency that is integer multiple of a baseline frequency
+The FFT will show various harmonics, e.g. could be only even/odd or both
+- high frequency components --> slow dropoff
+- low frequency components --> fast dropoff
+
+A signal is continuous, having frequency and period.
+Recording signal at evenly spaced intervals, we get samples.
+Example sample format is little-endian 16-bit mono.
+From samples, we can compute a spectrum.
+Conversely from a spectrum, we can convert(so can do inverse fft)
+
+An envelope (family of curves) describes the amplitude or changing level of the signal over time.
+So, could be thought of a smooth curve outlining wave's extremes
+
+Apodisation modifies a function.
+So, removing jagged discontinuities at start and end of wave is a form of apodisation.
+
+Low pass attenuates frequencies higher. (note that attenuate doesn't necessarily mean cutoff completely, however that is normally ideal)
+Sounds muffled
+
+
 Telephone lines use 3KHz-4KHz bandwidth anachronistic to analog days 
 
-RMS (Root Mean Square) is a mathematical method to determine average amount of energy over time of a varying signal 
+RMS (Root Mean Square) is used when values can be positive and negative, e.g. average of sinusoid is 0
 
-Has analog (Fourier, Laplace, Convolution, analog filtering) and digital domain (Sampling theorem, aliasing, FIR, IIR, FFT)
 
-Signal (frequency, period) is continuous -> record at evenly spaced intervals into samples <---> compute spectrum (so can do inverse fft)
-The samples may be in little-endian 16-bit mono
 
-Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
+
+
 Juypter notebook is a standard for embedding python code in a markdown style and presenting them 
 Conda can install postgresql as well as python packages
 Miniconda is distribution that primarily includes conda
@@ -220,39 +254,7 @@ IPython is interactive computing environment, initially developed for Python
 
 Time-invariant is one whose behaviour (response to inputs) does not change over time.
 
-Do we always deal with linear systems?
 
-Higher frequency (vibrations per second), higher pitch (what our ears actually percieve)
-Wavelength is distance wave shape repeats. Period is time between these
-Frequency is number of waves passing a point
-
-An envelope (family of curves) describes the amplitude or changing level of the signal over time.
-So, could be thought of a smooth curve outlining wave's extremes
-
-Apodisation modifies mathematical function.
-Typically used to smooth discontinuities at start and end of wave
-
-Low pass attenuates frequencies higher. (note that attenuate doesn't necessarily mean cutoff completely, however that is normally ideal)
-Sounds muffled
-
-Spectrum is frequency content of wave.
-Height is a complex number that encodes magnitude/amplitude/voltage/energy and phase offset (where it started in the sinusoid) 
-at that frequency
-However, in a graph often only plot the magnitude as don't care about phase?
-Any signal can be represented as a sum of single-frequency components
-
-DFT (Discrete Fourier Transform) computes spectrum
-FFT is an efficient algorithm that implements DFT (Laplace is in similar breath to FFT?)
-Would also have real FFT and complex FFT
-
-DFT sees how much does each wave frequency component correlate to a sine wave of same frequency
-DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
-square and triangle waves will be sum of many sine waves
-
-Harmonic is a wave with frequency that is integer multiple of a baseline frequency
-The FFT will show various harmonics, e.g. could be only even/odd or both
-- high frequency components --> slow dropoff
-- low frequency components --> fast dropoff
 
 Nyquist/folding frequency is highest frequency that can be measured using sampled data
 It will be half of our sampling rate.
