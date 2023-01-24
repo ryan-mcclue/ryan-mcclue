@@ -213,20 +213,18 @@ However, in audio signals, often only plot the magnitude as phase is not overly 
 FFT is an efficient algorithm that implements DFT.
 Have real FFT and complex FFT implementations.
 
-Specifically, DFT sees how much does each wave frequency component correlate to a sine wave of same frequency
-DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
-square and triangle waves will be sum of many sine waves
-
 Harmonic is a wave with frequency that is integer multiple of a baseline frequency
 The FFT will show various harmonics, e.g. could be only even/odd or both
-- high frequency components --> slow dropoff
-- low frequency components --> fast dropoff
+
+Specifically, for a wave, DFT sees how much does a particular portion of that wave correlate to a sine wave of same frequency
+DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
+square and triangle waves will be sum of many sine waves
 
 A signal is continuous, having frequency and period.
 Recording signal at evenly spaced intervals, we get samples.
 Example sample format is little-endian 16-bit mono.
 From samples, we can compute a spectrum.
-Conversely from a spectrum, we can convert(so can do inverse fft)
+Conversely from a spectrum, we can convert, i.e. perform an inverse FFT
 
 An envelope (family of curves) describes the amplitude or changing level of the signal over time.
 So, could be thought of a smooth curve outlining wave's extremes
@@ -234,27 +232,16 @@ So, could be thought of a smooth curve outlining wave's extremes
 Apodisation modifies a function.
 So, removing jagged discontinuities at start and end of wave is a form of apodisation.
 
-Low pass attenuates frequencies higher. (note that attenuate doesn't necessarily mean cutoff completely, however that is normally ideal)
-Sounds muffled
-
-
-Telephone lines use 3KHz-4KHz bandwidth anachronistic to analog days 
+Low pass attenuates frequencies higher. 
+Although attenuate doesn't necessarily mean cutoff completely, this is normally ideal.
+Sounds muffled.
+Telephone lines use 3KHz-4KHz bandwidth low-pass filter
 
 RMS (Root Mean Square) is used when values can be positive and negative, e.g. average of sinusoid is 0
 
-
-
-
-
-Juypter notebook is a standard for embedding python code in a markdown style and presenting them 
-Conda can install postgresql as well as python packages
-Miniconda is distribution that primarily includes conda
-IPython is interactive computing environment, initially developed for Python
-(FFT implemented in numpy, scipy etc.)
-
 Time-invariant is one whose behaviour (response to inputs) does not change over time.
-
-
+An alternate to this would be a linearly-increasing frequency, e.g. a chirp from say A3-A5
+So, if an LTI system is given the same input, will always give the same output 
 
 Nyquist/folding frequency is highest frequency that can be measured using sampled data
 It will be half of our sampling rate.
@@ -262,43 +249,26 @@ Called folding as any harmonic above nyquist will 'fold' back into our range, e.
 Aliasing a form of undersampling resulting from converting something continuous into discrete, i.e. misidentify signal
 This is relevent for say a square wave, which may have 'base' frequency of 1KHz, but might have FFT up to 5KHz
 
-Could have a signal that has linearly-increasing frequency, e.g. a chirp from say A3-A5
+A window function will zero out at some interval, e.g. hamming window
 
-FFT limitation is that it cannot say how wave changed over time. It's holistic
-We can divide signal into segments and compute DFT on each segment to produce a Short Time Fourier Transform spectrograph
-This will show how frequencies changed over time in the signal
-
-Spectral leakage is when some energy of one frequency appears at another. 
-If duration multiple of period, then minimal leakage.
-Can also reduce by applying a window function (function that zero's out at some interval, e.g. hamming window)
-
-Smoothing like convolution?
+Convolution is combining functions. We can attain a degree of smoothing like this.
+Convolution theorem states that multiplication `DFT(signal) * DFT(window)`, is equivalent to more involved convolution
 Good way to smooth out a noisy (random data not interested in actually recording) signal is to use a moving average
 Moving average has window size say of 30 days, so 1-30 average, then 2-31 average etc.
-So, convolution smooths signal, i.e. smooths out harsh edges and acts as a 'sort-of?' low-pass filter on the frequencies
 
-convolution is operation behind FIR filter. moving average is a type of FIR filter
-issue with convolution is boundary conditions, i.e. what happens on boundary of signal?
-FIR reponse won't go on for ever
+Convolution is operation behind FIR filter. 
+Moving average is a type of FIR filter. FIR reponse won't go on for ever
 
-convolution theorem states that convolution with a window in the time domain
-corresponds to multiplication by a filter in the frequency domain (this operation in frequency domain is nlogn not quadratic)
-so DFT(signal) * DFT(window) is better than convolving signal and window
-so, convolution involves more operations then simply multiplying like in a filter
+Gaussian is normal distribution, i.e. bell curve.
+It gets better smoothing. 
 
-boxcar window is moving average?
-
-gaussian is normal distribution, i.e. bell curve.
-it gets better smoothing. smoothing like a low-pass filter?
+Juypter notebook is a standard for embedding python code in a markdown style and presenting them 
+Conda can install postgresql as well as python packages
+Miniconda is distribution that primarily includes conda
+IPython is interactive computing environment, initially developed for Python
+(FFT implemented in numpy, scipy etc.)
 
 
-A LTI system if given the same input, will always give the same output 
-Also, two inputs added together is same as two outputs added together
-
-(FFT + Convolution Theory + LTI theory)
-* LTI system theory to characterise acoustics of space
-Then can convolve (combine 2 functions to create a 3rd) a wave with another to have the wave sound like it was played 
-in the same room as the other
 
 
 Bus Pirate has Microchip PIC (MPLab compiler for AVR as well) as a SOIC (Small Outline Integrated Circuit) IC package type
