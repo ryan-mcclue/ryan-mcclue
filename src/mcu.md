@@ -13,6 +13,21 @@ Could also use specific HIL machines like dSPACE
 CI/CD:
 https://www.youtube.com/watch?v=z_hWRif-f_Y&list=PL4cGeWgaBTe1uwiqIAc6fwPzPpvgPZI2J
 
+A CI tool is just a server script runner and data store specialised for DevOps (developing and then operating/publishing)
+Jenkins (installing adding Jenkins public .asc key into keyring?) open source. We use pipeline approach
+Jenkins install will:
+launch daemon that will be run by 'jenkins' user on startup 
+systemd-journald -> journalctl -u jenkins.service
+systemctl cat jenkins
+openJDK is open source implementation of Java. So, has own virtual machine
+Jenkins plugins (git, pipeline, webhook trigger, email extension)
+
+pipeline: checkout -> build -> static code analysis -> flash debug -> HIL debug -> flash release -> HIL release -> postbuild operations
+
+output results in as .xml for display later?
+
+have CI variables for say COM port etc. 
+
 Inside build script, `echo #define $BUILD-TAG-$build_type > version.h` as checking we are running on correct version is essential
 
 Continous delivery ensures that product can be reliably released at any time
@@ -41,9 +56,31 @@ Inside tests, will intermittently write to sim board and read from dut board and
 So, both boards require similar console interfaces
 If CI/CD actually on remote server, the CI/CD would communicate with another test server with the test hardware.
 This test server would implement some API to initiate serial connections
+So, local developer has two boards and so does remote server
 The bluepill board not an official st board. However, can generalise with cubeide? Configure max. clock
 
 Can create a local 'bare' remote git repo: `mkdir remote.git; cd remote.git; git init --bare; git remote add origin file:\home\ryan`
+(then write a githook bash script in local repo so that when pushing to remote, also push to CI server)
+
+
+MOTOR DRIVER/PROFESSIONALISM:
+As working in a complex system, driver must be non-blocking (use interrupts?), tests, debug features like performance measurement, logging and console commands
+able to coexist with other modules and use in a super-loop context
+
+Robot kinematics is study of motion without considering potential fields blocking motion
+Inverse kinematics is determining motion to reach desired position (so just trajectory planning?)
+Planar joint is gliding joint?
+
+Often driver boards needed for motors as power of GPIO signals is not enough.
+Furthermore, may require external power supply to prevent slipping steps on the motor.
+(register specific to make GPIO setting as fast as possible, which equates to it being set on time)
+
+Require command queue to prevent motor stalling?
+
+
+24/7 SYSTEM:
+Able to detect and recover from faults. So, must build in features to collect information
+
 
 
 Embedded looking through datasheets and deciding what registers and bits to set
@@ -286,7 +323,7 @@ This is relevent for say a square wave, which may have 'base' frequency of 1KHz,
 A window function will zero out at some interval, e.g. hamming window
 
 Convolution is combining functions. We can attain a degree of smoothing like this.
-Convolution theorem states that multiplication `DFT(signal) * DFT(window)`, is equivalent to more involved convolution
+Convolution theorem states that multiplication in frequency domain `DFT(signal) * DFT(window/filter)`, is equivalent to more involved convolution in time domain
 Good way to smooth out a noisy (random data not interested in actually recording) signal is to use a moving average
 Moving average has window size say of 30 days, so 1-30 average, then 2-31 average etc.
 
