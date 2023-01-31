@@ -81,7 +81,7 @@ Stepper motors don't move in a smooth and continuous way
 Open loop, as no feedback of motor position
 Therefore, it's possible motor might slip steps and software gets out of sync
 Also, will require calibration (possibly with a limit switch?)
-Can be controlled with GPIO?
+Stator coil current controlled with GPIO?
 
 Say 32 steps per revolution, plus 64 time gear reduction, i.e. internal motor must rotate 64 times to get one external rotation
 (so a gear reduction of 64:1)
@@ -91,6 +91,8 @@ gives total 2048 steps
 rotor has permanent magnet whose poles will line up with stator electromagnet coils
 stepper will have rotor and stator teeth, i.e. further subdividing magnets
 
+radian is arc length distance of 1 radius. 2pi/tau radians for circumference of circle. 
+tau appears everywhere, e.g. harmonic motion as period of sine wave 
 
 TODO: For any hardware, understand basic signal patterns
 
