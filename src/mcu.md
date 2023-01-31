@@ -64,24 +64,40 @@ Can create a local 'bare' remote git repo: `mkdir remote.git; cd remote.git; git
 
 
 MOTOR DRIVER/PROFESSIONALISM:
-As working in a complex system, driver must be non-blocking (use interrupts?), tests, debug features like performance measurement, logging and console commands
+As working in a complex system, driver must be non-blocking (use interrupts?), tests, debug features like performance measurement, 
+logging and console commands (issue motion, dump state; these required to write tests)
 able to coexist with other modules and use in a super-loop context
+So, driver designed to be integrated into superloop architecture and is non-blocking
 
 Robot kinematics is study of motion without considering potential fields blocking motion
 Inverse kinematics is determining motion to reach desired position (so just trajectory planning?)
 Planar joint is gliding joint?
 
-Often driver boards needed for motors as power of GPIO signals is not enough.
-Furthermore, may require external power supply to prevent slipping steps on the motor.
-(register specific to make GPIO setting as fast as possible, which equates to it being set on time)
-
 Require command queue to prevent motor stalling?
+i.e. queue required if commands run for a period of time
 
 Stepper motors don't move in a smooth and continuous way
 Open loop, as no feedback of motor position
 Therefore, it's possible motor might slip steps and software gets out of sync
 Also, will require calibration (possibly with a limit switch?)
-Stator coil current controlled with GPIO?
+Stator coil current typically controlled with 4 GPIO pins
+Various patterns/sequences of activating stator coils to generate say normal full-step, half-step, 
+'wave-drive' (one stator energised at a time) less power less torque etc.
+
+Often driver boards needed for motors as power of GPIO signals is not enough.
+Furthermore, may require external power supply to prevent slipping steps on the motor.
+(If high inertia, must do slow-stop/starts to avoid slipping steps. Also if insufficient torque)
+Register specific to make GPIO setting as fast as possible, which equates to it being set on time.
+Furthermore, having all gpio pins be on same port would increase speed
+
+For bipolar, require H-bridge (reverse voltage). More expensive driver chips include this
+If providing external power, probably want board to perform current overload
+
+Is stepper motor reducing current at static positions unique to a stepper, i.e. will all motors have holding current?
+
+Just like on bicycle, higher speed, i.e. steps per second yields lower torque
+Torque required combination of load and static/kinetic friction
+Cheaper motors have worse backlash, i.e. when changing direction
 
 Say 32 steps per revolution, plus 64 time gear reduction, i.e. internal motor must rotate 64 times to get one external rotation
 (so a gear reduction of 64:1)
