@@ -11,8 +11,6 @@ responses through benchtop instrumentation
 Could also use specific HIL machines like dSPACE 
 
 CI/CD:
-https://www.youtube.com/watch?v=z_hWRif-f_Y&list=PL4cGeWgaBTe1uwiqIAc6fwPzPpvgPZI2J
-
 A CI tool is just a server script runner and data store specialised for DevOps (developing and then operating/publishing)
 Jenkins (installing adding Jenkins public .asc key into keyring?) open source. We use pipeline approach
 Jenkins install will:
@@ -64,10 +62,13 @@ Can create a local 'bare' remote git repo: `mkdir remote.git; cd remote.git; git
 
 
 MOTOR DRIVER/PROFESSIONALISM:
-As working in a complex system, driver must be non-blocking (use interrupts?), tests, debug features like performance measurement, 
-logging and console commands (issue motion, dump state; these required to write tests)
-able to coexist with other modules and use in a super-loop context
-So, driver designed to be integrated into superloop architecture and is non-blocking
+As working in a complex system, driver must:
+  * non-blocking/interrupt, i.e. incorporate into superloop 
+  * lightweight logging to circular buffer dumped to flash on faults (perhaps also logged to a USB for long-time field system test)
+  * console commands:
+    - orchestrate tests
+    - dump state for debugging
+    - performance readings 
 
 Robot kinematics is study of motion without considering potential fields blocking motion
 Inverse kinematics is determining motion to reach desired position (so just trajectory planning?)
@@ -90,6 +91,7 @@ Furthermore, may require external power supply to prevent slipping steps on the 
 Register specific to make GPIO setting as fast as possible, which equates to it being set on time.
 Furthermore, having all gpio pins be on same port would increase speed
 
+(two half bridges make up H-Bridge. half bridge is two switches connected to a power supply)
 For bipolar, require H-bridge (reverse voltage). More expensive driver chips include this
 If providing external power, probably want board to perform current overload
 
@@ -115,7 +117,35 @@ TODO: For any hardware, understand basic signal patterns
 
 24/7 SYSTEM:
 Able to detect and recover from faults. So, must build in features to collect information
+These events do occur; providing a broader view of what embedded is all about
+IMPORTANT: analysis of potential failures is critical for embedded. plan based on bug-free code is unrealistic
+System should:
+  * watchdog timers
+  * stack overflow?
+  * audits and asserts?
+  * defensive programming: handle unexpected/erroneous input from external systems/devices/users
+  * get information from device:
+    - while it runs
+    - has restarted, now running fine, why?
+python tool to decode fault reports? so, in addition to testing another usage of python for embedded?
+without testing, can't say for certain if adding a new feature has introduced a new bug
 
+1. Detect fault, e.g. watchdog, CPU exception
+2. Collect information, e.g. CPU registers, fault registers, logs
+   error counters, e.g. bus/communication errors like serial framing errors
+3. Perform recovery:
+   - if safety (robotics, etc.), will shutdown and require manual restart
+   - if available (communications, etc.), will do automatic restart
+     software allows for triggering hardware through software, as oppose to watchdog or tying GPIO pin
+     hard reset means whole CPU and all peripherals reset
+     so software/hardware can trigger either soft/hard reset
+   1. If possible, just do simple hard reset as single recovery action.
+      However, might have to only reset single controller, e.g. I2C and work way up
+   2. Panic mode: System integrity is questioned, so operate in minimal sane state, e.g. disable interrupts (which should stop scheduling in an RTOS)
+
+99.999% (five nines) really only acheived with redundant hardware that can be swapped in while running
+
+watchdog will automatically reset system?
 
 
 Embedded looking through datasheets and deciding what registers and bits to set
@@ -130,6 +160,8 @@ DSP, FPU
 IMPORTANT: start work in a new file workflow like Jon Blow
 
 TODO: What is CMSIS?
+
+When working with interrupt values, similar to multithreading 
 
 TODO: documentation writing to allow for standards compliance?
 TODO: remote debugging/profiling
@@ -474,7 +506,9 @@ boot.cpp for clocks, caches, etc. i.e. before processing super-loop
 * turn on ART
 
 setup.hpp for interrupt/dma priorities, include HAL files, alternate function listing
-* port/pin mappings
+* port/pin/af mappings
+* irq priorities
+* peripheral FIFO sizes etc.
 
 Look in startup.s file
 Copy over exception labels and make functions into handlers.cpp

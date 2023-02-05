@@ -13,6 +13,8 @@ It's an indication of how an algorithm scales, i.e. asymptotic limiting behaviou
 It operates in a zero-cost abstraction world, e.g. memory allocations involved in small input number for linear is slower than logarithmic (why C++ STL uses hybrid introsort)
 Furthermore, ignores constants, e.g. Fibonacci heaps have large constant in their amortised linear cost, so often not actually better insertions than binary heap
 
+
+
 ## Data Structures
 * Array: search O(n)
   - Heap:
@@ -60,6 +62,8 @@ Furthermore, ignores constants, e.g. Fibonacci heaps have large constant in thei
   Complete tree has all 'h-1' levels are filled, and last level filled from left to right
   Balanced tree has each node's subtree's differing in height by no more than 1 (O(logn)) 
   Full/perfect tree has all nodes filled 
+  For complete binary trees, better off storing it as an array
+  In other tree structures, better of storing in nodes to account for holes, e.g. say root node only has left children
   Inverting is a notorious procedure, however demonstrates recursive solutions that arise with trees
   Specifically, inverting is swapping left and right subtrees from bottom up
   - Trie:
