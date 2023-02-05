@@ -127,10 +127,15 @@ System should:
   * get information from device:
     - while it runs
     - has restarted, now running fine, why?
+  * lightweight logging (works in addition to 'normal' logging that has higher overhead and say more useful in development rather than analysis)
+    will be left-on in the field
+    - lightweight as no run-time formatting of messages (so, have offline formatting tool)
+    - specify number of bytes per parameter 
+
 python tool to decode fault reports? so, in addition to testing another usage of python for embedded?
 without testing, can't say for certain if adding a new feature has introduced a new bug
 
-1. Detect fault, e.g. watchdog, CPU exception
+1. Detect fault, e.g. watchdog, CPU exception, not-detecting anything from sensor for say 15minutes
 2. Collect information, e.g. CPU registers, fault registers, logs
    error counters, e.g. bus/communication errors like serial framing errors
 3. Perform recovery:
@@ -146,6 +151,30 @@ without testing, can't say for certain if adding a new feature has introduced a 
 99.999% (five nines) really only acheived with redundant hardware that can be swapped in while running
 
 watchdog will automatically reset system?
+watchdog trigger will precede a fault?
+
+LOGGING:
+problems in field or problems difficult to reproduce
+program parses format strings after preprocessing to assign IDs to each
+    TODO: search for LWL() macros
+    TODO: test commands, e.g. 'lwl test'
+    TODO: could write to UART and have decoder program recieve in real-time
+    TODO: check most recent log record and count if duplicate record being entered
+
+FAULT HANDLING/FLASH WRITING:
+  * CPU detected faults, e.g invalid pointer, writing to read-only memory, integer divide by 0, illegal instruction
+  * watchdog
+  * application software detections, e.g. data structure corruption
+Encapsulate fault data, e.g. type, registers, lightweight log buffer 
+Write to flash (don't overwrite if one already there) and console
+Then reset
+
+MCU reset pin if input, resets via external signal.
+If output, MCU intiated reset.
+More complex devices can get stuck. So, some sensors may have reset pins. 
+Tie external devices reset lines to MCU reset pin (Might tie to a GPIO if require specific software reset)
+Voltage supervisor essentially detects brown-outs
+
 
 
 Embedded looking through datasheets and deciding what registers and bits to set
