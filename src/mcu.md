@@ -213,8 +213,46 @@ IMPORTANT: distinction between initialisation on first power-up and reset initia
 
 STACK OVERFLOW PROTECTION:
 Nasty when occurs, as things act strange
+ARM interrupts share stack space
+MPU just places certain restrictions on specific addresses and generates a MemManage interrupt
+Inside linker script, specify `_s_stack_guard = .;` and `_e_stack_guard = .;`
+(The .map file produced at build time will contain the specific address assignments for these variables)
+IMPORTANT: This is not fool-proof, e.g. a function with 32 bytes of local variables that aren't written to 
+
+ASSERTS/AUDITS:
+Custom assert macro:
+```
+#define ASSERT(condition) \
+  if ((!condition)) { fault_detected(FAULT_TYPE_ASSERT); }
+```
+Perhaps only leave asserts in release builds for safety-critical application
+
+Audit is some code that runs to verify correct operation of system. 
+Probably run periodically
+More necessary for long-running systems, to detect issues that weren't visible in the lab as didn't run for such a long period of time 
 
 
+DFU (Device Firmware Update)/Bootloader:
+https://interrupt.memfault.com/blog/device-firmware-update-cookbook
+For OTA, ESP32 connected to main MCU via UART? Have a website that you can drag and drop to?
+If physical, read off USB?
+CRC check for validation.
+First and second-stage bootloaders for safety
+
+FLOATING POINT/FPU:
+Q notation used for fixed point, e.g. Q23.8 has 23 bits for units, 8 bits for fractional part 
+Quad is 128bit floating point.
+(interesting `long double` on x86 is 80bits)
+IEEE also define special values Nan, Inf, -Inf etc. 
+These will be returned when a floating point exception occurs, e.g. divide by 0, square root of negative
+Important to use 'f' suffix for MCU to avoid C bias towards double
+FPU instructions interleaved with CPU instructions
+FPU has own registers (really applies to any coprocessor hardware like a codec)
+An M4 FPU is optionally included (in fact, many cortex FPU is optional).
+Therefore, if included, have to enable
+Must verify precompiled libraries are compiled with appropriate floating point flags
+To verify, could look at .list file to see if FPU being used
+Some example gcc CRT software FPU functions: `aeabi__dmul(); aeabi__f2d()`, hardware: `vadd.f32`
 
 Embedded looking through datasheets and deciding what registers and bits to set
 
