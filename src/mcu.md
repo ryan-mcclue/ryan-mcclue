@@ -62,13 +62,14 @@ Can create a local 'bare' remote git repo: `mkdir remote.git; cd remote.git; git
 
 
 MOTOR DRIVER/PROFESSIONALISM:
-As working in a complex system, driver must:
+EVERY MODULE SHOULD: As working in a complex system, driver must:
   * non-blocking/interrupt, i.e. incorporate into superloop 
   * lightweight logging to circular buffer dumped to flash on faults (perhaps also logged to a USB for long-time field system test)
+  * logging for errors
   * console commands:
     - orchestrate tests
     - dump state for debugging
-    - performance readings 
+    - performance readings (start and stop commands)
 
 Robot kinematics is study of motion without considering potential fields blocking motion
 Inverse kinematics is determining motion to reach desired position (so just trajectory planning?)
@@ -150,9 +151,6 @@ without testing, can't say for certain if adding a new feature has introduced a 
 
 99.999% (five nines) really only acheived with redundant hardware that can be swapped in while running
 
-watchdog will automatically reset system?
-watchdog trigger will precede a fault?
-
 LOGGING:
 problems in field or problems difficult to reproduce
 program parses format strings after preprocessing to assign IDs to each
@@ -169,11 +167,52 @@ Encapsulate fault data, e.g. type, registers, lightweight log buffer
 Write to flash (don't overwrite if one already there) and console
 Then reset
 
+When a fault is detected, enter panic mode:
+  * disable interrupts
+  * reset stack pointer to top of RAM
+  * use polling, not DMA or interrupts
+If fault handling gets stuck, have watchdog has backup
+When in an exception, certain registers will be pushed onto the stack
+Write first part in assembly, then jump
+
+Typically have to erase flash first. This must be a page/block size. 
+These pages might not all be the same, e.g. last page in flash larger, so write to say second page in flash for fault data
+When writing to flash, must be multiple of minimum flash write size
+
+Will require altering linker script and startup.s
+
 MCU reset pin if input, resets via external signal.
 If output, MCU intiated reset.
 More complex devices can get stuck. So, some sensors may have reset pins. 
 Tie external devices reset lines to MCU reset pin (Might tie to a GPIO if require specific software reset)
 Voltage supervisor essentially detects brown-outs
+
+WATCHDOGS:
+watchdog detects fault, i.e. can trigger a fault
+helps maintain system health by ascertaining that critical code is being executed, not simply code
+e.g. watchdog for reading/writing input/output every 100ms
+the main loop might be fine, but the contents of the loop not working.
+so, need more than a single watchdog
+
+must periodically 'feed', i.e. clear
+a 'windowed' timeout must be fed at a particular time
+
+watchdog timer will trigger reset if not cleared.
+so disable during development.
+implement a LED flash to indicate if reset by watchdog
+
+may also have variables in linker .noinit section to avoid overriding on reset
+i.e. memory block in RAM that is not cleared on reset (like .bss and .data)
+
+if software-based, can take software actions like saving state
+if hardware-based, typically instant MCU reset
+IMPORTANT: reset is not a power-cycle
+have multiple software watchdogs monitoring critical code who then cumulatively feed the single hardware
+IMPORTANT: distinction between initialisation on first power-up and reset initialisation
+`__attribute__((section(".no.init.vars")))`
+
+STACK OVERFLOW PROTECTION:
+Nasty when occurs, as things act strange
 
 
 
