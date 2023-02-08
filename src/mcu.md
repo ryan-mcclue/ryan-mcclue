@@ -1,6 +1,3 @@
-TODO: further investigations
-https://www.youtube.com/@geneschroedertech7501
-
 As debugging is much harder on embedded, require more logging?
 Also, unit testing on host machine further reduces debugging difficulty
 
@@ -95,6 +92,7 @@ Furthermore, having all gpio pins be on same port would increase speed
 (two half bridges make up H-Bridge. half bridge is two switches connected to a power supply)
 For bipolar, require H-bridge (reverse voltage). More expensive driver chips include this
 If providing external power, probably want board to perform current overload
+FOC (field orientated control) another industry way of controlling?
 
 Is stepper motor reducing current at static positions unique to a stepper, i.e. will all motors have holding current?
 
@@ -361,6 +359,7 @@ bus connections are open-drain, thereby faciliting each signal line having a pul
 restore signal to high when no device asserting it low
 (this may be built into sensor, however for multiple devices may have to manually add one)
 
+TODO: For protocols/peripherals, specify common control registers
 USART:
 Universal Synchronous Asynchronous Receiver Transmitter.
 UART subset (asynchronous means no clock signal to synchronise bits)
@@ -573,6 +572,7 @@ With HAL, typically enable what drivers we want in source,
 e.g. ADC, DMA2D, SDRAM (additional ram), DSI, LTDC (LCD TFT Display Controller),
 QSPI (for additional flash), RTC, RNG, SD (implement FATfs), TIM, SPI, UART, EXTI
 
+Seem to like having init states for peripherals?
 
 Interrupt handler required for systick?
 
@@ -666,6 +666,7 @@ VGA (Video Graphics Array) is a connector but also refers to a resolution of 640
 WVGA (Wide) is a resolution of 800x480
 
 does board have low drop-out regulator onboard so can pass 5V to 3.3V?
+(low-drop out type of regulator)
 
 MIPI (mobile industry processor interface) developed DSI. 
 DSI just display. Also, DSI use less power as HDMI is something extra the LCD controller
@@ -1042,3 +1043,8 @@ FMC (flexible memory controller) for SRAM (flexible in that it can also support 
 Some projects could have multiple MCUs on a single board
 This could be because one MCU might be bit-banging (implement in software over hardware) 
 a particular interface 
+
+Unbalanced line uses one signal wire and gnd.
+Balanced uses two signal lines, with one phase shifted 180°
+
+Can also have automatic thermal shutdown
