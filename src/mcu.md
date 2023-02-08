@@ -165,6 +165,8 @@ Encapsulate fault data, e.g. type, registers, lightweight log buffer
 Write to flash (don't overwrite if one already there) and console
 Then reset
 
+TODO: expand to idea of 'power off memory function', i.e. resumption of previous settings
+
 When a fault is detected, enter panic mode:
   * disable interrupts
   * reset stack pointer to top of RAM
