@@ -1,3 +1,6 @@
+Common in embedded to have many separate functions for init to conserve battery
+Also, common to check flags register for synchronisation between various peripherals running at different clocks
+
 As debugging is much harder on embedded, require more logging?
 Also, unit testing on host machine further reduces debugging difficulty
 
@@ -325,6 +328,10 @@ So, interrupt when want to react instantly or want to be asleep
 
 ADC:
 * ENOB (Effective Number Of Bits)?
+* (common datasheet pin names, e.g. ADC123_IN3 means that this pin can connect to any of the three ADC units on the board via input 3, i.e channel 3)
+* Rank is the order in which channels are processed on the ADC
+* The sample time here is acquistion time
+ 
 
 TIMER:
 More general-purpose than systick, e.g. PWM output?
@@ -736,6 +743,9 @@ The feedback of the output frequency into the initial phase detector can be chan
 Adding dividers/pre-scalers into this circuit allows to get programmable voltage.
 So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
 
+MULTIMETER:
+read solder bridge resistor values
+
 1. **Documentation**
    * reference manual --> mcu
    * datasheet --> board
@@ -1050,3 +1060,27 @@ Unbalanced line uses one signal wire and gnd.
 Balanced uses two signal lines, with one phase shifted 180°
 
 Can also have automatic thermal shutdown
+
+without bootloader, monolithic firmware
+bootloader and software separate binaries 
+ 
+Always one single stack pointer, r13. However, two 'swappable' registers MSP (OS) and PSP (process)
+
+So, bootloader and application will each have their own vector table.
+
+Dual bank flash allows to erase in one bank while running code in another. Useful for updates.
+
+Often there is a VTOR register which we can use to add an interrupt handler
+outside of the startup file, isr_vector = (* long)SCB->VTOR; isr_vector[15] = handler;
+
+If writing directly to registers, need to take into account that some operations may
+require a few cycles, e.g. initialising clock. HAL takes care of this.
+
+Interrupts are generally more efficient. Response time-critical. Allow for power saving.
+Not hitting bus as hard which might interfere with other bus masters, e.g. DMA
+
+Polling when duration of operation specific, e.g. sending out 50us pulse
+If high throughput, e.g 30000 times a second, context switch will be too much (i-cache, d-cache?)
+
+PWM can be useful to preserve power as something that is on for say 90% of time looks like 100%?
+Example embedded serial terminal console commands: factory_reset(), get_battery(), get_dev_id()
