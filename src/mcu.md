@@ -168,6 +168,8 @@ Encapsulate fault data, e.g. type, registers, lightweight log buffer
 Write to flash (don't overwrite if one already there) and console
 Then reset
 
+Flash writing limited number of erase cycles.
+
 TODO: expand to idea of 'power off memory function', i.e. resumption of previous settings
 
 When a fault is detected, enter panic mode:
@@ -1084,3 +1086,20 @@ If high throughput, e.g 30000 times a second, context switch will be too much (i
 
 PWM can be useful to preserve power as something that is on for say 90% of time looks like 100%?
 Example embedded serial terminal console commands: factory_reset(), get_battery(), get_dev_id()
+
+  # newlib only includes ISO C, not any POSIX etc.
+
+  # most newlib functions are reentrant (so, prefixed _r)
+  # therefore, inclusion of libc functions increases size in .data section also
+  # as require rentrancy structs
+  # Also, could see large increase in flash size if using a lookup table
+  # So, could use map file to find out where specific symbols causing program size to be large
+
+  # effectively map file is program symbol table.
+  # how to optimise memory?
+  # perhaps see that calling a function from stlib may increase program size by 30%?
+  # various sections:
+  #  * archives linked (although statically linked to libc, as only including what is used, may include various .o files inside of .a file)
+  #    (so, can see what is included and why)
+  #  * memory configuration (names, origin, length)  
+  #  * memory map (symbols, what addresses they have, section they are in; so could see .text.func address)
