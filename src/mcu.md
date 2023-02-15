@@ -356,6 +356,7 @@ Therefore, each slave has it's own separate SS line.
 This makes signal routing on a PCB more difficult
 
 I2C:
+(I2S uses 3 wires, less overhead bits, i.e. stop/start bits)
 Inter-Integrated Circuit
 (Intel released SMBus I2C variant 10KHz-100KHz)
 * Serial
