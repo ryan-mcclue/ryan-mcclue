@@ -583,6 +583,7 @@ However, probably use register direct for interrupts as want performance out of 
 With HAL, typically enable what drivers we want in source, 
 e.g. ADC, DMA2D, SDRAM (additional ram), DSI, LTDC (LCD TFT Display Controller),
 QSPI (for additional flash), RTC, RNG, SD (implement FATfs), TIM, SPI, UART, EXTI
+(In fact, STM32Cube won't include HAL source files into project unless configure to use them in GUI. so copy from Repository/)
 
 Seem to like having init states for peripherals?
 
@@ -963,7 +964,7 @@ rcc is clock configuration
 
 True ROM not really used. ROM now means that writing is slower and wears down chip
 OTP (one time programmable) memory (PROM)
-EEPROM (NOR):
+EEPROM (NOR): (also called e-squared)
 read/write/erase: bytes
 good for configurations as when erasing, don't have to load entire page into ram
 Flash (NAND): 
