@@ -428,11 +428,17 @@ oscilloscope with memory depth of 54Mpts can record a total of 54mil samples in 
 by default, as alter time scale, memory depth and sample rate automatically adjusted so that capture fills the screen
 acquire -> mem-depth
 increasing memory depth to max. will slow down scope
+oscilloscope for timers and SPI?
 
 Use scope to check levels (logic analyser may just read 0), see if things look right,
 timing, noise, real-time, analogue
 
 logic analyser for long term patterns
+
+other tools:
+ * usb protocol analyser
+ * nrf dongle for BLE
+ * CANoe for ECUs 
 
 DAC:
 DAC coupled with OpAmp can act as dynamically adjustable current source
