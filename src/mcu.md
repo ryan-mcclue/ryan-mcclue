@@ -734,6 +734,7 @@ must look at board schematic as external resistors might overrule
 
 Vdd (drain, power supply to chip)
 Vcc (collector, subsection of chip, i.e. supply voltage of circuit)
+
 Vss (sink, ground)
 Vee (emitter, ground)
 

@@ -20,7 +20,7 @@ Furthermore, ignores constants, e.g. Fibonacci heaps have large constant in thei
   - Heap:
     The parent node is greater/less than all its child nodes
     Binary has 2 children, binomial has many
-    Binary heap used to implement priority queues to allow for logarithmic insertion/deletion
+    Binary heap used to implement priority queues to allow for logarithmic insertion/deletion (could also be implemented in say a splay tree)
     - Fibonacci Heap:
       Mergeable heap
       Consists of unioned min-binomial-heaps
