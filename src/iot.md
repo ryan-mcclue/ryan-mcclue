@@ -32,17 +32,18 @@ they can be slower as you have to write more code to work around the basic CAS (
 
 Locks implemented using atomics
 Designed for coordinated access to data shared across threads 
-A lock is a mechanism that controls execution flow. 
+A lock is a synchronisation primitive/mechanism that controls execution flow. 
 It can be acquired or released.
 Various implementations of locks:
 * Semaphore
+  Called a semaphore as it signals the availability of resource.
   Each acquisition decrements counter.
   Counting semaphore has variable counter value.
   Binary semaphore has counter value as 1
   If cannot acquire, will be put to sleep 
 * Mutex 
-  Introduces ownership to a binary semaphore. 
-  This solves possible issues with semaphores, e.g. accidental unlock as only owning thread can release
+  Introduces ownership to a binary semaphore, i.e. thread locking must unlock it.
+  More specific in purpose, i.e for exclusive access to resource
   If cannot acquire, will be put to sleep 
 * Spinlock
   A mutex that instead of sleeping, will be put in a busy loop if cannot acquire. 
