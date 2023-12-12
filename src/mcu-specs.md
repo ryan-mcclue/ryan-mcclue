@@ -1,3 +1,5 @@
+TODO: CPU (mention if has MMU), and any codecs
+
 Common in embedded to have many separate functions for init to conserve battery
 Also, common to check flags register for synchronisation between various peripherals running at different clocks
 
