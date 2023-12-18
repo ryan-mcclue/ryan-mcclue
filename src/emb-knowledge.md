@@ -23,6 +23,36 @@ Does the minimum system schematic mean the essential components that have to be 
 So the simple minimum system here makes PCB design simpler
 However, are all schematics shown indicative of this 'minimum system'?
 
+### LCD
+* CMOS:
+* IPS: clear, more power
+* OLED
+
+### Memory
+Flash Layout:
+bootloader
+partition table
+nvs (encrypted storage of passwords, ssid, etc.)
+phy_init (rf calibration data)
+app
+custom storage partition
+
+Filesystems:
+  * FAT simple
+  * littleFS
+    want journalling as file corruption likely: littleFS
+
+wear-leveling enough, i.e. distribute writes/erases across memory blocks
+filesystem for when storing many irregular sized things like images, audio, database
+if storing known sizes, better to use circular buffer:
+ - not optimal wear leveling across many sectors
+ - no bad block detection, i.e. periodically check for integrity of sections of memory
+ - write verification/ECC (error correction code) (memory more susceptible as more exposed?)
+ - no power-loss protection; i.e. copy-on-write will copy value and only if successful point new data to it
+
+internal flash on stm32 faster than SPI limited esp32 external flash
+
+
 ## Deployment
 MCU parametric selection using microchip/maps
 "I need the cheapest part I can get, for multiple 10K unit production runs with one SPI bus, one I2S  bus, DMA channels and a handful of GPIOs 
@@ -69,6 +99,24 @@ TODO: what is considered fast in embedded, e.g. 5MHz for I2C, 10us for loop?
 PCM (pulse code modulation) requires changing values to generate noise
 
 UWD (ultra-wideband) is short range RF used to detect people and devices
+
+* JTAG (Joint Test Action Group):
+hardware interface to connect chips to testing hardware
+Testing method in standard is known as a boundary scan
+TAP (Test Access Port) is on supported chip that is controlled with TMS signal.
+Contains IR and DR registers. Will process JTAG instructions
+TDI, TDO, TCK, TMS, TRST (optional)
+
+jtag flashing faster than uart as parallel
+
+
+* UART
+EN/RST (enable/reset) signal will trigger a hard reset
+asserting BOOT button will trigger DTR/RTS RS-232 signal to put board in download mode after reset
+due to improper FTDI serial driver while holding BOOT button press EN and flash
+$(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
+
+
 
 ## RTOS
 Superloop would be a task. Periodically queue and dequeue data from interrupts
