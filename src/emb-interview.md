@@ -1,4 +1,5 @@
-## Questions
+## Questions (with real-life examples)
+If don't know, say how you would find out. e.g. x11 frame rate, email, docs etc.
 * What happens before main?
 Varies across each MCU.
 First does Power-On-Reset (POR) which checks if voltage and clocks ok.  
@@ -14,6 +15,51 @@ Then .bss and .data sections initted (globals and static variables)
 If any C++ objects, calling their ctors
 Stack
 Then cruntime like IO or heap memory
+- e.g: startup.s from STMCube 
+
+* Describe architecture of this device
+Basic outline of input and output hardware and associated protocol peripheral drivers.
+Based on design goals; want networking, want minimal cost; 
+- e.g: queue motor driver, microchip MCU parametric selection website 
+
+* Describe a successful project
+
+* Describe a not so successful project
+There is more than just technical things for an engineer like understanding and communicating requirements
+
+* What is wrong with this code?
+If compiled with optimisations, will never return as no volatile keyword
+
+* Design intersection stoplight control
+Name lights NS and EW.
+States are NS green, EW red, etc. 
+In each state, check status of all car sensors. 
+Set timer for max time
+IMPORTANT: For all design questions, later describe how can improve e.g. traffic study to know car patterns, sensor broken fallback timer, add new all-red state to handle clearing traffic
+IMPORTANT: Also discuss tradeoffs
+
+* How would you choose a MCU for our platform?
+Know what company builds. 
+Ask what are current bottlenecks:
+limited processing speed during complex control operations (hardware acclerations like simd)
+What are types of processing and bandwidth requirements:
+real-time (timers and interrupts, i.e. hardware based protocols), 100MHz (clock at least this), 1Gbps (high-speed serial, USB etc.)
+What are new goals for volume and cost.
+something with low lead times and low cost
+Are requirements going to change, i.e. can pick a specific mcu?
+high number of timers, PWM, high operating temperature for motor specific
+Safe to assume more RAM, code space, processing power than current.
+Best to pick popular parts for toolchains and being in middle of family to upgrade later
+
+* Optimise reversing bits in a byte
+If have more code space than time, a lookup table can be used
+
+* Compute sum of 1..N
+Notice arithmetic sequence n(n+1)/2.
+Grows O(n^2). So, to store square, double the bits used.
+
+* How many different solutions
+If stuck, modify parts of original to get to new
 
 
 ## Desire
