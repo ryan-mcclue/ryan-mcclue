@@ -5,7 +5,21 @@ IMPORTANT: as esp32 comes with default bootloader, it may use peripherals alread
  * Using and verifying hashes of executables during updates
  * Actually test your software (e.g., fuzzing, to make sure you validate your inputs)  
 
+## Multidisciplinary
+Ask EE (possibly in schematic review):
+  * beneficial passive components
+  * more test points, e.g. copper pads, brass loops
+  * verifying MCU/peripherals are similar to what was used on dev-kit,
+  * ask about input ranges like what voltage ranges do I expect for ADC?
+  * Also, can discuss things that might be inexpensive in hardware, but expensive in software
+    Feedback on PCB design could be using I2C over SPI in relation to number of wires?
+Using hardware tools to debug are important so as to give EE sufficient information
+
+
 ## Hardware
+Schematics useful for looking into electrical diagrams of board components, 
+e.g. mcu pins that are pull-up (will read 1 by default), peripherals (leads to resistors, etc.), st-link, audio, etc.
+
 PSoC is type of MCU made by Cypress where some peripherals can be programmable from software like in a FPGA? 
 Combines FPGA and MCU 
 
@@ -34,6 +48,7 @@ However, are all schematics shown indicative of this 'minimum system'?
 * Multimeter: continuity
 * Logic Analyser: communication protocol
 
+
 ### LCD
 Will interact with a display like Nokia 5110 (resolution, monochrome) via relevent driver, e.g. PCD8544 (SPI)
 * CMOS:
@@ -41,6 +56,11 @@ Will interact with a display like Nokia 5110 (resolution, monochrome) via releve
 * OLED
 
 ### Memory
+* EEPROM: 
+ Is EEPROM the same as flash? (EEPROM write bytes more power, flash sector)
+SPI flash erase byte is 0xff? Can only set by sectors?
+
+
 Flash Layout:
 bootloader
 partition table
@@ -65,6 +85,8 @@ if storing known sizes, better to use circular buffer:
 internal flash on stm32 faster than SPI limited esp32 external flash
 
 ## Deployment
+A single chip is often more expensive to develop/maintain and less fault tolerant if one of its susbsystems fails than having external sensors
+
 component selection is capabilities and then what environment for these components
 
 MCU parametric selection using microchip/maps
@@ -76,13 +98,11 @@ with at least one ADC input. QSPI / SDIO is a nice to have, but I can get by wit
 (remove 'future' devices to not show unlisted prices)
 * add to side-by-side, e.g. cheapest might be MIPS, so compare with say ARM
 
-
 Small amount of RAM < 1MB, e.g. wanting to do some real-time processing on chip can use QSPI to use more flash and ram
 (So, most MCU with small number of memory, more can be added)
 
 less IO ports, bad ADC, higher power draw, tied to SDK for usage
 so not an option for control or most industrial applications
-
 
 * Automotive: car require wide temperature ranges
 * Aerospace: radiation hardening (backup mcus, physical shielding, etc.)
@@ -93,11 +113,16 @@ Certifications:
 closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
 however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
 
+## Interrupts
+
+
 ## Protocols
 infrared is heat. LED can give of narrow band of infrared.
 Therefore, can be used as an IR remote control that requires line of sight.
 Hence RMT (remote control reciever) refers to infrared
 the lackof modulation and frequency range of human IR reason for not triggering IR reciever
+
+In fact fastest possible is USB. If enough pins, SPI as simpler than I2C
 
 CAN
 
@@ -129,6 +154,17 @@ EN/RST (enable/reset) signal will trigger a hard reset
 asserting BOOT button will trigger DTR/RTS RS-232 signal to put board in download mode after reset
 due to improper FTDI serial driver while holding BOOT button press EN and flash
 $(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
+
+## CPU
+State (arm: 4bytes, thumb: 2byte) -> mode (thread, handler: default priveleged and all interrupts)
+
+## Battery
+To ensure within ADC limits, attach a voltage divider. Having 2 resistors will give slightly more current to prevent slower sampling times.
+Could use optocoupler board (EVAL-ADuM4160EBZ) when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
+
+about power investigation (importance of having subsystems): 
+https://twitter.com/josecastillo/status/1491897251148533769
+https://twitter.com/josecastillo/status/1492883606854942727?t=Wlj1lyg3WgWpewxXkvFPOw&s=19
 
 ## Performance
 how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
@@ -181,10 +217,5 @@ Various implementations of locks:
   They will first behave as a standard mutex/spinlock that will revert to the other after some predefined condition
 
 ## IOT
-$(get_idf) sets up path
-$(idf.py set-target esp32) will do a cmake --configure
-$(idf.py menuconfig) is like linux kernel kconfig and will generate a sdkconfig
-$(idf.py build) generate large number of drivers, as well as a bootloader, partition table and application binary 
-$(idf.py -p /dev/ttyUSB0 flash monitor) (add user to dialout group)
-IMPORTANT: Issue on Ubuntu serial flashing driver whereby the particular RS232 signals aren't being sent properly to
-put the chip into programming mode, so have to hold down Boot button until flashing percentage and then release
+
+

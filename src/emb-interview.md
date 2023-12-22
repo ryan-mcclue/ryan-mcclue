@@ -1,3 +1,21 @@
+## Questions
+* What happens before main?
+Varies across each MCU.
+First does Power-On-Reset (POR) which checks if voltage and clocks ok.  
+The system cannot turn on instantly as components have power ramp-up time for voltage to stabilise.
+
+Explicit:
+Set stack and CPU registers
+Then runs intialisation code at reset vector, e.g. clock configuration, critical peripherals like MMU
+Setting exception vectors to handle interrupts
+
+Compiler generates implicit if on desktop(like _start):
+Then .bss and .data sections initted (globals and static variables)
+If any C++ objects, calling their ctors
+Stack
+Then cruntime like IO or heap memory
+
+
 ## Desire
 Embedded systems interact with our world, not just our screens
 Nature of development:
@@ -27,6 +45,11 @@ Nature of development:
 
   Another reason for not using C in startup.s is that an optimising compiler might vectorise loop when FPU has not been enabled
 
+  More frequent use of state machines as event-driven (most likely Mealy as use current state and input)
+
+interview questions
+https://embeddedwala.com/Blogs/embeddedsystem/bootsequenceofarmbasedmcu
+
 ## Project
 YOU WANT TO TALK ABOUT THIS IN AN INTERVIEW
 TODO: using an IMU to add tilt/interactivity responses, i.e. transform interface to component
@@ -53,7 +76,7 @@ TODO: look at classmates project github
 
 
 (a) Use a Cortex-M processor
-(b) Have a button that causes an interrupt
+(b) Have a button that causes an interrupt (debounce: want to debounce say no more than 10Hz to achieve an approx. 16ms user response)
 (c) Use at least three peripherals such as ADC, DAC, PWM LED, Smart LED, LCD,
 sensor, BLE
 (d) Have serial port output
@@ -90,6 +113,10 @@ How long would the device last on a battery? What could you do to make it last l
 features you’d like? How would you go about adding them?
 
 ## Problems Encountered
-Ground loop powering display and MCU
-ground loop is essentially multiple grounds instead of one, leading to extraneous current flow as it could go to either one
-
+ * Ground loop powering display and MCU
+   ground loop is essentially multiple grounds instead of one, leading to extraneous current flow as it could go to either one
+   (optocoupler and all power same with buck convertors)
+ * non-standard SWD pin and 5V not being given to one of the pins 
+   (board schematics and jtag pins)
+ * stuck working with HC bluetooth serial AT commands
+   (looked at opensource drivers from adafruit, sparkfun, mbed)
