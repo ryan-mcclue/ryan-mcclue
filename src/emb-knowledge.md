@@ -15,6 +15,29 @@ Ask EE (possibly in schematic review):
     Feedback on PCB design could be using I2C over SPI in relation to number of wires?
 Using hardware tools to debug are important so as to give EE sufficient information
 
+## Interrupts
+An exception is mechanism that changes the normal flow of a program.
+An interrupt is a type of exception that is triggered from an external source
+An exception will have a number (offset into vector table)
+priority level (lower number, higher priority)
+synchronous (divide-by-zero, illegal instruction)/asynchronous (timer expiration, peripheral interrupt), 
+inactive (waiting to occur), pending (waiting for CPU to finish current instruction), active (being serviced), nested (priority prempted)
+
+Prempted means to temporarily interrupt with the intention of resuming
+Priority inversion is when a higher priority task is prempted by a lower priority task
+This arises where a higher priority task needs to wait for a resource that a lower priority task owns.
+In this case, the higher priority task blocks on resource and allows lower task to run.
+However, this lower task could get prempted by another task, so the delay could compound.
+To prevent this delay compound, priority inheritance temporarily places the lower priority task to the same priority as high
+However, should be avoided if can be.
+
+Want to keep ISR short to reduce chance of priority inversion, premption and maintain real-time processing
+
+Index 0 of vector table is reset value of stack pointer (rest exception handlers) 
+On Cortex-M, 6 exceptions always supported: reset, nmi, hardfault, SVCall, PendSV, SysTick 
+External interrupts start from 16 and are configured via NVIC
+NVIC handles priority and nested interrupts
+Will have to first enable device to generate the interrupt, then set NVIC accordingly
 
 ## Hardware
 Schematics useful for looking into electrical diagrams of board components, 

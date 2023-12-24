@@ -4,6 +4,7 @@ If don't know, say how you would find out. e.g. x11 frame rate, email, docs etc.
 Varies across each MCU.
 First does Power-On-Reset (POR) which checks if voltage and clocks ok.  
 The system cannot turn on instantly as components have power ramp-up time for voltage to stabilise.
+Will then jump to reset exception handler at reset vector which for cortex-m4 is 0x04, i.e. 
 
 Explicit:
 Set stack and CPU registers
@@ -15,7 +16,7 @@ Then .bss and .data sections initted (globals and static variables)
 If any C++ objects, calling their ctors
 Stack
 Then cruntime like IO or heap memory
-- e.g: startup.s from STMCube 
+- e.g: startup.s from STMCube defines interrupt handlers as weak and copies .data to RAM and clears .bss
 
 * Describe architecture of this device
 Basic outline of input and output hardware and associated protocol peripheral drivers.
