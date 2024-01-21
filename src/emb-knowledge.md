@@ -15,6 +15,38 @@ Ask EE (possibly in schematic review):
     Feedback on PCB design could be using I2C over SPI in relation to number of wires?
 Using hardware tools to debug are important so as to give EE sufficient information
 
+## Documentation
+### Schematic:
+Often found under 'CAD resources' along with gerber files, BOM etc.
+  - VDD voltage rail to core MCU (also have separate E5V, U5V, 3V3, 5V, VBAT etc. and AVDD/AGND for analog powered)
+  - IDD current consumed by device
+  - IOREF (voltage logic level; stacking components to set their logic levels)
+  - COMP comparator
+  - SB solder bridge (control configuration options; cheaper and less intrusive than a switch)
+    JP jumper (when shorted with cap, is considered no)
+  - P[A-Z] port
+    CN connector (exposes various pins)
+  - D diode (power isolation, e.g:
+             VDD main power and VBAT is backup
+             only want VBAT to feed VDD when necessary
+             so, diode prevents VDD possibly charging VBAT)
+             (schottky diode for low voltage drop, but some reverse current leakage)
+  - U unit (ICs like voltage regulators)
+  - X oscillator
+  - B button
+  - T transistor (macroscopic as easier to interface with other components)
+    (npn used as electrons generally greater mobility than holes)
+  - L inductor (ceramic ferrite; step-up/down voltage; magnetic)
+  - C capacitor (charges and discharges; smooths/stabilises/filters and timing)
+    R resistor (plenty of voltage dividers, pull-up/down)
+  - TP test point
+  - SAI (serial audio interface; serial for audio as less power)
+  - MCO (master clock output)
+### Timing:
+When lines cross, means can be either high or low
+
+
+
 ## Interrupts
 An exception is mechanism that changes the normal flow of a program.
 An interrupt is a type of exception that is triggered from an external source
@@ -22,6 +54,8 @@ An exception will have a number (offset into vector table)
 priority level (lower number, higher priority)
 synchronous (divide-by-zero, illegal instruction)/asynchronous (timer expiration, peripheral interrupt), 
 inactive (waiting to occur), pending (waiting for CPU to finish current instruction), active (being serviced), nested (priority prempted)
+
+Allow for efficient execution, rather than having to poll for an EOC flag say for an ADC
 
 Prempted means to temporarily interrupt with the intention of resuming
 Priority inversion is when a higher priority task is prempted by a lower priority task
@@ -33,11 +67,14 @@ However, should be avoided if can be.
 
 Want to keep ISR short to reduce chance of priority inversion, premption and maintain real-time processing
 
+
 Index 0 of vector table is reset value of stack pointer (rest exception handlers) 
 On Cortex-M, 6 exceptions always supported: reset, nmi, hardfault, SVCall, PendSV, SysTick 
 External interrupts start from 16 and are configured via NVIC
 NVIC handles priority and nested interrupts
 Will have to first enable device to generate the interrupt, then set NVIC accordingly
+
+The 'startup' file in assembly to allow for easy placement of interrupts to memory addresses.
 
 ## Hardware
 Schematics useful for looking into electrical diagrams of board components, 
@@ -136,10 +173,12 @@ Certifications:
 closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
 however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
 
-## Interrupts
-
+## Power
+Perhaps variable power at 2V for 3.3V to test in low power situations
 
 ## Protocols
+(TODO: give protocol speeds!)
+
 infrared is heat. LED can give of narrow band of infrared.
 Therefore, can be used as an IR remote control that requires line of sight.
 Hence RMT (remote control reciever) refers to infrared
@@ -151,7 +190,7 @@ CAN
 
 TODO: AES, RSA, SHA, RNG
 
-I2S for reading microphone? So I2S PCM interface for audio?
+I2S for reading microphone? So I2S PCM interface for audio? 
 
 SDIO is high-speed SD card protocol, (sd 3.0?)
 NO, SDIO IS FAST SPI?
@@ -181,6 +220,19 @@ $(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
 ## CPU
 State (arm: 4bytes, thumb: 2byte) -> mode (thread, handler: default priveleged and all interrupts)
 
+## Clocks
+
+## Timers
+Start out by setting prescaler low to give as much resolution as possible (power savings neglible)
+Play with prescaler and period values that fit within say 16 bits provided
+e.g:
+24MHz / 24 = 1MHz, so ns resolution
+2000 period is 2ms
+
+
+## DMA
+A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU
+
 ## Battery
 To ensure within ADC limits, attach a voltage divider. Having 2 resistors will give slightly more current to prevent slower sampling times.
 Could use optocoupler board (EVAL-ADuM4160EBZ) when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
@@ -193,6 +245,9 @@ https://twitter.com/josecastillo/status/1492883606854942727?t=Wlj1lyg3WgWpewxXkv
 how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
 so, IO line if want to reduce timing overhead
 could take several lines together and send out on a DAC to combine into a single signal for easier viewing
+  TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
+  want to be able to measure current and cycles
+
 
 ## Testing
 Software breakpoint requires modification of code to insert breakpoint instruction

@@ -6,10 +6,17 @@ First does Power-On-Reset (POR) which checks if voltage and clocks ok.
 The system cannot turn on instantly as components have power ramp-up time for voltage to stabilise.
 Will then jump to reset exception handler at reset vector which for cortex-m4 is 0x04, i.e. 
 
-Explicit:
-Set stack and CPU registers
-Then runs intialisation code at reset vector, e.g. clock configuration, critical peripherals like MMU
-Setting exception vectors to handle interrupts
+Embedded (resethandler):
+Set stack pointer.
+Copy .data to RAM 
+Zero fill .bss
+Initialise clock and critical peripherals like FPU, MMU, etc.
+C runtime, e.g. C++ static ctors
+Defines addresses of ISR
+
+Desktop:
+OS implicitly creates new process and sets up memory
+C runtime, e.g. standard streams, command line arguments
 
 Compiler generates implicit if on desktop(like _start):
 Then .bss and .data sections initted (globals and static variables)
