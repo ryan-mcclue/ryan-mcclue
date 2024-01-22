@@ -1,9 +1,14 @@
 IMPORTANT: as esp32 comes with default bootloader, it may use peripherals already, e.g. bootloader uses UART0
 
+Common in embedded to overload terms, e.g. STM32 board
+
 ## Security
  * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
  * Using and verifying hashes of executables during updates
  * Actually test your software (e.g., fuzzing, to make sure you validate your inputs)  
+
+MCU control bits, e.g. read/write protection on flash, usage of SWD.
+Only removed with entire chip erase.
 
 ## Multidisciplinary
 Ask EE (possibly in schematic review):
@@ -16,7 +21,10 @@ Ask EE (possibly in schematic review):
 Using hardware tools to debug are important so as to give EE sufficient information
 
 ## Documentation
-### Schematic:
+When lines cross in timing diagram in timing diagram, means can be either high or low
+
+When reading through driver code, must have datasheet up to understand why they are doing certain things
+
 Often found under 'CAD resources' along with gerber files, BOM etc.
   - VDD voltage rail to core MCU (also have separate E5V, U5V, 3V3, 5V, VBAT etc. and AVDD/AGND for analog powered)
   - IDD current consumed by device
@@ -42,9 +50,50 @@ Often found under 'CAD resources' along with gerber files, BOM etc.
   - TP test point
   - SAI (serial audio interface; serial for audio as less power)
   - MCO (master clock output)
-### Timing:
-When lines cross, means can be either high or low
 
+  names referring to shields:
+  ST zio connector is extension of arduino uno. is black raised headers
+  ST morpho connector are male holes 
+
+  IC packaging:
+  DIP (double inline package; logic gates), SOP (small outline package; voltage regulator), 
+  QFN (quad flat package; mcu) and BGA (ball grid array; cpu)
+
+  Various 'application note' documents and errata (for mcu and peripheral) 
+  (e.g. I2C port might not work under certain conditions)
+  (application note for 'efficient coding' when looking at low power)
+
+
+## Debug
+ARM Debug Interface Architecture
+DAP (Debug Access Port) bus.
+Possible Debug Port are SW-DP, JTAG-DP, SWJ-DP
+Possible Access Port are MEM-AP (access to CPU, flash etc.), JTAG-AP 
+Debugger handles transactions, e.g. request/ack/data phases etc.
+(attackers connect say a bus pirate two various pins and send signals hoping to get valid response)
+(boards implement different ways to prevent access to DAP)
+SWO is an extension of 2pin SWD interface SWDIO/SWDCK
+ITM (Instrumentation Trace Macrocell) typically connected to SWO
+Specific semihosting (reading a file) interrupt request also handled over SWO
+Programmers by default do not provide power
+
+Always use oscilloscope/logic analyser to verify signals make sense
+
+
+So, when reporting issue:
+  * verify signal
+  * supply console command
+  * mention datasheet info, e.g timing diagram
+  * (look for open-source drivers that perform similarly)
+
+Essentially with embedded, have lots of testing to mitigate issues so TEAM can solve problems
+hardware and software people need to be in it together
+shipping products is a team sport
+
+As problems not always software:
+Need to be able give hardware/electrical engineer as much information as you can to reproduce bug
+
+Debuggers should stop watchdog timer automatically (although firmware update will manually have to)
 
 
 ## Interrupts
@@ -54,6 +103,8 @@ An exception will have a number (offset into vector table)
 priority level (lower number, higher priority)
 synchronous (divide-by-zero, illegal instruction)/asynchronous (timer expiration, peripheral interrupt), 
 inactive (waiting to occur), pending (waiting for CPU to finish current instruction), active (being serviced), nested (priority prempted)
+
+Before entering an interrupt, context is saved (e.g. PC, LR, PSR, SP)
 
 Allow for efficient execution, rather than having to poll for an EOC flag say for an ADC
 
@@ -67,12 +118,12 @@ However, should be avoided if can be.
 
 Want to keep ISR short to reduce chance of priority inversion, premption and maintain real-time processing
 
-
 Index 0 of vector table is reset value of stack pointer (rest exception handlers) 
 On Cortex-M, 6 exceptions always supported: reset, nmi, hardfault, SVCall, PendSV, SysTick 
 External interrupts start from 16 and are configured via NVIC
 NVIC handles priority and nested interrupts
 Will have to first enable device to generate the interrupt, then set NVIC accordingly
+NMI cannot be ignored, e.g. HardFault
 
 The 'startup' file in assembly to allow for easy placement of interrupts to memory addresses.
 
@@ -119,6 +170,9 @@ Will interact with a display like Nokia 5110 (resolution, monochrome) via releve
 * EEPROM: 
  Is EEPROM the same as flash? (EEPROM write bytes more power, flash sector)
 SPI flash erase byte is 0xff? Can only set by sectors?
+
+  Flase erase sets cells to certain value, possible 0xFF.
+  Sectors and pages are what divided into and can erase together
 
 
 Flash Layout:
@@ -230,6 +284,19 @@ e.g:
 2000 period is 2ms
 
 
+pwm
+
+## Driver
+Technically everything with an 'if' is a state machine
+If have to give to QA, encode in a spreadsheet to present as a state table
+Adding a state is cheap
+TODO: understand table based state machine
+
+## Motion
+
+
+## Error Handling
+
 ## DMA
 A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU
 
@@ -248,7 +315,6 @@ could take several lines together and send out on a DAC to combine into a single
   TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
   want to be able to measure current and cycles
 
-
 ## Testing
 Software breakpoint requires modification of code to insert breakpoint instruction
  * bugs not just in domain of software. 
@@ -259,12 +325,19 @@ Have standard unit/integration tests and
    POST (power-on-self-tests) which run every time on board power-up
   TODO: POSTS tests like checking battery level, RAM R/W, CRC check? 
 
+ESSENTIAL:
+serial console (performs HIL testing to MCU works with each peripheral successfully before putting in enclosure) 
+(can be used to create a reproducible problem on multiple boards; or on cue for an oscilloscope capture/EE to see)
+
+Software should be flexible to hardware changes
+
 
 ## RTOS
 Superloop would be a task. Periodically queue and dequeue data from interrupts
 
 Even without RTOS, still have a timer subsystem and separation of tasks, which is backbone of RTOS
 
+RTOS main features are a scheduler (priority, time slices, preemptive) and resource sharing
 
 SYNCHRONISATION:
 Atomic means no other thread will see the operation in a partially completed state
@@ -283,6 +356,7 @@ Various implementations of locks:
   Counting semaphore has variable counter value.
   Binary semaphore has counter value as 1
   If cannot acquire, will be put to sleep 
+  (Hardware semaphores used in MCU to coordinate booting between multiple CPUs, e.g. M4 + M7)
 * Mutex 
   Introduces ownership to a binary semaphore, i.e. thread locking must unlock it.
   More specific in purpose, i.e for exclusive access to resource
