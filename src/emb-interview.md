@@ -1,3 +1,35 @@
+INTERVIEWING:
+1. Resume
+
+2. Phone Screens:
+  - technical word bingo
+
+3. In Person:
+  In interview, as a student can bring modern software practices
+  (perhaps a diversity of thought, to get a 360degree view of subject)
+  This is the portfolio I have, here is want I can bring
+
+  * Want to know can they work with you
+  * Want to know can you do the job
+  (know failures)
+
+  Ask you to write pseudo-code solving a problem, e.g. 4-way intersection:
+    - ask clarifying details so they know thinking about big picture
+    (problem include a timeout for sensors that aren't working)
+    (state machine)
+
+  Ask the interviewer:
+    - do you like your job?
+    - describe typical work day?
+    
+  situational interviewing
+
+  Respect and appreciate the time taken for the interviewer (spent all day on call)
+
+  1. Creativity
+  2. Technical Knowledge
+  3. People Skills
+
 ## Questions (with real-life examples)
 If don't know, say how you would find out. e.g. x11 frame rate, email, docs etc.
 * What happens before main?

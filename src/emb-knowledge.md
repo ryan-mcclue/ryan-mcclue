@@ -2,6 +2,12 @@ IMPORTANT: as esp32 comes with default bootloader, it may use peripherals alread
 
 Common in embedded to overload terms, e.g. STM32 board
 
+while (1)
+{
+  throw_bone();
+  result = state_machine[state]();
+}
+
 ## Security
  * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
  * Using and verifying hashes of executables during updates
@@ -9,6 +15,14 @@ Common in embedded to overload terms, e.g. STM32 board
 
 MCU control bits, e.g. read/write protection on flash, usage of SWD.
 Only removed with entire chip erase.
+
+General security:
+  * CI
+  * static analysers
+  * treat all external data as malicious:
+    - buffer overflows; generally from malformed user input (prevent stack frame overwrite for code execution)
+    (IoT chipset has more attack vectors than traditional embedded, so more careful) 
+
 
 ## Multidisciplinary
 Ask EE (possibly in schematic review):
@@ -62,6 +76,9 @@ Often found under 'CAD resources' along with gerber files, BOM etc.
   Various 'application note' documents and errata (for mcu and peripheral) 
   (e.g. I2C port might not work under certain conditions)
   (application note for 'efficient coding' when looking at low power)
+If many people have encountered a common problem, will typically be an application note, e.g. DMA, DSP, encryption
+
+In addition to HAL files, typically have example source code for particular MCU on github from vendor
 
 
 ## Debug
@@ -127,6 +144,8 @@ NMI cannot be ignored, e.g. HardFault
 
 The 'startup' file in assembly to allow for easy placement of interrupts to memory addresses.
 
+
+
 ## Hardware
 Schematics useful for looking into electrical diagrams of board components, 
 e.g. mcu pins that are pull-up (will read 1 by default), peripherals (leads to resistors, etc.), st-link, audio, etc.
@@ -167,6 +186,14 @@ Will interact with a display like Nokia 5110 (resolution, monochrome) via releve
 * OLED
 
 ### Memory
+RAM usage:
+  .cinit (globals and static with initialisers)
+  .bss (globals and static with on initialisers)
+  .heap (growing down)  
+  ........... NOTE: RTOS tasks will have their own heaps+stacks
+  .stack (growing up)
+Embedded avoid malloc()s as fragmentation becomes more of an issue, when dealing with small allocation sizes
+
 * EEPROM: 
  Is EEPROM the same as flash? (EEPROM write bytes more power, flash sector)
 SPI flash erase byte is 0xff? Can only set by sectors?
@@ -227,8 +254,62 @@ Certifications:
 closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
 however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
 
+Going from devboard, e.g. Discovery to PCB:
+  * remove ICDI chip 
+    (replace with JTAG pins. could use Tag-Connect, i.e. springy pogo pin connector in plated holes or pads instead of headers)
+    (flash-bin && play banjo-kazooie.mp3 && sleep 1 && goto start)
+  * remove UART-to-Serial chip
+    (replace with FTDI cable)
+  * remove unused, e.g. ethernet, USB etc.
+    (replace with battery? wall wart?)
+  * for speed add codec, e.g. audio TLV320AIC
+  * smaller surface area, remove jumpers (IDD pin and actual GPIO pins), buttons, sensors, leds, plated holes, etc.
+    (add test pins where things can go wrong e.g. ground pins, power rails, communication busses)
+    (balancing act between how small product board is. could add an 'elephant board' concept)
+  * FCC/EMC for unintentional EM radiation (other certifications)
+    (can actually search for product on ffcid.io)
+
+## DFU
+Schedule slips, so decide features included in update in the field 
+(even more so as time between sending to factory and in user hands is a few months for consumer products)
+
+On board bootloader cannot be changed after leaving factory
+Code will be communicated to it and written to codespace
+If programming fails due to power outage, bootloader can retry
+Really only use on-board bootloader if multiple MCUs or bootloader is built into silicon for extremely resource constrained
+(multiple MCUs useful for low-power as can have large one mostly dormant until required?)
+(or STM MCU and say a BLE MCU?)
+
+We want an custom bootloader:
+  * both bootloader and runtime code updated separately
+  * code can be validated
+  * 2x size of programmed code in flash
+
+Use CRC (hash is better) to ensure image sent is image recieved 
+Also, sign so we know where it came from
+Per-company keys is easier, however per device key is more secure
+At a minimum, OTA bundle:
+  * version
+  * hash
+  * signature
+  * (3x flash size to have a known 'factory' image?)
+
+Memory layout in Flash
+  * image header (serial number, keys)
+  * reset vectors (these could be in flash, i.e could be functions copied over to .ramfuncs in cstartup for speed?)
+  * .text
+  * .rodata/.consts
+  * .cinit
+  * ...
+  * nv storage? (could also have some storage system, file system etc.)
+  * bootloader?
+
+
+
 ## Power
 Perhaps variable power at 2V for 3.3V to test in low power situations
+
+Seems that common to sleep at end of superloop and wait for an interrupt to occur?
 
 ## Protocols
 (TODO: give protocol speeds!)
@@ -293,12 +374,54 @@ Adding a state is cheap
 TODO: understand table based state machine
 
 ## Motion
+A MEMS IMU sensor giving 9DOF, should be pre-calibrated and hopefully digital to avoid analog noise:
+* accelerometer (90% of time tell us which way is down, i.e. what side are you facing)
+* gyroscope (how fast is something turning/rotating, i.e. gesture detection)
+* magnemoter (gives x and y on Earth, i.e. where pointing)
 
+A Kalmann filter (combines measurements as recursive bayesian) is used as common for noise such as vibrations to make these sensors imprecise
+Kalman has different implementations for different vehicles, e.g. car, boat, spaceship
+
+x, y, z Euler angles around axis are roll (literal rolling), pitch (up hill) and yaw (turning)
+
+Quaternion if 4D-space math (with 4th dimension not time being time)
+Used to remove discontinuities, e.g. 359-0 boundary
+
+Like cryptography, use well established boffin libraries
+
+## Peripherals
+TODO: Have excel spreadsheet with these calculations
+
+Circular buffer size deal with tangibles, e.g. seconds, temperature values, etc.
+(16MB / (((1.8 * 1.1crc-timestamp-overhead) * 0.5compression)) / 1000)) = 16161 seconds of ADC data
+
+Does board have enough RAM + Flash (internal and external) + CPU power?
+(12bits * 512Hz * 2channels) * 1.2protocol-overhead = 1.8kBps 
+looking at UART baud rates, we see that it satisfies (no need for USB)
 
 ## Error Handling
+Have all codepaths be able to operate on 0/nil input (no needless validation)
+
+If needing to inquire about warnings, return in addition to result.
+
+Error is when cannot possibly continue. Aim for early into callstack:
+1. Go to failsafe, i.e. rollback state to known good condition (retry, reboot, wait)
+2. Crash and wait for reboot
+
+Log warnings and errors:
+ - dev: capture state of the device (heap, stacks, registers, firmware version, the works) and breakpoint
+ - release: error code (everything if error)
+
+Now, as scaling to 1million devices; will encounter 1 in a million problems
 
 ## DMA
 A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU
+The system bus (could be cortex-m AHB) that connects each can only be used at one time. So, DMA arbitration occurs on channels. 
+
+In general DMA copies data from place to place
+CPU analyses data
+CPU should be used to analyse data
+
 
 ## Battery
 To ensure within ADC limits, attach a voltage divider. Having 2 resistors will give slightly more current to prevent slower sampling times.
@@ -314,6 +437,13 @@ so, IO line if want to reduce timing overhead
 could take several lines together and send out on a DAC to combine into a single signal for easier viewing
   TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
   want to be able to measure current and cycles
+
+Map file can be used to see what is taking up RAM or Flash, e.g. string constants
+Look at largest consumers first
+Could be monolithic library functions that need replacing
+
+Move critical function to zero-wait state RAM
+
 
 ## Testing
 Software breakpoint requires modification of code to insert breakpoint instruction
@@ -369,5 +499,14 @@ Various implementations of locks:
   They will first behave as a standard mutex/spinlock that will revert to the other after some predefined condition
 
 ## IOT
+  * heartbeat log (to show alive, e.g. power usage and battery life)
 
+IoT (all require some form of online device sign up?):
+  * BLE -> Phone -> WiFi (portable)
+    id 
+  * WiFi (stationary)
+    SSID, password, AP mode
+  * Cell modem (portable constant coverage)
+  * Lora (intermittent data; not really for consumer products as configuration esoteric, noise susceptible and particular base stations)
+  (ZigBee like BLE and WiFi but slow)
 
