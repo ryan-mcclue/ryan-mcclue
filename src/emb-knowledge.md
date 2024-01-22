@@ -8,6 +8,17 @@ while (1)
   result = state_machine[state]();
 }
 
+Simplistically, arduino and ilk software bloated, minimal debug features, over charge 
+For monolithic things like PlatformIO, version maintenance of libraries is a nightmare (i.e. packaging problems)
+
+Multiplexing techniques used to control more loads with less ports, e.g. charlieplexing LEDs, buttons, etc.
+
+Select dev board middle of the road to account for changes down the road, e.g. want AI so more flash, want to optimise power etc.
+
+CMSIS (Common Microcontroller Software Interface Standard) is standard from ARM, so all vendors must implement.
+CMSIS has reference for neural networks, fft, etc.
+
+
 ## Security
  * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
  * Using and verifying hashes of executables during updates
@@ -164,6 +175,9 @@ Voltage regulators maintain constant voltage across input and load:
 - LDO (low drop-out): drop-out is minimum voltage difference for correct functionining 
 - buck converter/step-down (more complex, more efficient, wider range of input and load voltage)
 
+synchronous (more expensive than asynchronous) switching (more expensive than linear) step-down (or buck) regulator
+(expensive as gets higher efficiency at lighter loads)
+
 Dev. section may have a USB-UART chip
 
 is 12-bit SAR (successive approximation) ADC with 18 channels good?
@@ -305,11 +319,53 @@ Memory layout in Flash
   * bootloader?
 
 
-
 ## Power
 Perhaps variable power at 2V for 3.3V to test in low power situations
 
 Seems that common to sleep at end of superloop and wait for an interrupt to occur?
+
+For low power, sleep has to be at forefront (long and as deep as possible)
+We don't explicitly wait for things to happen
+More concerned with peripherals, rather than actual core
+
+Reduce power by reducing:
+  * Voltage, Resistance (component selection, e.g. less components in sensor)
+  * Current (less code)
+  * Time (slowly, sleep)
+
+Light sleep (low milliamp to microamp)
+Deep sleep (microamp)
+Hibernate (nanoamp; here things like cleanliness of board matter, e.g. flux)
+
+Low Power Questions (At Start):
+1. How big battery can fit and what price?
+11mm x 4mm ($5)
+Found 40mAh, 3.7V
+2. How long must unit work between charging?
+At least 24 hours
+System can average (0.004 / 24) mA
+3. What are estimated pieces of system?
+oled (12mA, 0), accelerometer (0.165mA, 0.006mA), battery
+on state last (), sleep state last ()
+We see that cannot be on all the time, as average current less than what battery can provide
+4. Resultant restrictions
+Tweak on percentage until average current usage is within bounds
+Screen only on 5% of time
+
+Low Power Questions (At End):
+1. Different states device can be in?
+on, light sleep
+2. How long in each state
+on 5 seconds every 5 minutes, i.e:
+on (5seconds, 0.02), sleep (300seconds, 0.98)
+3. How much current in each state
+on (12mA), sleep (0.14mA)
+4. How long device last on 40mAh battery?
+(0.004) / ((0.12 * 0.02) + (0.00014 * 0.98)) hours
+
+Always use internal pull-ups if possible (sometimes not because too weak),
+so can disable for lower power
+
 
 ## Protocols
 (TODO: give protocol speeds!)
@@ -353,7 +409,19 @@ due to improper FTDI serial driver while holding BOOT button press EN and flash
 $(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
 
 ## CPU
+transistors -> logic gates -> adders/subtractors/multipliers -> ALU
+transistors -> logic gates -> flip-flops/latches -> memory
+
+In semiconductor; 2 areas: chip design with logic gates and physics/chemistry of transistors, lithography
+
+Have clock for synchronisation; knowing when data is valid
+
+Machine learning a lot of linear algebra, so energy intensive and large die size required
+
+ASIC (cheapest) -> CPU (limited by ISA) -> FPGA (basically anything limited by size)
+
 State (arm: 4bytes, thumb: 2byte) -> mode (thread, handler: default priveleged and all interrupts)
+
 
 ## Clocks
 
@@ -390,7 +458,8 @@ Used to remove discontinuities, e.g. 359-0 boundary
 Like cryptography, use well established boffin libraries
 
 ## Peripherals
-TODO: Have excel spreadsheet with these calculations
+TODO: Have excel spreadsheet with these peripheral calculations
+TODO: also have a power section (e.g. how many volts, does it have low-power mode?)
 
 Circular buffer size deal with tangibles, e.g. seconds, temperature values, etc.
 (16MB / (((1.8 * 1.1crc-timestamp-overhead) * 0.5compression)) / 1000)) = 16161 seconds of ADC data
@@ -398,6 +467,15 @@ Circular buffer size deal with tangibles, e.g. seconds, temperature values, etc.
 Does board have enough RAM + Flash (internal and external) + CPU power?
 (12bits * 512Hz * 2channels) * 1.2protocol-overhead = 1.8kBps 
 looking at UART baud rates, we see that it satisfies (no need for USB)
+
+### ADC
+When using ADC, must know nature of signal:
+- Ensure can sample at relevent Nyquist 
+- If noisy, might need a low-pass filter
+- If high dynamic range (ratio to lowest/highest) will need higher bit depth (which in turn gives lower quantisation errors)
+- If pure signal should, low bit depth to save on data
+
+Reference voltage for analog sensors and ADCs is main source of noise, so it should be as stable as possible
 
 ## Error Handling
 Have all codepaths be able to operate on 0/nil input (no needless validation)
@@ -442,7 +520,11 @@ Map file can be used to see what is taking up RAM or Flash, e.g. string constant
 Look at largest consumers first
 Could be monolithic library functions that need replacing
 
-Move critical function to zero-wait state RAM
+Move critical functions to zero-wait state RAM
+
+Taylor series useful for approximating functions, e.g. quicker to perform Taylor series expansion of say `e**0.1`
+
+Q numbers, a.k.a fixed point numbers, Q3.4 has 3 bits for intger, 4 bits for fractional
 
 
 ## Testing
@@ -458,6 +540,8 @@ Have standard unit/integration tests and
 ESSENTIAL:
 serial console (performs HIL testing to MCU works with each peripheral successfully before putting in enclosure) 
 (can be used to create a reproducible problem on multiple boards; or on cue for an oscilloscope capture/EE to see)
+
+for console command groups, have a turn on and turn off command for power analysis
 
 Software should be flexible to hardware changes
 
