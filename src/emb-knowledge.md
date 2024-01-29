@@ -491,6 +491,11 @@ Log warnings and errors:
  - release: error code (everything if error)
 
 Now, as scaling to 1million devices; will encounter 1 in a million problems
+  // if could fail, log
+  // if unlikely to fail, just log and if crops up with testing then handle 
+  // TODO: add this as things to check in these tests: (a lot of system libs fail due to lack of memory, permissions etc.)
+  // if likely to fail, handle
+
 
 ## DMA
 A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU

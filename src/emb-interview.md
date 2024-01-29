@@ -39,11 +39,12 @@ The system cannot turn on instantly as components have power ramp-up time for vo
 Will then jump to reset exception handler at reset vector which for cortex-m4 is 0x04, i.e. 
 
 Embedded (resethandler):
-Set stack pointer.
+Set stack pointer from linker script
 Copy .data to RAM 
 Zero fill .bss
-Initialise clock and critical peripherals like FPU, MMU, etc.
-C runtime, e.g. C++ static ctors
+Coprocessor access (CP10/11 for FPU; off cortexm4 SCB system control block), 
+GPIO clocks (RCC peripheral), external memory controller (FMC for SDRAM access), vector table relocation to SRAM (VTOR)
+C runtime, e.g. C++ static ctors/dtors, gnuc function constructors/finalisers
 Defines addresses of ISR
 
 Desktop:
