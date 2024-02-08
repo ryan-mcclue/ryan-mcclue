@@ -1,34 +1,21 @@
-INTERVIEWING:
+This is the portfolio I have, here is want I can bring.
+
+## Stages
 1. Resume
-
 2. Phone Screens:
-  - technical word bingo
-
+  - Chat to talk to discuss your background, talk to you about the position, and gauge your interest.
+  - They confirm your education, work experience, interest in the position.
+  - "So, any questions? No? Then I guess I can ask you, can you tell me about yourself? And also, why are you interested in this position? Oh you have experience in some tech stack on your resume thats cool because our position needs that."
+  - https://www.indeed.com/career-advice/interviewing/phone-interview-questions-and-answers
 3. In Person:
-  In interview, as a student can bring modern software practices
-  (perhaps a diversity of thought, to get a 360degree view of subject)
-  This is the portfolio I have, here is want I can bring
-
-  * Want to know can they work with you
-  * Want to know can you do the job
-  (know failures)
-
-  Ask you to write pseudo-code solving a problem, e.g. 4-way intersection:
-    - ask clarifying details so they know thinking about big picture
-    (problem include a timeout for sensors that aren't working)
-    (state machine)
-
-  Ask the interviewer:
+  * Problem Solving:
+    - Explain game plan before beginning and why you think it will work, e.g. naive first.
+    - Write test cases at end, even if simply comments
+    - Keep talking through, even if stuck; ask clarifying details so they know thinking about big picture
+  * Asking questions:
+    - Ask about team to show enthusiasism about working together
     - do you like your job?
     - describe typical work day?
-    
-  situational interviewing
-
-  Respect and appreciate the time taken for the interviewer (spent all day on call)
-
-  1. Creativity
-  2. Technical Knowledge
-  3. People Skills
 
 ## Questions (with real-life examples)
 If don't know, say how you would find out. e.g. x11 frame rate, email, docs etc.
@@ -64,6 +51,7 @@ Based on design goals; want networking, want minimal cost;
 - e.g: queue motor driver, microchip MCU parametric selection website 
 
 * Describe a successful project
+- 
 
 * Describe a not so successful project
 There is more than just technical things for an engineer like understanding and communicating requirements
@@ -207,3 +195,4 @@ features you’d like? How would you go about adding them?
    (board schematics and jtag pins)
  * stuck working with HC bluetooth serial AT commands
    (looked at opensource drivers from adafruit, sparkfun, mbed)
+
