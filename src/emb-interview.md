@@ -42,8 +42,8 @@ Embedded (resethandler):
 Set stack pointer from linker script
 Copy .data to RAM 
 Zero fill .bss
-Coprocessor access (CP10/11 for FPU; off cortexm4 SCB system control block), 
-GPIO clocks (RCC peripheral), external memory controller (FMC for SDRAM access), vector table relocation to SRAM (VTOR)
+Coprocessor access (CP10/11 for FPU; off cortexm4 SCB system control block), vector table relocation to start of Flash (VTOR)
+Possibly: RCC peripheral clock enable for external memory controller (FMC for SDRAM access) 
 C runtime, e.g. C++ static ctors/dtors, gnuc function constructors/finalisers
 Defines addresses of ISR
 
