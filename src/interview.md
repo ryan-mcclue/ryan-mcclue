@@ -96,10 +96,66 @@ Payload of network packets can be sent in any endianness.
 Only IP headers and below, e.g. TCP/UDP are big-endian/network-byte-order
 
 * Explain how interrupts work. What are some things that you should never do in an interrupt function?
+Can't return or be passed parameters.
+On many processors / compilers, floating point operations are not necessarily re-entrant. 
+In some cases one needs to stack additional registers, in other cases, one simply cannot do floating point in an ISR (indicated by common compiler extension __interrupt)
+
+* What does the following code output and why?
+void foo(void)
+{
+unsigned int a = 6;
+int b = -20;
+(a+b > 6) ? puts(“> 6”) : puts(“<= 6”);
+}
+Signed and unsigned promoted to unsigned. So b will be very large number
+
+* Comment on the following code fragment?
+unsigned int zero = 0;
+unsigned int compzero = 0xFFFF; /*1’s complement of zero */
+On machines where an int is not 16 bits, this will be incorrect. It should be coded:
+unsigned int compzero = ~0;
+
+* What are the problems with dynamic memory allocation in embedded systems?
+memory fragmentation, problems with garbage collection, variable execution time
+
+What does the following code fragment output and why?
+char *ptr;
+if ((ptr = (char *)malloc(0)) == NULL) {
+  puts(“Got a null pointer”);
+}
+else {
+  puts(“Got a valid pointer”);
+}
+result of malloc(0) is implementation defined, so that the correct answer is ‘it depends’.
+discussion on what the interviewee thinks is the correct thing for malloc to do
+
 
 * Where does the interrupt table reside in the memory map for various processor families?
 
 * Explain when you should use "volatile" in C.
+A volatile variable is one that can change outside the scope of what the compiler can see. 
+Compiler must reload the variable every time it is used instead of holding a copy in a register. 
+(a) Hardware registers in peripherals (e.g., status registers)
+(b) Non-stack variables referenced within an interrupt service routine.
+(c) Variables shared by multiple tasks in a multi-threaded application.
+
+(a) Can a parameter be both const and volatile? Explain your answer.
+Yes. An example is a read only status register. It is volatile because it can change unexpectedly. It is const because the program should not attempt to modify it.
+(b) Can a pointer be volatile? Explain your answer.
+Yes. Although this is not very common. An example is when an interrupt service routine modifies a pointer to a buffer.
+(c) What is wrong with the following function?:
+int square(volatile int *ptr) { return *ptr * *ptr; }
+As value can change at any time, compiler will:
+int square(volatile int *ptr)
+{
+int a,b;
+a = *ptr;
+b = *ptr;
+return a * b;
+}
+
+
+Bit fields are right up there with trigraphs as the most brain-dead portion of C. Bit fields are inherently non-portable across compilers, and as such guarantee that your code is not reusable
 
 Explain UART, SPI, I2C buses. Describe some of the signals in each. At a high-level describe each. Have you ever used any? Where? How? What type of test equipment would you want to use to debug these types of buses? Have you ever used test equipment to do it? Which?
 
@@ -112,7 +168,76 @@ Implement a Count Leading Zero (CLZ) bit algorithm, but don't use the assembler 
 
 * What is RISC-V? What is it's claimed pros or cons?
 
+* Using the #define statement, how would you declare a manifest constant that returns the number of seconds in a year? 
+`#define SECONDS_PER_YEAR (60UL * 60UL * 24UL * 365UL)`
+The UL is to account for overflow on say a 16-bit machine
+
+* Pointer syntax
+(e) int *a[10]; // An array of 10 pointers to integers
+(f) int (*a)[10]; // A pointer to an array of 10 integers
+(g) int (*a)(int); // A pointer to a function a that takes an integer argument and returns an integer
+
+* Const usage
+const int *a;
+int * const a;
+Really just for readability
+
 List some ARM cores. For embedded use, which cores were most commonly used in the past? now?
+
+    if don't know, say what you would assume based on experience, how to find out more
+
+    implementing a ‘time of day’ from a partial data sheet and a single 16 bit timer, 
+    down counting so they need to think harder about boundaries and races.
+
+    C like volatile, how to make an FSM, how to manipulate bits etc
+
+    What is static?
+
+    What is volatile?
+What types of issues can arise if you forget the volatile keyword?
+
+    How does an interrupt work?
+
+    What programming practices should typically be avoided in embedded systems, and why?
+
+    Basic circuits questions: Ohms law. Voltage Dividers. Series and Parallel Resistors.
+
+    Compare and contrast I2C, UART, and SPI
+
+    How does an ADC work? How about a DAC?
+
+    Compare and contrast Mutex and Semaphores
+
+    Linked List algorithm questions
+
+    String manipulation algorithm questions
+
+    Bit manipulation algorithm questions
+
+    Tell me about a hardware issue you debugged.
+
+    Why would you use an RTOS?
+
+    How does an OS manage memory?
+
+What is spinlock? When and how do you use it?
+
+- What is a cache? Why do we need a CPU cache? Cache policies, associativity, ways, cache coherence.
+
+- High speed buses/interfaces and signal integrity.
+
+- MMU & IOMMU. TLB, ASID, page tables, then come questions on memory spaces for a process.
+
+- SoC boot up process. Linux kernel boot up, initrd, initramfs, boot loaders.
+
+- File systems and flash. Wear levelling.
+
+- What would happen if we have unstable DDR or CPU core power supply? How would you debug it
+
+- What is the most common issue you dealt with on embedded system? What is a race condition, priority inversion, starvation, memory corruption, etc
+
+- How would you debug <some issue> (like memory corruption).
+
 
 Explain processor pipelines, and the pro/cons of shorter or longer pipelines.
 
