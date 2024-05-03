@@ -1,3 +1,20 @@
+## Performance
+refer to 'perf' repo
+
+signed + unsigned (unsigned converted to signed)
+will typically do sign extension when converting from signed to unsigned
+
+## Continous Integration
+embedded CD is not comparable to what CD would mean for a Web app. 
+In our case it's a series of scripts in a pipeline which automate the delivery process 
+(from building to packaging, notifying the right people, archiving all artifacts, etc). 
+But then it's not "deployed" per se as it wouldn't make sense in our product.
+Basically all steps that used to be done locally and manually when delivering firmware have been automated/scripted and put in a configurable pipeline.
+
+Maybe in some IoT projects it's even a proper deployment in the sense that at the end of the pipeline some firmware update is pushed to all endpoints. 
+What matters is to automate what can be automated and would bring value if it is, shorten the cycle and gain in confidence in what you're doing. 
+
+
 ## Soldering
 UPS (uninterruptable power supply) sits between PSU and provides momentary power to allow for graceful powerdown 
 
@@ -540,7 +557,63 @@ Networking Chapter in the book Hacking The Art of Exploitation
  
 Distinction between unicast (device to device), multicast (device to some devices) and broadcast (device to all devices) is at network layer 3. (the signals are all technically recieved)
 
-## Matrices
+## Math
+
+### CRC
+STM32F1 implements the CRC32 from IEEE 802.3 (Ethernet). 
+Lots of other systems use that CRC32-IEEE, but there are a few other different CRC32 standards in common use. 
+MPEG2 also uses the same CRC32 version as Ethernet. CRC32C is probably the second most common CRC32 function used.
+CRC32 is a pseudorandom function family, there are many functions (mappings from {0,1}n→{0,1}32) in the family. 
+The parameters are the 32-bit input polynomial, the byte ordering, the bit ordering, whether there's padding, and whether there's an initial input value (and what it is if so).
+
+CRC32 isn't one standard algorithm. 
+It's 232 different possible algorithms, depending on which polynomial you pick. 
+There are a few dozen or so commonly used polynomials. 
+ST's AN4187 gives good documentation on how to compute them using the CRC peripheral. 
+The STM32F1 series is specialized to compute only the 0x4C11DB7 polynomial, with the initial value 0xFFFFFFFF. 
+That's a common one (used in 802.3 Ethernet), but isn't the only one.
+
+IIRC even the old STM32F1xx the CRC32 peripheral can process has a throughput of 8 bit per cycle (also 16 bit every two cycles or 32 bit every 4 cycles). That's hard to beat with anything more than add/shift/xor.
+
+78k cycles to compute a CRC for 256 words is some 300 cycles per word. That must be for the 1-bit at a time algorithm.
+I'ts possible to do CRC32 using a byte based algorithm using a 1k lookup table at a fraction of these cycles.
+
+ST manual will give polynomial used for CRC, so can check on PC:
+```
+class Crc32:
+    crc_table = {}
+
+    def __init__(self, _poly):
+        # Generate CRC table for polynomial
+        for i in range(256):
+            c = i << 24
+            for j in range(8):
+                c = (c << 1) ^ _poly if (c & 0x80000000) else c << 1
+            self.crc_table[i] = c & 0xFFFFFFFF
+
+    # Calculate CRC from input buffer
+    def calculate(self, buf):
+        crc = 0xFFFFFFFF
+
+        i = 0
+        while i < len(buf):
+            b = [buf[i+3], buf[i+2], buf[i+1], buf[i+0]]
+            i += 4
+            for byte in b:
+                crc = ((crc << 8) & 0xFFFFFFFF) ^ self.crc_table[(crc >> 24) ^ byte]
+        return crc
+    
+    # Create bytes array from integer input
+    def crc_int_to_bytes(self, i):
+        return [(i >> 24) & 0xFF, (i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF]
+        
+# Use it
+# Prepare CRC block
+crc = Crc32(0x04C11DB7)
+result = crc.calculate(your_input....)
+```
+
+### Matrices
 vector math routines (obtaining cross product from column vector form)
 when drawing vectors in a physical sense, 
 keep in mind they are rooted at the origin (even if drawings show them across time)
@@ -1153,6 +1226,7 @@ Always use internal pull-ups if possible (sometimes not because too weak),
 so can disable for lower power
 
 
+They might ask you how they work, where they would be appropriate to use, what tradeoffs there might be among various options, how you would implement them.
 ## Protocols
 (TODO: give protocol speeds!)
 
