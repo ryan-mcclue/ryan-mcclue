@@ -1,10 +1,73 @@
+## Requirements
+- what is the power source, battery or wall power?
+- are there any particular size requirements?
+- are there any particular cost targets?
+- what peripherals do you need to interface to for sensing and communication? 
+- Do you need a camera for your intrusion detection? 
+- Do you need Wi-Fi or LTE for communication?
+- does the system have to respond in real time or have any hard deadlines?
+- what are the compute resources required by your algorithm? 
+- If in C/C++ can extract flash and RAM requirements for that. 
+  If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
+
 ## Performance
 refer to 'perf' repo
+
+TODO(Ryan): How can I answer/know: 
+Hey you need to guarantee a response to this external command in 40ms, that seems pretty tight."
+Sweet, I've got 10x what I need" (thinking 5ms is an eternity)
+perhaps just knowing cycle count of CPU and average instructions in ISR?) 
+
+And it frequently comes from someone asking how long it takes this system to boot. Oh around 600 uS"
+Most of which is waiting for the power supply to settle down and send the power-good signal...
+Or the PLL to lock, or the 32 khz crystal to stabilize
+
+I ran a timer at 20kHz and did 25us of work in the ISR every time. 
+That was on a 168MHz F4. It was absolutely fine. 
+The system had plenty of steam left for comms, UI and so on
+Depending on the application, you could even spend 50-75% of CPU time in the control loop, with the RTOS only managing the other 25%!
+Use an ISR timer, to signal your control loop thread. 
+You can use a timer of up to 100-200 kHz with STM32H7. 
+Above that you need to put the control code in the ISR itself.
+
+If your embedded application runs on battery, it is sometimes more battery-efficient to have a short periodic 
+burst of high-speed communication (such as wi-fi or 5G - that are active for less time and then shut off between transmissions) 
+than a slower, less power-hungry transmission method (LoRa) that must be active for a MUCH longer period of time.
+Depending upon your application, Protocols that utilize UDP, RTSP can be FAR more efficient (and faster) than protocols like REST which rely TCP-based transport protocols (which requires a 3-way handshake). As one other commenter mentioned, you will want to decide how much error correction you wish to add and/or if/how you want to ensure lossless data transfer (retries, etc).
+Sometimes, basic data compression of a file can be effective.
+
+compression for compression speed, e.g. lz4 or resultant size
+
+https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
+You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
+e.g. establish a baseline for idle system, then enable some component and check the difference from idle.
+e.g. log power usage during a wireless transmission
+
+verify with a profiler: 
+stm32 better ADC accuracy, lower ISR latency, good documentation, better power efficiency, more IO
+
+Using third party libraries like ESP-IDF opens up to issues like setting wake up pin enables an internal pull-up resistor behind-the-scenes, 
+causing unstable wake times
+
+
+- Full HD (1920x1080) @ 60fps @ 8bit-colour
+Assume 20cycles per pixel. 10cycles pixel transfer.
+(1920x1080x60x8) x (20 + 10) = min. frequency
+Now, although bandwidth linked to frequency, ignores cache hits etc.
+
+A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
+
+memory bus set up to transfer 4 bytes at a time on exactly 4 byte boundaries.
+this alignment is for hardware efficiency
+if unaligned, and if the hardware supports it, 2 cycles required to get 4bytes
+
 
 signed + unsigned (unsigned converted to signed)
 will typically do sign extension when converting from signed to unsigned
 
 ## Continous Integration
+Having CI for just building when merging a feature branch notice compiler errors early on
+
 embedded CD is not comparable to what CD would mean for a Web app. 
 In our case it's a series of scripts in a pipeline which automate the delivery process 
 (from building to packaging, notifying the right people, archiving all artifacts, etc). 
@@ -150,7 +213,15 @@ Can be solved by having a shadow stack, i.e. two stacks, one for variables, one 
 
 Euclidean geometry are a set of rules laid out by Euclid that follow for geometry on a flat surface
 
+- memory (overflow, free) (really an issue with ASLR, PIE, DEP?)
+- input sanitisation (injection), 
+- authentication (tokens)
+- read back protection to prevent IP theft (secure boot manager, flash encryption, jtag disabling)
+tamper response usually done with a button on the board that gets activated when case opens
+this will trigger an interrupt handled by RTC (real time clock)
+
 ## Assembly
+compiler assembly inspection: https://coffeebeforearch.github.io/2020/08/12/clamp-optimization.html
 
 ## Bootstrap 
 UUID/GUID (universally/globally) 16 bytes. 
@@ -328,7 +399,6 @@ This is why C++ STL uses hybrid introsort
 Quadratic insertion/bubble sort preferable for small lists
 Loglinear divide-and-conquer merge/quick for medium
 Linear radix for large
-
 
 
 In practice, you can solve efficiency by leaning on existing libraries/work.
@@ -805,9 +875,6 @@ Various synthetic benchmarks indicative of performace, e.g.
 DMIPS (Dhrystone Million Instructions per Second) for integer and
 WMIPS (Whetstone) for floating point
 
-SPDIF (Sony Phillips Digital Interface) carries digital audio over a relatively short distance
-without having to convert to analog, thereby preserving audio quality.
-
 The polarity of the magnetic field created by power and ground wires will be opposite.
 So, having the same position in each wire line up will reduce outgoing noise as superposition of
 their inverse magnetic fields will cancel out. Furthermore, incoming noise will affect each
@@ -818,18 +885,9 @@ Glass fibre optic does not have this issue.
 
 ASIC (Application Specific Integrated Circuit) MCU for specific task 
 
-* USART: 
-* SPI:
-* I2C:
-
 On startup, copy from Flash to RAM then jump to reset handler address
 No real need for newlib, just use standalone mpaland/printf
 Some chips have XIP (execute-in-place) which allows for running directly from flash 
-
-QI is a wireless charging standard most supported by mobile-devices for distances up to 4cm
-FreePower technology allows QI charging mats to support concurrent device charging
-
-QSPI can be used without CPU with data queues
 
 Chrom-ART Accelerator offers DMA for graphics, i.e. fast copy, pixel conversion, blending etc.
 
@@ -838,11 +896,7 @@ LED anode is positive longer lead
 5ATM is 5 atmospheres. 1 atmosphere is about 10m (however calculated when motionless)
 50m for 10 minutes
 
-MIDI (Musical Instrument Digital Interface) 3 byte messages that describe note type, how hard pressed and what channel
-Useful for sending out on MCU
 FRAM (ferroelectric) is non-volatile gives same access properties as RAM
-
-
 
 Storage device sizes are advertised with S.I units, whilst OS works with binary so
 will show smaller than advertised (1000 * 10³ < 1024 * 2¹⁰)
@@ -866,7 +920,6 @@ SDRAM (synchronises internal clock and bus clock speed).
 SDRAM. LPDDR4 
 (low-power; double pumping on rising and falling edge of clock, 
 increasing bus clock speed while internal typically stays the same, amount prefetched etc.)
-
 
 DIIM (Dual In-Line Memory Module) is form factor with a wider bus
 SODIMM (Small Outline)
@@ -989,7 +1042,6 @@ to show contrasting colours.
 5.1 means 5 speakers, 1 subwoofer
 In order of ascending levels of audible frequencies 20Hz-20000Hz have devices
 woofer, subwoofer, speaker and tweeter.
-
 
 ### Oscilloscope
 oscilloscope default noise is mains (200MHz, 1Gsamples/sec as oppose to multimeter which is maybe 
@@ -1225,10 +1277,31 @@ on (12mA), sleep (0.14mA)
 Always use internal pull-ups if possible (sometimes not because too weak),
 so can disable for lower power
 
-
 They might ask you how they work, where they would be appropriate to use, what tradeoffs there might be among various options, how you would implement them.
 ## Protocols
+IMPORTANT: know MISRA C subset (i.e. so can say embedded C)
+    Serial
+    USB
+    Ethernet
+    WiFi
+    Bluetooth
+    Zigbee
+    Cellular
+    checksum, TLS, CRC, OSI, TLS, AES, PID, feedback loop, flash filesystem
+
 (TODO: give protocol speeds!)
+QSPI can be used without CPU with data queues
+MIDI (Musical Instrument Digital Interface) 3 byte messages that describe note type, how hard pressed and what channel
+
+SPDIF (Sony Phillips Digital Interface) carries digital audio over a relatively short distance
+without having to convert to analog, thereby preserving audio quality.
+
+QI is a wireless charging standard most supported by mobile-devices for distances up to 4cm
+FreePower technology allows QI charging mats to support concurrent device charging
+
+* USART: 
+* SPI:
+* I2C:
 
 infrared is heat. LED can give of narrow band of infrared.
 Therefore, can be used as an IR remote control that requires line of sight.
@@ -1269,6 +1342,54 @@ due to improper FTDI serial driver while holding BOOT button press EN and flash
 $(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
 
 ## Wireless
+### App-Device
+https://www.youtube.com/watch?v=DEFPSfLRObk
+https://www.youtube.com/watch?v=WeXjPkm4djg
+https://www.youtube.com/watch?v=pL3dhGtmcMY
+
+1. WiFi + HTTP + asynchronous (manual refresh button) + self-hosted (device serves web site)
+2. Real-Time Communication 
+device-to-user push, i.e. real-time updates:
+long-polling simplest for infrequent messages
+sse (server-sent events)
+USE THIS: websockets would offer bidirectional real time information (used over a http request as persist) (full-duplex; tcp)
+3. Standalone App
+device discovery SSDP or mDNS
+security with TLS
+TLS, however certificates for unknown domain names as for embedded devices is challenging 
+4. protocol
+if limited could go to CoAP (request model similar to http) 
+5. rf
+offload to less power with BLE
+more range with 4G
+### Server-Device
+  1. transferring sensor/state data, i.e. one-way no response data; MQTT; custom UDP
+MQTT + mbedTLS + AWS IOT
+mqtt + influxdb + grafana 
+1. start localhost server, e.g. lampp
+https://www.youtube.com/watch?v=rw_1E-2Dwrs&list=PLVTsfY7Kr9qjVkq8aJmTXbiiy5h41ayRL&index=4
+2. use firebase?
+server communicate with cloud database like firebase
+3. all cloud
+thingspeak, blynk, thethings.io, ..., etc.
+
+  all local: sqlite3 + dashing + matplot
+### Device-Device
+3. device-device
+  ... zigbee?
+
+- PROTOCOL: 
+  * http simple 
+  * custom UDP
+  * mqtt favoured as don't have to polling?
+    mqtt less protocol overhead than http so less power?
+    But even in more high level projects, 
+    which need larger data packets, encryption and qos guarantee (i.e. message delivery garuntees), mqtt fits in
+    quite slow as MQTT is designed for 1 second+ timing
+    realtime require 100-200ms delay?
+    Though this requires a central always-on and listening "hub", not a fit for app to device.
+
+
 Sound Waves (20Hz-20kHz)
 Ultrasonic are sound waves not audible by humans
 SONAR (Sound Navigation And Ranging) used in maritime as radio waves largely absorbed in seawater due to conductiveness

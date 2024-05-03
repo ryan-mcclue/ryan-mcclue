@@ -56,6 +56,10 @@ Based on design goals; want networking, want minimal cost;
 * Describe a successful project
 - 
 
+* 
+Simply being able to say "I don't know, but I do know that in the spec/experience it says xyz, so maybe it would do abc, but I would have to look for jkl to be sure." is huge.
+learn how to communicate ideas and how to say "I don't know how to do it" in team environment 
+
 * Describe a not so successful project
 There is more than just technical things for an engineer like understanding and communicating requirements
 
@@ -129,7 +133,6 @@ else {
 result of malloc(0) is implementation defined, so that the correct answer is ‘it depends’.
 discussion on what the interviewee thinks is the correct thing for malloc to do
 
-
 * Where does the interrupt table reside in the memory map for various processor families?
 
 * Explain when you should use "volatile" in C.
@@ -164,7 +167,51 @@ Explain how DMA works. What are some of the issues that you need to worry about 
 * In which direction does the stack grow in various processor families?
 x86 downwards, ARM configurable (mostly downwards; set addressing mode bit in CPSR), MIPS downwards, AVR upwards 
 
-Implement a Count Leading Zero (CLZ) bit algorithm, but don't use the assembler instruction. What optimizations to make it faster? What are some uses of CLZ?
+* Implement a Count Leading Zero (CLZ) bit algorithm, but don't use the assembler instruction. What optimizations to make it faster? What are some uses of CLZ?
+http://graphics.stanford.edu/~seander/bithacks.html
+
+    describe a lightly complex system; for example:
+        100Hz ODR sensor (lets say acceleromter)
+        50MHz cortex M MCU
+        firmware algorithm to process sensor data 
+        (give range of performance; perhaps 50 to 50k cycles to process 1kB of sensor data, depending on the values in that data set)
+        wifi module connected via UART
+        user control via wifi (interface is out of scope, maybe a smartphone or browser)
+        user controls can affect sensor ODR, filter algorithms and therefore performance, and turn on/off data streaming to cloud versus just local storage of summary data
+    ask candidate to sketch the block diagram
+        give loads of assistance here. the goal is to agree on how these are connected and make sure the candidate was part of the process rather than handed an inadequate spec)
+    ask candidate to draw up protocol diagrams showing how the comms between various components would play out. ask questions to motivate the candidate through at least the following:
+        boot: something has to configure the sensor, connect to wifi, etc
+        sync: something has to pull existing user settings from the cloud/etc. use that to fine tune the sensor config and other options. perhaps time sync matters too?
+        operational mode: what happens once it is up and running normally? this is the stuff that most will focus on right away
+        reconfig: user sends some config packets while system is running; how to handle that? do you restart threads? do you collect a set of changes and commit all at once or commit each small change as they are made?
+        resync: system losses wifi signal then reacquires it; what do you do? can this be detected? do you need a heartbeat or similar?
+        halt: perhaps the system is battery powered and needs to halt on its own as the battery gets low - what should it do? is it safe to broadcast a wifi msg saying "i'm halted"? how to reduce power consumption but prevent a reboot into operational mode again?
+        end of life: any thoughts on the permanent end of application life? e.g. maybe this sensor is part of an airbag control system on a car; once it has crashed it should be considered "dead" until proven otherwise... how might that be accomplished?
+    bad design
+        ask candidate to model their firmware for this system (e.g. pseudo-code describing the threads/tasks)
+        ask them to make as many mistakes as they can: do it poorly as a counter example of good design
+        ask candidate to describe the mistakes:
+        who might make a mistake like this (experienced engineers?)
+        how difficult would it be to debug a mistake like this, and why?
+        how harmful to the system might this mistake be (e.g. crash versus poor performance)?
+        how might the candidate guide another engineer to better understand this mistake and avoid it in the future (good collaboration skills required here)
+    better design
+        ask candidate to model their firmware without intentional mistakes
+        ask how they might test this firmware to expose potential accidental mistakes
+        ask how their tests might prove suitability for purpose even without proving it is bug free
+        ask how they might ensure the design is maintainable over time and that future engineers are least likely to inject new mistakes (e.g. readable code, inline documentation, unit tests, etc)
+    Ask the candidate about their experience with RTOS then expand from there. 
+        Start with what they know then base the design on that to stretch them a little. 
+        E.g. What would you change to add another sensor? 
+        How did you prove it works? 
+        What would you change for the next revision? 
+        How would you handle scaling to 100x quantity?
+
+q1) can you draw a block diagram of that system as a whole
+q2) ok you did the little part over there in the corner (not the whole thing)
+can you show/draw a block diagram of your part in detail. all inputs and outputs
+q3) can you intelligently describe the parts involved? who they interact?
 
 * What is RISC-V? What is it's claimed pros or cons?
 
@@ -513,5 +560,3 @@ features you’d like? How would you go about adding them?
    (board schematics and jtag pins)
  * stuck working with HC bluetooth serial AT commands
    (looked at opensource drivers from adafruit, sparkfun, mbed)
-
-
