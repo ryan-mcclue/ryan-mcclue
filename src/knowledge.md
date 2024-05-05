@@ -1,3 +1,67 @@
+# Performance
+TODO: refer to 'perf' repo
+
+how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
+so, IO line if want to reduce timing overhead
+could take several lines together and send out on a DAC to combine into a single signal for easier viewing
+
+  TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
+  want to be able to measure current and cycles
+
+Map file can be used to see what is taking up RAM or Flash, e.g. string constants
+Look at largest consumers first
+Could be monolithic library functions that need replacing
+
+Taylor series useful for approximating functions, e.g. quicker to perform Taylor series expansion of say `e**0.1`
+
+Q numbers, a.k.a fixed point numbers, Q3.4 has 3 bits for intger, 4 bits for fractional
+
+Say a 10byte packet.
+With UART, recieve an interrupt per byte.
+With DMA, recieve an interrupt per packet.
+So, if 400Kb/s, interrupt difference is considerable.
+
+Often need to guarantee response in say 40ms. 
+Know CPU frequency and routine cycle count.
+Generally in embedded, 5ms is an eternity for an ISR.
+Conceivable for 25us of work.
+
+And it frequently comes from someone asking how long it takes this system to boot. Oh around 600 uS"
+Most of which is waiting for the power supply to settle down and send the power-good signal...
+Or the PLL to lock, or the 32 khz crystal to stabilize
+
+For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
+UDP much better as no 3-way handshake.
+Balance between compression for speed or resultant size. 
+
+https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
+You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
+e.g. establish a baseline for idle system, then enable some component and check the difference from idle.
+e.g. log power usage during a wireless transmission
+
+verify with a profiler: 
+stm32 better ADC accuracy, lower ISR latency, good documentation, better power efficiency, more IO
+
+Using third party libraries like ESP-IDF opens up to issues like setting wake up pin enables an internal pull-up resistor behind-the-scenes, 
+causing unstable wake times
+
+
+- Full HD (1920x1080) @ 60fps @ 8bit-colour
+Assume 20cycles per pixel. 10cycles pixel transfer.
+(1920x1080x60x8) x (20 + 10) = min. frequency
+Now, although bandwidth linked to frequency, ignores cache hits etc.
+
+A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
+
+memory bus set up to transfer 4 bytes at a time on exactly 4 byte boundaries.
+this alignment is for hardware efficiency
+if unaligned, and if the hardware supports it, 2 cycles required to get 4bytes
+
+
+signed + unsigned (unsigned converted to signed)
+will typically do sign extension when converting from signed to unsigned
+
+
 # DSP
 Shannon-Nyquist: sampling rate at least twice highest frequency component to prevent aliasing.
 Quantising is mapping continous to discrete, i.e. analog to digital
@@ -6,11 +70,6 @@ You will always need a lowpass filter before you quantize your signals.
 Plotting an FFT of signal can see noise. 
 If noise overlaps with our band, then require noise cancellation, otherwise bandpass filter.
 
-# Performance
-Say a 10byte packet.
-With UART, recieve an interrupt per byte.
-With DMA, recieve an interrupt per packet.
-So, if 400Kb/s, interrupt difference is considerable.
 
 # OS
 Micro and monolithic kernel just features of kernel.
@@ -958,48 +1017,6 @@ comparing temp. sensor datasheets:
 quiescent/overhead current (i.e. enabled but not giving output)
 pin-out configurations, e.g. does it have both breadboard and smt?
 
-## Performance
-TODO: refer to 'perf' repo
-
-Often need to guarantee response in say 40ms. 
-Know CPU frequency and routine cycle count.
-Generally in embedded, 5ms is an eternity for an ISR.
-Conceivable for 25us of work.
-
-And it frequently comes from someone asking how long it takes this system to boot. Oh around 600 uS"
-Most of which is waiting for the power supply to settle down and send the power-good signal...
-Or the PLL to lock, or the 32 khz crystal to stabilize
-
-For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
-UDP much better as no 3-way handshake.
-Balance between compression for speed or resultant size. 
-
-https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
-You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
-e.g. establish a baseline for idle system, then enable some component and check the difference from idle.
-e.g. log power usage during a wireless transmission
-
-verify with a profiler: 
-stm32 better ADC accuracy, lower ISR latency, good documentation, better power efficiency, more IO
-
-Using third party libraries like ESP-IDF opens up to issues like setting wake up pin enables an internal pull-up resistor behind-the-scenes, 
-causing unstable wake times
-
-
-- Full HD (1920x1080) @ 60fps @ 8bit-colour
-Assume 20cycles per pixel. 10cycles pixel transfer.
-(1920x1080x60x8) x (20 + 10) = min. frequency
-Now, although bandwidth linked to frequency, ignores cache hits etc.
-
-A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
-
-memory bus set up to transfer 4 bytes at a time on exactly 4 byte boundaries.
-this alignment is for hardware efficiency
-if unaligned, and if the hardware supports it, 2 cycles required to get 4bytes
-
-
-signed + unsigned (unsigned converted to signed)
-will typically do sign extension when converting from signed to unsigned
 
 ## Continous Integration
 Having CI for just building when merging a feature branch notice compiler errors early on
@@ -1313,8 +1330,6 @@ Other elements are optional and can be combined together,
 e.g no derivative, no financial, must share under same license.
 
 Public domain means no license, so could claim as yours
-
-## Performance (CPU)
 
 ## Data Structures
 
@@ -2737,22 +2752,6 @@ about power investigation (importance of having subsystems):
 https://twitter.com/josecastillo/status/1491897251148533769
 https://twitter.com/josecastillo/status/1492883606854942727?t=Wlj1lyg3WgWpewxXkvFPOw&s=19
 
-## Performance
-how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
-so, IO line if want to reduce timing overhead
-could take several lines together and send out on a DAC to combine into a single signal for easier viewing
-  TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
-  want to be able to measure current and cycles
-
-Map file can be used to see what is taking up RAM or Flash, e.g. string constants
-Look at largest consumers first
-Could be monolithic library functions that need replacing
-
-Move critical functions to zero-wait state RAM
-
-Taylor series useful for approximating functions, e.g. quicker to perform Taylor series expansion of say `e**0.1`
-
-Q numbers, a.k.a fixed point numbers, Q3.4 has 3 bits for intger, 4 bits for fractional
 
 ## Testing
 Software breakpoint requires modification of code to insert breakpoint instruction
