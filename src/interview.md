@@ -53,8 +53,18 @@ Basic outline of input and output hardware and associated protocol peripheral dr
 Based on design goals; want networking, want minimal cost; 
 - e.g: queue motor driver, microchip MCU parametric selection website 
 
+* I’ve seen questions like design a traffic control systems, design a calculator that performs basic math. 
+Candidates are expected to choose sensors, actuators, justify the choice of processor suitable for the system, draw timing diagrams, component diagrams, etc and even make a choice between bare metal or RTOS system. What are other such systems you can think of?
+Timing, performance, latency, throughput.
+Some sense of time scales and data rates.
+Some sense of memory size required for various forms of data.
+
 * Describe a successful project
 - 
+
+* Give an example of priority inversion.
+* How does a task switch occur on various cpus.
+* What assembly involved with specific CPU context switch, interrupt, scheduler etc.
 
 * 
 Simply being able to say "I don't know, but I do know that in the spec/experience it says xyz, so maybe it would do abc, but I would have to look for jkl to be sure." is huge.

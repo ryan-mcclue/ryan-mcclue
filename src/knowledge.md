@@ -1,4 +1,919 @@
-## Requirements
+# DSP
+Shannon-Nyquist: sampling rate at least twice highest frequency component to prevent aliasing.
+Quantising is mapping continous to discrete, i.e. analog to digital
+You will always need a lowpass filter before you quantize your signals.
+
+Plotting an FFT of signal can see noise. 
+If noise overlaps with our band, then require noise cancellation, otherwise bandpass filter.
+
+# Performance
+Say a 10byte packet.
+With UART, recieve an interrupt per byte.
+With DMA, recieve an interrupt per packet.
+So, if 400Kb/s, interrupt difference is considerable.
+
+# OS
+Micro and monolithic kernel just features of kernel.
+A unikernel is primarily for hypervisors, in that doesn't need to support many drivers, process isolation etc.
+
+# Debugging
+Could bit-bash UART (require a timer to keep things aligned) over an LED with a phototransistor and RS232 driver to send to PC.
+
+When flash programming, use journaling by checking PVD detector state.
+Also make sure BOR programmed.
+
+first step in embedded debugging commandments; thou shalt check voltage 
+
+Aardvark adapter essential for automated testing (so, an adapter of sorts should always be used for automated testing?)
+
+# AI:
+1. General embedded systems that are capable of running simplified models for e.g. Edge-based inference (e.g. Tensorflow->TFLite)
+2. Embedded systems with dedicated edge/AI accelerators that use their own frameworks (OpenVINO, TensorRT/CUDA, etc.)
+3. Microcontrollers or other resource-constrained processors running bare metal models (tfmicro, various PL IPs for HLS on FPGAs, etc.)
+
+Thermal imaging coupled with camera more 'deterministic/maintainable' than AI vision
+
+tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
+(ie: is the i2c correct? are you using the correct spi mode?
+
+NOTE: suspend to RAM is a type of sleep mode
+
+# Protocols
+RSSI how well can recieve signal. It's particular to a chipset, so Cisco might have 1-100, another might be 0-60 etc.
+decibels are logarithmic units relative to a reference level.
+dbM (decibel milliwatts) represents recieved signal strength compared to 0.001watts.
+dbA (decibel audio) is how much more sound is being generated then a reference level.
+
+Modbus is a request-response protocol. Can be implemented over TCP/UART etc.
+JTAG like SWD is a debugging interface and is not capable of flashing EEPROM or FLASH chips directly (these require I2C or SPI)
+
+COBS for framing. Don't want length tag, as you might start reading a packet mid way
+slip encoding to send packets?
+
+resolution of PWM setup dependent on the frequency set up for it 
+(e.g. resolution of 8 gives 100% duty cycle of 255)
+
+I2C developed by Phillips to allow multiple chips on a board to communicate with only 3 wires 
+(id is passed on bus)
+(number of devices is limited by address space; typically 128 addresses?)
+
+LIN protocol for vehicles (seems to be a host of protocols specific to automotives)
+
+for long range, LoRa or sigfox
+essentially tradeoffs between power and data rate
+ieee 802.11 group for WLANs (wifi - high data rate), 
+802.15 for WPANs; 802.15.1 (bluetooth - le variant - heavily used in audio), 
+802.15.4 low data rate (zigbee implements this standard)
+
+# Other
+Resistance is purely electric opposition to current flow.
+Impedance is total opposition to current flow.
+When current flows, creates magnetic field.
+For AC, as current changes direction, magnetic field decreases inducing an opposing voltage.
+So, higher frequencies, higher impedance. 
+
+high impedence is floating as no good path for current to flow.
+have tri-state GPIOs for multi-bus controllers, i.e. all but one floating so as to not create short circuit.
+
+A channel in a sensor is quantity measured. 
+So an acceleration sensor could have 3 channels, 1 for each axes
+
+Investigate gcc tunables, e.g. in debug build: export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+
+Excel can livestream graphs (useful for serial output)
+
+May compile for different architectures in embedded for different product lines 
+e.g. low-end fit bit, high-end fitbit
+
+Compile with different compilers to see performance benefits at end.
+Also possible may have to use a particular compiler for specific hardware.
+
+verification: requirements
+validation: does it solve problem
+authenticate: identity
+authorise: privelege
+token something used to authorise 
+
+HTML not turing-complete, i.e. can't perform data manipulations
+
+embedded systems special purpose, constrained, 
+often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
+challenges are testabilty and software/hardware comprimises for optimisation problem solving, e.g. bit-banging or cheap mcu, external timer or in-built timer, adding hardware increases power consumption, e.g. ray tracing card or just rasterisation, big.LITTLE clusters
+1/4 scalar performance for 1/2 power consumption good tradeoff
+
+malloc and printf are not reentrant 
+
+Garbage collection search is not free
+
+# ARM
+The CPU architecture will have an exception (a cpu interrupt) model. 
+Here, reset behaviour will be defined.
+the 32 bit arm cortex-m4 has FPU (a application, m for microcontroller, r high performance real time)
+often harvard archicture
+Von Neumann, RAM (variables, data, stack) + ROM (code/constants) + I/O all on same CPU bus.
+Harvard has ICode bus for ROM, and a SystemBus for RAM + I/O. 
+This allows operations to occur simultaneously. So, why use Von Neumann?
+
+different boards use different ICDI (in-circuit debug interfaces) to flash through SWD via usb-b
+e.g. texas instruments use stellaris, stm32 ST-link
+
+we can see in x86 (wikichips), instruction and data separate from L2 cache
+arm SoC block diagram (datasheet), see d-bus and i-bus to RAM
+introduce things like CCM (core coupled cache) 
+and ART (adaptive real-time accelerator) that add some more harvard like instruction things
+essentially, more busses instead of more cores like in x86, 
+(i.e. a lot more than just a CPU to be concerned with)
+also have more debug hardware
+
+AXIM, AHB and APB ARM specific
+will have a bus matrix (which allows different peripherals to communicate via master and slave ports by requesting and sending data)
+off this, have AHB (higher frequency and higher bandwidth).
+like to think of AHB as host bus as it feeds into APBs via a bridge. APB1 normally half frequency of APB2
+we can see that DMA can go directly to APB without going through bus matrix
+So, relevent for speed and clock concerns going through which bus?
+Also to know if we are DMA'ing something and CPUing something, they
+are not going to be fighting on the same bus, i.e. spread out load
+lower power peripherals on lower frequency busses?
+
+
+stm32 datasheet and reference manual (documents of different depths about same mcu) nomenclature
+will have 'Application Notes' that detail specific features like CCM RAM
+datasheet will often be related to a family, e.g. stm32f429xx.
+therefore, at the front will have a table comparing memory, number of gpios, etc. for particulars
+
+Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
+SYSCLK is what would use to calculate cpu instruction cycles.
+
+# IOT
+REST:
+curl -H "Authorization: Bearer <access-token>" https://api.particle.io/devices -d arg="D7 HIGH"
+
+webpage on cloud. when connected to esp32 ssid, then send credentials.
+will send a packet to device ssid.
+turn esp32 into softAP. have user connect to its SSID and input credentials via webpage 
+
+amazon s3 doesn't support https.
+however using amazon cloudfront cdn can reroute http to https
+(require CNAME setting on site DNS...?)
+
+# Hardware
+PLCs are hardened (physically and electrically) over typically SoC
+
+Antennas have ideal impedance. 
+So, our body may luckily shift the impedance of the antenna to be better or worse. 
+We don't amplify the signal
+
+RC delay circuit of 1ms to enable pin to allow for power supply to start
+capacitors to power rail and ground help maintain voltage on higher currents to avoid brown-outs
+tvs diodes to protect against transient voltage spikes (USB d+ and d- lines)
+capacitors to voltage line and ground for getting rid of high frequency noise (this is a bypass capacitor)
+
+batteries:
+- charge time might be slower in product as have to dissipate heat
+- li-ion has self-discharge rate, i.e will discharge without being connected (so not good for long, low-power devices)
+- a fixed battery will not self-discharge, but cannot be recharged?
+- quiescent current of voltage regulator etc. contribute to power draw of 400mAh battery
+
+ESP32-WROOM-SCHEMATIC:
+usb (data+/data-) -> usb charge -> linear regulator -> pgood?
+usb -> ftdi
+when usb plugged in (i.e. to charge) pgood high, chg low?
+
+monitor peak current usage to see what sized battery is required
+ESC for brushless
+have charge controller specific to solar panels also?
+
+spring (low freq., shock absorption) and straight antennas (high freq., static, longer range)
+antenna built for specific freq., e.g. 433MHz (wavelength = v / f), (quarter and halflength antennas common)
+
+capacitor for smoothing voltage (power supply are noisy, e.g. mains noisy, various components on board sapping) and filtering. polarised over high capacitance
+(will retain charge for a long time; could discharge with pliers across electrodes)
+
+rectifier is AC to DC
+
+battery form factors, e.g. 18650?
+
+a clock is an oscillator with a counter that records number of cycles since being initialised
+Crystal generates stable frequency
+PLL is type of clock circuit that allows for high frequency, reliable clock generation (setup also affords easy clock duplication and clock manipulation)
+So, PLL system could have RC or crystal input
+Feeding into it is a reference input (typically a crystal oscillator) which goes into a voltage controlled oscillator to output frequency
+The feedback of the output frequency into the initial phase detector can be changed
+Adding dividers/pre-scalers into this circuit allows to get programmable voltage.
+So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
+
+TODO(Ryan): Why is a floating pin also called high impedance?
+To avoid power dissipation and unknown state, 
+drive with external source, e.g. ground or voltage.
+
+Pull-up/down resistors are to used for unconnected input pins to avoid floating state
+So, a pull-down will have the pin (when in an unconnected state) to ground, i.e. 0V when switch is not on
+
+Vdd (drain, power supply to chip)
+Vcc (collector, subsection of chip, i.e. supply voltage of circuit)
+Vss (sink, ground)
+Vee (emitter, ground)
+
+A shift register has 8 outputs (sometimes lettered ABCDEFGH), a "clock" input and a "data" input. 
+When the clock input changes, it reads the data input line and puts that on the first output, A. 
+The previous value of output A is moved to output B, the previous value of output B is moved to output C, and so on down the line.
+digital addressable LEDs use shift registers.
+
+image sensor module is the optical to digital conversion part of a camera
+
+Backup power from a capacitor that has just enough power to transfer state to EEPROM in case of power outage?
+
+Linear acutator is motor that moves up and down
+
+LiPo require special charging circuitry.
+Furthermore, when using typically have either a regulator or boost converter  
+
+smooth drawing requires floating point and sub-pixel drawing
+0.25 pixel would involve 0.25 of its colour, i.e. blending
+
+trimpot a.k.a potentiometer
+
+MEMS (micro-electromechanical systems) motion sensor
+
+buck converter steps down DC-DC voltage, while stepping up current
+(various step-down mechanisms in relation to AC/DC and voltage/current)
+
+although bluetooth LE say 50m distance, a repeater can be used (and really for any RF)
+
+H-bridge is IC that switches voltage polarity, e.g. run DC motors forwards or backwards
+Rectifier converts AC to DC (transformer is high voltage AC to low voltage AC)
+
+
+Might see GNSS + INS (inertial navigation system; i.e using IMU as well)
+
+MEMs accelerometers for vibration detection in cars
+
+DC motor: raw PWM signal and ground
+signal controls speed
+high rpm, continous rotation (e.g. fans, cars)
+servo: dc-motor + gearing set + control circuit + position sensor
+signal controls position
+limited to 180°
+accurate rotation (e.g. robot arms)
+stepper:
+can be made to move precise well defined 'steps', i.e. jumps between electromagnets
+position fundamental (e.g. 3D printers)
+
+RJ45 connector
+
+astable means no stable states, i.e. is not predominatley low or high, e.g. square wave, sine wave etc.
+oscillator generates wave (could be for carrier or clock)
+
+RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
+internal mcu oscillators typically RC, so subject to frequency variability
+
+## Workflow
+IMPORTANT(Ryan): No tests, doesn't work!
+
+IMPORTANT: premature MICROOPTIMISATION (i.e. fine-tuning things) is root of all evil.
+overall optimisation should always be at forefront 
+
+If wanting to create a new implementation of a function, 
+perhaps don't just delete it entirely, rather change its name to func_old()
+
+ingress (act of entering), egress used for traffic
+
+struct padding largest value wants to be on a byte boundary that is divisible by itself
+trailing members may have padding also to ensure consecutive structs in array are aligned as well
+
+IMPORTANT: memory access is very slow. actual math operations etc. are very fast.
+e.g. SIMD perform 4 multiplies in 1 cycle, reading something from memory 50 cycles
+So, when optimising, look at reducing memory accesses and see if those memory accesses are in the cache
+IN GENERAL, COMPUTE DON'T LOOKUP, e.g. store width, height: compute area  
+Remove values that can be computed. Reduces possibility of bugs
+As math is effectively 'free', we can reduce memory size also
+
+If value is very expensive to compute, then wrap dependent values in function, e.g. set_width()
+
+IMPORTANT: BUFFER ITERATIONS, USE STRIDE FOR GREATER FLEXIBILITY
+`void colour_iterate(u8 *colours, u32 count, u32 stride);`
+
+IMPORTANT: WANT TO WRITE CODE. NOT STANDALONE, BUT AN EVER HIGHER MOUNTAIN OF KNOWLEDGE.
+
+c compiler can reorder.
+AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due to reordering
+
+strive for value orientated (less pointers), 
+i.e. use structs by value; so return them and use as arguments.
+removes aliasing and x86 passes small structs into registers, so never hit memory
+and if optimised and inline function, goes away entirely
+
+full fence is release and acquire, i.e cannot move up or down
+atomics are not just instructions to compiler to not reorder, but also hardware instructions related to cache flushing etc.
+
+C standard as at least 6 pages of undefined behaviour 
+could be more, in fact anything not explicit defined is undefined.
+there could be more undefined behaviour waiting to be noticed. 
+it's just because C is 50 year old language that many corner cases explored
+
+compiler assumes that code that is undefined behaviour cannot be reached and so will optimise away
+GET INTO HABIT OF USING LIKELY AND UNREACHABLE?
+
+coroutine is function that can be suspended at any point, and resume later
+
+asynchronous programming just make things harder to debug;
+
+DIFFERENCE IN APPROACH TO WORKING ON TEAM AND STAGE OF PROJECT
+on a team, 'proper' commit should change one thing and have accompanying tests.
+So, write explorative code on branch and merge when done
+
+perhaps start with this:
+https://github.com/TheSandvichMaker/netgame
+and improve with glenn fielder?
+glenn fielder networking
+codersblock
+javidx9 mmo
+
+techlinked + michel tunnell (this week in linux)
+
+When working with array, always check if length > 0
+
+For production, probably want to `dlopen()` to provide fallbacks for missing libraries 
+
+
+always in software development will have things that aren't working optimally. know they are there.
+will later go back and fix them when required (e.g. when in quality improving mode). 
+just know this will always happen
+
+Working with modern software is going to be a pain at some point.
+Have to stay strong and not belittle situation, rather accept it and move on.
+At times, have to get off high horse and roll up your sleeves.
+
+Linux issues: 1. runtime configurability (difficult part not API, but what to do when settings aren't exact, i.e. what to fall back on when abstraction not there). 2. multiple binaries
+Although possible to dynamically load core libraries like xlib/wayland/alsa and support
+a minimum set of APIs, this is essentially what SDL does.
+However, system/user configurability is huge in linux. There is simply too much
+runtime variability to test for all users.
+Furthermore, multiple CRT to support, e.g. muslc for Alpine
+
+Linux desktop suffers from binary compatibility nightmare, e.g. 15 binaries to support all. 
+This is because libraries like glibc are happy to break abi to get minor improvements, e.g spec says this so let's do it even though no one cares
+
+There are no absolutes, just tradeoffs for solving your problem, e.g raw vs smart pointers
+
+Often issue is not hard code, it's because the problem is messy, i.e.  Unwritten assumptions,  
+external constraints, users want lots of generic functionality. 
+So often interesting at the same time, very annoying. 
+
+combinations: 2ⁿ-1, max: 2ⁿ
+introducing negatives we effectively remove one bit
+numbers represented in twos complement to handle addition/subtraction of negatives and positives.
+not because of representation, e.g. sign bit would work fine
+when saying complement, it's with respect to negative number handling:
+ones ➞ invert all bits in positive number to get negative. therefore have -0
+twos ➞ adding a positive and its negative will get a 2 in each place. think about the MSB as the negative place, hence why -1 is all 1s
+
+dave's garage, what's a creel
+
+(Serial Advanced Technology Attachment)
+important that these are sustained speeds, so for small file sizes expect a lot less as seconds smaller
+note that storage space advertised with S.I units, whilst OS works with binary
+
+RAM potentially hundreds of cycles (CAS latency and cache retrieval process)
+(important to note that RAM CAS is only say 20% of total latency as will 
+In general:
+check if in L1. If not go check in L2 and mark least recently accessed L1 for
+move to L2. bubbles up to L3 until need for memory access which will go to memory
+controller etc.
+
+so, ram frequency gives max. throughput
+however latency of ram also important
+
+(cache latency from wikichip)
+
+generic is referencing Ubuntu specific kernel compilation (could also have -lowlatency etc.) 
+(generic does not include a lot of modules in kernel to alleviate RAM, so use modprobe)
+(-41 is build number, i.e how many times compiled)
+(the compiler, linker, libc are all specific to linux OS used, e.g. compiled with different settings, different versions, etc.)
+
+ost influential software written largely by one person, e.g Linux, Unix, git etc. Then a team is assigned to maintain it. Fallacy about solo programmer productivity requiring large teams.
+Design by committee pushes design to middle of bell curve as opposing views average out
+
+Cpu try to guess what instructions ahead (preemptive). 
+Cost of incorrect reflushing expensive. 
+So want to get rid of conditional jumps. 
+Ideally replace with conditional movs or arithmetic branch less techniques.
+Endianness (register view), twos complement (-1 all 1s)
+Branch less programming is essentially SIMD
+
+Flops calculated with best instruction set?
+Not memory bound is best case for hyper threading
+Intel speeds optimised for gpr arithmetic, boolean and flops
+
+You need to be self critical to be a good engineer
+
+Caches are a way of minimising roundtrip time of RAM by putting memory as close to the core that thinks will need it
+L1 closest, 1/2 cycles, 32k. Wikichip for more info
+Cpu will go to caches first
+
+L1 can supply 2 cache lines per clock
+Instructions per clock, number of work components, e.g. number of add components, cache line per cycles, cache latency, agu (address resolver units) impose restrictions
+A cache miss is simply stalling for an instruction. 
+However, this may not be an issue if we do other work, e.g. complex algorithm takes many instructions hiding memory access for out of order cpu. 
+If hyper threading with two schedulers, if cache miss on one, just switch to the other.
+Can really only know if a cache miss incurs a performance penalty by looking at raw numbers from vtune, etc. Because of the scheduler, it's not as simple as just looking at memory sizes
+So, due to complex overlapped/scheduling nature of modern CPUs can really only know if cache miss incurs penalty with vtune
+Uop website displays table for instructions
+
+Currently good that most things are little endian with 64 byte cAche lines, however some hardware guys Is going to come along and change it back to big endian
+
+An instruction of throughput 1 means issued every clock. As many instructions take longer than 1 cycle, each core requires a scheduler to see if it can execute something.
+View cpu as sections where there is some distance to communicate.
+
+People become attached to a way of programming which doesn't focus on solving the problem. They want to build rube-goldberg machines
+Selectively attacking problems seriously means you have a functional program quicker, whereby you can actually decide if those other problems need to be addressed. 
+Can defer hard decisions later as they will be made better as you will have more technical expertise and more context to work with
+
+Testing is important. If you don't write tests, your software doesn't work. However, write higher level system tests, not excessive unit tests. 
+More efficient and this is where bugs are likely to be. You often have to remove code, so having unit tests just increases the volume of code you have to write. 
+Huge drain on productivity. Maybe for NASA.
+
+Faster cpu like Apple's m1 are irrelevant if software bad
+
+Floating point math faster than integers
+
+my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
+
+Compiler works on file by file, so knows nothing about calls across files. 
+Therefore it generates object files which are partially executable machine code with unresolved symbols. 
+Linker merges these object files and also adds extra header information so that the OS can load our executable (or more specifically a kernel, e.g. linux)
+
+Complete code coverage on the one hand is very thorough, however don't get a lot of engineering output. 
+Furthermore, most bugs appear in between systems not in units. 
+
+Best way to test is to release on early access.
+This checks hardware and software, user may be running adobe acrobat which hogs cpu so instruct them to kill it before running your game. 
+Or maybe 20000 chrome plugins. This is something a hardware lab can't tell you
+
+To make an installer just fwrite your executable and then data files appended with footer. 
+Inside the exe, fread the exe and fseek based on the static offset of the appended resources
+Bake resources in for reliability only really
+
+Packed files better as less OS operations performing expensive file handles etc.
+
+const is only useful if you find it catches bugs for you (maybe for globals instead of using #defines)
+however, in terms of optimsations, const is useless as you can cast const away.
+therefore, for me, const is mostly just a waste of typing.
+
+good practice to assign variable for syntatical reasons, i.e. more readable, e.g
+`Controller *controller = &evdev_input_device.controller;`
+
+when programming some days you are off. this just means you're going to be debugging a lot. hopefully bugs are proximal
+
+we want it to be clear what our code can and cannot touch. global variables make this hard (however, can add _ to see where they are all used)
+however, as many OSs are rather janky and most code will live outside this, it is ok to have some globals here
+globals are fine in development. can repackage into a structure later.
+
+clock speed not as relevent as improvements in microarchitecture and number of cores means can be more efficient under less duress.
+also, lower clock speed may be because want to draw less power.
+
+short build times (under 10 seconds) are incredibly important to not decentivness making changes and testing them
+
+note that >> will typically (implementation defined) perform arithmetic shift (fill in with 1's) on signed, so not always the same as a divide.
+similarly, sign-extension just fills in the new MSBs with 1's
+
+most modern cpus have a floating point unit, making them faster than ints (same latency), 
+e.g. a multiply is one instruction where ints is two (multiply and shift)
+x87 is the FPU instructions for x86 (also have SSE instructions which is want you ultimately want)
+however, for multiplayer games, optimisers can give different results when using floating point,
+e.g a platform that has operator fusion like a MULADD may give different result when rounding then a 
+platform that has do it separate. (fixed point could solve this)
+
+asserts are part of debug program that are used to check that things work that should always work.
+use them for a condition that must be true that is not explicitly present
+
+it's not the programming practice but the dogma that gets you. 
+
+amdahls law gives the time taken for execution given a number of cogives the time taken for execution given a number of cores.
+for this formula (indeed any formula) we can obtain some property by seeing as function parameter approaches infinity. 
+in this case, the parallelising part drops out.
+brooks law says that simply adding more people to a problem does not necessarily make it faster. 
+if requires great deal of coordination/communication actually slows down.
+
+solving a problem: 
+1. decide what you are doing (this can't be open-ended.) 
+2. organise groups to achieve this
+by making these boundaries, we are presupposing that each part is separate, e.g tyres team and engine team; assume tyres and engine cannot be one piece.
+therefore, the boundaries define what products you can make, i.e. you produce products that are copies of yourself or how you are structured
+so, in software if we assign teams for say audio, 2d, 3d we would expect individual APIs for each.
+the org chart is the asymptote, so it's the best case that we make a product as granular as our org chart. it could be far worse and even more granular 
+
+therefore, communication between teams is more costly than communication within teams.
+takeaway is that low-cost things can be optimised, high-cost can't be (further away on the org chart)
+
+note that communication in code could just be someone checking something in and you pulling it
+
+what we are seeing now with modern software is the superposition of orgcharts due to use of legacy codebases
+now we see org charts in software, where people are artifically creating inheritence hierarcies that limit how the program works
+this is very bad. the reason it's done is for people to create mental models that help them solve the problem as they can't keep the complexity in their head. 
+it may be necesary to solve the problem, however it shouldn't be looked at as good.
+however, because it's done due to lack of understanding, the delegation/separation is not done with enough information. so you limit possibilities of the design space.
+so although, libraries, microservices, encapsulation, package managers, engines may be necessary due to our brain capacity 
+WE MUST BE LEAN AND FLEXIBLE IN ORGCHARTS IN COMPANY AND IN SOFTWARE TO INCREASE DESIGN.
+some old codebases need to be retired
+
+some software is scaffolding, i.e. not shipped with the final product, e.g. editor for games
+
+Instead, if it's something that is actually an error, e.g. missing file, write the code to explicitly handle it.
+Handling the error in a sense makes it no longer an error, rather a feature of the program
+
+if function is expecting a range between, clamp it
+
+Refactoring is essential
+. You must know what you are trying to achieve so you have some notion of progress, e.g. adding a constraint to the system. 
+
+You can abstract/encapsulate anything at anytime, so why not do it later when you know what you are doing?
+
+if can go functional without sacrificing, saves you complexity down the road.
+oftentimes simply utilising elements of functional programming is good, e.g. no global state, only operating on parameters etc.
+
+writing code guides you to the right design, e.g. made same call -> put into function; 
+require args in function -> struct;
+many related functions together -> organise related functions into own file; (if thinking could be moved to another file, make comment sections outlining code blocks to ease this process later on)
+sections of single value interpreted differently -> pack 2 variables into 1 (_ technique useful here)
+same operations performed on pairs of variables -> vectors (as oppose to working with them as scalars)
+
+we don't want to orient our code around objects (if anything, algorithmic oriented). 
+its about how you arrive at some code that determines how good it is
+
+excessive pre-planning and setting waypoints is really only useful if you've done the problem before
+instead, we become a good pathfinder, learning to recognise the gradient of each day of the journey.
+
+only break into function when you know what you want, 
+e.g. called multiple times or 
+
+Refactoring with usage code: just write out structures that satisfy the usage code.
+If major rewrite use #if 0 #endif to allow for successful compiling
+
+being able to draw out debug information is very useful. 
+time spent visualising is never wasted (in debugger expressions also)
+
+(mocking of syscalls for unit testing with file i/o)
+
+If the data being grouped can only exist together (e.g. points), use vectors.
+Put all structs related typedefs inside their own header file for easy access.
+
+As floats are an approximation, when comparing to 0.0f (say for a denominator check) 
+or negative (say for a square root) use a tolerance/epsilon less-than/greater-than check.
+In fact whenever dividing should always ask oneself "can the value be zero?"
+To be clear about float to int casting, use a macro like truncate/round (think about what if uneven divide)
+Due to mixed integer and float arithmetic going to float, calculate integer percentages `val * 100 / total`
+There is no need to overload the division operator as can do `(* 1.0f / val)`
+
+Endianness comes into play when reading/writing from disk (e.g. file type magic value) and working directly with `u8 *` (e.g. iterating through bytes of a u32) 
+
+to market app: I'm notified when keywords related to "human wants thing, my app can do thing" appear on HN, Reddit and Lobsters.
+
+even parity is to make it even, i.e. so if 5 1's, even parity will add a 1 
+
+
+## Code
+// sha1 more bits than md5, so more complex?
+// really sha1 fine over more secure sha256 as 1 in 9quintillion
+// meow hash probably better for large data
+
+`!!` operator to 0 or 1: `t += ((F32)!!(flags & flag) - t) * rate;` 
+
+immediate mode and retained mode are about lifetimes. 
+for immediate, the caller does not need to know about the lifetime of an object.
+
+discovering for linux docs (xlib, alsa) are code and for 
+development may have to add to groups (uinput) 
+
+plugins just be .so files that are loaded with dlsym()
+
+Visualising essential for debugging insidious problems...
+
+Drawing have left_edge, top_edge
+Drawing charts, define chart_height, bar_width, bar_spacing etc. in pixels
+Can draw single pixel height reference line
+Cycle through colours with `arr[index % ARRAY_COUNT(arr)]`
+
+artist creates in SRGB space (in photoshop) 
+so if we do any math on it (like a lerp), 
+will have to convert it to linear space and then back to srgb for the monitor (if we were to just blit directly, it would be fine)
+to emulate complicated curves, could table drive it
+we compromise on r² and √2
+without gamma correction, resultant image will look very dim (due to nature of monitor gamma curve) 
+so with rgb values, preface with linear or srgb
+
+## OS 
+Further proliferation of OSs, e.g. Touch Ubuntu, Edubuntu, Kubuntu etc.
+
+Google wants RISC-V as tier-1 architecture for Android. 
+Part of further push for open source usage so as to not pay licensing fees, 
+e.g. developing their own video codec etc.
+
+Code maintainability the main drawback in reaching a situation where programmers 
+simply query LLM (Large Language Models) and just clean up the output?
+
+New display electroluminescent quantum dots to possible replace OLED
+New memory packaging with higher density to replace SO-DIMM, CAMM (Compression Attached Memory Module)
+Skeptical about copilot AI code writing as doesn't understand architectural issues and beyond.
+
+## Other
+Intel thunderbolt faster than USB-C, yet ports still look very similar
+
+Skeptical of announcements made by budget-starved laboratories (e.g. universities) about breakthroughs for technologies decades away, e.g. fusion 
+There are often caveats, e.g. rarefied and furthermore, commerciality is most likely decades away
+
+Seems that bipartisan government action required to fix rats nest of drivers in modern OSs in a similar vein to EU enforcing anti-competitive laws on Apple to allow third-party apps, USB-C etc.
+
+Have to be careful not to engage in technological contempt culture, e.g. language wars.
+As technology changes rapidly, address changes with temperance
+
+If social media was all RSS (really simple syndication), things would be much simpler
+
+Mass production to TMSC advanced 3-nm chip underway
+Unfortunately most likely due to Samsung chips having low yield, 
+they don't have high QA for voltage regulation as compared to TSMC
+
+Unikernel has applications bundled inside kernel (so like eBPF) for high performance
+
+Amusing Dead Internet Theory that the Internet died around 2016 and is now largely bots
+
+Interesting can just buy off the shelf drone and attach something like an ESP32 to send data back to us
+
+Like 'Scrum Certification' now with Matter have an official certification process
+
+Have GPU microarchitectures like RNDA.
+
+Chiplets seem future of shrinking size and expanding computing power, now seen in GPUs
+They can be easily be recombined to create custom designs
+
+VSR (virtual super technology) has GPU scale to 4K and then downscale if necessary to monitor's resolution
+However, if want say 8K gaming, will require a DisplayPort cable
+
+Resistive RAM uses analog memory cells to store more information with less energy
+
+Silicon carbide power supplies more efficient
+
+Unfortunate that Intel releasing software-defined-silicon, i.e. pay-as-you-go to enable certain hardware features
+
+
+interesting set of questions to inspect a software engineering workplace:
+https://neverworkintheory.org/2022/08/30/software-engineering-research-questions.html?utm_source=tldrnewsletter
+
+MOSFETs are a type of transistor.
+different transistors for say quick-switching, low signal, high frequency, amplifier etc.
+
+USB-4, PCI5, DDR5 emerging standards.
+
+Could buy a GPU for running interesting machine learning applications like Stable Diffusion (prompt engineers, oh dear...)
+https://www.krea.ai/
+GPU structure similar to CPUs, e.g have cache, GDDR6 memory (more simple parrellisation)
+
+interestingly CRT can scale better than fixed-set resolution LCD
+
+new TV monitor combination QD-OLED
+curved monitors less fatiguing as physically matches our eye's shape
+flexible/bendable monitors no one asked for...
+
+cool looking completely submerged server desktops. 
+pure water is a very good insulator (our tap water will have chlorine for example)
+obtained via ozone treatment
+
+	static_assert((sizeof(sound_signature) / sizeof(*sound_signature)) >= 4,
+		"There should be at least 4 elements in this array.");
+
+PLC more expensive microcontroller that is more versatile, e.g. handle voltage overload (often used in assembly lines)
+
+doesn't seem like quantum computers will be able to solve any practical tasks 
+(unless program exploits quantum parrelism to a large extent)
+
+it's sad, but you really could do a stand-up of modern software projects, e.g.
+"introducing Goliath, an automatic external dependency manager. 
+under the hood we use a Nextrus package manager.
+can be scripted with Freasy language extension of Frosty core language"
+
+eyes convert photons to electrochemical signal
+transduction converts one energy form to another
+CCD (charged couple device; less noise, more power, lower speed) and CMOS (consumer grade) common camera sensors
+digital cameras convert photons to array of pixels, represented as voltage levels
+quad pixel camera sensor combines four adjacent pixels in this array
+
+round design of new Nvidia GPU may be evidence for the 20-year cyclical nature of fashion
+
+YouTube no respect for customers, running clandenstine experiment running up to 5 ads at the start instead of spacing them out
+Furthermore, Mozilla researchers found that buttons like 'Stop recommending', 'Dislike' have next to no effect
+
+Cool USB SAMD boards (possible malware creation)
+
+Finally, alleviating ambigious USB 4.0 v2.0 naming scheme with devices having clear
+USB 40Gbps, 240W printed on them
+
+Record breaking DDos attacks, 17.2million requests per second, 3.4terabits per second, 809million packets per second
+
+Google have size to challenge Dolby with new HD audio standard.
+However, whilst seeming altruistic, is just so they don't have to pay Dolby licensing fees in their hardware 
+
+Interesting Domain Brokerage services to allow you to get already used domains
+
+Cool application of IoT: https://hackaday.com/2015/11/24/building-the-infinite-matrix-of-tamagotchis/
+
+Serverless is just a term for a caching server closer to clients
+
+## Companies
+How nice that Apple's anti-tracking crackdown only applies to third-party apps
+
+With the growth of hardware, really seems that adaptive learning algorithms are going to be used instead of solving the problem explicitly
+
+Although decentralisation sounds good (own cell network etc.), 
+it requires user maintenance which people will pay others to do and we're back to square one in a way
+
+It really isn't tinfoil hat mentality to be wary of updating unless necessary, e.g. most recent kernel patch affected Intel graphics displays
+
+Thanks to TCC compiler, can compile C in memory and load it, hence using it in some way like a scripting language
+
+Despite new phones offering a plethora of new features, don't assume that they are bug-free, e.g. pixel phone crash detection malfunctioning on roller coaster, not allowing dialling to 000, etc.
+
+Realise you can overclock RAM with Intel XMP (extreme memory profile)
+
+The decline of the lone app, as Microsoft 365 leviathan
+
+With improved network performance, perhaps cheaper to offload calculations to powerful servers (VDI: virtual desktop infrastructure)
+NB-IoT (narrowband, i.e. low power). Also have CoAP (constrained application protocol) for embedded devices to access Internet 
+Easy to fall prey to the act of not adding anything useful to a product, but simply adding IoT and calling it smart, e.g. smart condom
+
+HDR (high dynamic range) refers to colour spectrum. Implemented in technologies such as Dobly Vision 
+Dolby Atmos is a surround sound technology
+
+RCS seems to be better than SMS
+
+Cloud excels when application simple and low traffic (managing a large application in the cloud is just as difficult as on bare metal)
+Or, your traffic patterns are unpredictable
+Otherwise, paying an unjustified premium
+
+Are the petabit speeds of research optical chip really that useful 
+if hardware can't process that fast?
+Will radio only get us so far?
+
+Perhaps explainpaper.com could break into reading programming papers
+
+Raptor Lake overclock to over 8GHz (however with liquid nitrogen...)
+
+## AI
+It seems software licenses need to be updated to account for AI scraping
+
+Microsoft wants to put Windows in Cloud for better AI; which means better data harvesting...
+
+With false uptimes reported by say Telstra, has become Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
+
+Are their sufficient AI generative models to embody the four horsemen for human made technology?
+
+Often times I'm subject to the Dunning-Kruger effect (over confident from lack of experience) when it comes to programming
+
+Any political software leads down the path of FSF. They're all polite until they're not.
+
+Seems in with big-tech, marketing is often more important than the underlying technology.
+170km 'The Line' ecotopia, metaverse, telsa etc.
+They make wild claims and the general public has no way of knowing the facts behind them (perception vs reality)
+
+ARMs open-model allowed vendors to implement custom MPUs that saw in gain dominance over oher RISCs like MIPS and AVR.
+
+Tech companies becoming conglomerate monopolies, e.g. tiktok music, apple tv etc.
+
+Much like the C++ standards committee, concerns of 'ivory tower' nature of smart home Matter standards
+
+The importance of programming to a physical machine is paramount.
+The underlying technology is always changing, e.g. arcade machines, consoles, phones, watches, plastic 4bit processors 
+
+iSIM is eSIM except on SoC, instead of separate chip
+
+Many 'ultra-zoom 100x' on phone cameras are just artificially injecting pixels
+
+Containers are new OSs, LLM are new CPUs
+
+Advantageous for apps to not be standalone and only be accessible via web.
+More ad targeting metrics
+
+ESP32 a unicorn that combines WiFi, BLE and Zigbee in one
+
+AI seems to address toy problems and not deal with permutations of problem, e.g. design, corner cases, performance, etc.
+Expressing all possibilities is best done in a programming language not English.
+
+## Hardware
+Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
+Similar to Zigbee and Z-Wave
+
+hierarchy:topology
+p2p:(mesh, bus)
+client-server:star
+
+Hardware subscription issues: lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
+
+Unfortunate that 'true security' makes things more complex and inconvenient, e.g. yubikey 
+
+Oh dear, Java is not dying out  (state of the octoverse)
+Frequent STMicroelectronics newsletter coverage of IoT (and the many, many protocols) and machine learning indicative of trend in industry
+
+Hi-fi audio. Newer terms to mean higher fidelity/data resolution 
+new OLED TVs (contrast, blacks). 
+QLED/QNED (brightness) is a adding a 'quantom dot' layer into the white LED backlight LCD sandwich
+
+5.1 means 5 speakers, 1 subwoofer
+woofer, subwoofer, speaker, tweeter
+
+Are we moving down the road of homogenous, e.g. specifically target CPU or GPU or hetereogenous programming, e.g. CUDA  
+
+Bitcoin is a Ponzi scheme as almost no one actually uses it in transactions, and is purely speculative.
+Does not create anything. Interesting manifestation of capitalism.
+
+Moore's law number of transistors doubles every 2 years. Although not strictly true, general trend is holding. 
+Proebsting's law states that compiler improvements will double program performance every 18 years. 
+Therefore, cautious about the performance benefits a compiler brings. Focusing on programmer productivity is more fruitful
+In general, newer compilers take longer to compile, but produce slightly faster code maybe 20% faster.
+
+Amazing that certain old rpm harddrives were susceptible to crashing when 'Rhythm Nation' played as the resonant frequency was the same
+
+Although the open nature of RISC-V gives it some economical advantages, historically the ISA
+has not been the major driving factor in widespread adoption. Rather, who invests the most in
+R&D, e.g. many places will develop ARM, with RISC-V go on your own.  
+
+Chiplets connection of chips. So, can build chiplets that aren't SoC, e.g. just CPUs and SoCs without chiplets
+Intel R&D into chiplet technology stacking presents it as a future possibility (Apple already uses it with two M1 max chips to M1 ultra)
+
+ACM (Association for Computing Machinery) Turing Award is essentially Nobel Prize for Computer Science.
+Not applicable for me as awards largely for academic contributions like papers/reports published e.g data abstraction (Liskov substitution, Byzantine fault tolerance), parallel computing (OpenMP standard).
+In some sense, the modern day Booles and Babbages
+I'm more concerned with engineering feats in software products. 
+
+Read a Google research project on removing noise in photos. 
+Investigate source to test and am completely put off by the amount of
+dependencies involved: conda (why not just whole hog and docker), python, jax for TPU (python to tensor processing unit), external repositories
+This also applied to the 'amazing' AI image generator Stable Diffusion (I suppose high VRAM requirements also)
+Docker has uses in CI
+
+As Moore's law is widening, i.e. was 2 years now 4 years, companies creating own hardware, e.g.
+YouTube chip to handle transcoding
+
+## Quantum
+RSA public key is two primes multiplied together. 
+These primes constitute private key.
+Qubit can be in multiple states. So, compute all bit combinations at once.
+However, result is a superposition, so can only read one of the state results
+Therefore, as difficult to extract meaningful information from superposition, quantum computing not useful for most algorithms 
+However, quantum fourier transform can be done on a periodic superposition
+So, if superposition has inherent periodicity, useful
+
+## Cosmic Rays
+single event upset; soft-error;
+trace elements of uranium releasing alpha particles that interfered with transistor in ram (electronics so small)
+cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running, plane system
+in fact, laboratories have neutron detectors for this
+so, could have duplicate computers to account for this, say on an airplane
+
+## Science Media
+press-releases for science are oversimplified and sensationalised to attract attention
+also pressure to publish first
+e.g. worm hole created in quatum computer, really just mathematical simulation
+quite often early reports are wrong, e.g. ambient pressure, room-temperature superconductor
+some areas in computer science over-hyped, e.g. AI, quantum computing
+there can infinite falsities, but only one truth, so most likely wrong
+
+## Lightbulb vacuum triodes
+0 kelvin is absence of thermal energy. 247 kelvin is 0celsius
+thermionic emission is emission of electrons from a heated surface
+this led to vacuum diode, which could rectify AC
+signal amplification is increasing amplitude, so further distances and less noise
+vacuum diode was first electrical switch used in first digital computer ENIAC
+
+## Analog Computing
+Analog computers such as the antikythera mechanism can use gears, with each tooth representing a value (often mechanical devices) to measure orbits. Also tides
+Analog errors are easy to occur and can multiply, also as models of the real world, not general purpose.
+So, digital more noise-resilient, general-purpose and easily made as same components
+
+Multiplying 32bit numbers may require hundreds of transistors for digital
+Analog could just add two currents and apply resistor easily.
+So, in come cases, analog better as less components and less power.
+Success of neural networks is their size. So, require large amounts of power and memory to train
+In fact, neural networks effectively boil down to matrix multiplication
+By storing certain amount of electrons and applying a certain voltage, output currents can be added together
+Size of transistor approaching size of atom, so Moore's law ending
+
+# FFT
+Convert from time-domain into frequency-domain to divide signal into various subcarrier frequencies.
+This allows to send parallel data, i.e. higher bandwidth in 5G
+FFT developed to detect nuclear testing
+Thermonuclear/hydrogen bomb first uses fission which triggers fusion
+Peace sign made by combining semaphores of N and D (nucler deterrant)
+Around 55 earthquakes a day
+So, FFT to have fast way determining underground nuclear tests
+
+# Ground
+Voltage is difference between two points. Ground is reference voltage (as in say a CPU, there is no literal ground)
+
+x11 requires window manager (from desktop environment like xfce, gnome (gtk), kde (qt)); compositor all in one
+x11 siphoned input, graphics, fonts and indirect communication etc. 
+wayland and mor are compositors
+
+
+## Embedded Project Requirements 
 - what is the power source, battery or wall power?
 - are there any particular size requirements?
 - are there any particular cost targets?
@@ -10,33 +925,54 @@
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
 
-## Performance
-refer to 'perf' repo
+Often case thinking about what peripherals can be multiplexed to get more I/O pins.
+I/O lines typically either control lines (SPI), IRQ line and power control line (for proper sequencing)
+Most I/Os don't involve a lot of CPU time:
+- IRQ or status I/Os polled a few times a second
+- Power controls only for power-on and reset
+Anything requiring high speed transfers uses DMA so can run at full speed without taking CPU cycles.
 
-TODO(Ryan): How can I answer/know: 
-Hey you need to guarantee a response to this external command in 40ms, that seems pretty tight."
-Sweet, I've got 10x what I need" (thinking 5ms is an eternity)
-perhaps just knowing cycle count of CPU and average instructions in ISR?) 
+memory (spi flash), wifi, sleep (button), battery charger, debug output, LCD (parallel)
+(might only need to display this say, every 250ms as oppose to every frame), 
+
+Low number of pins, 8bit MCUs like ATTiny202 useful for something simple like a battery gauge indicator, 
+e.g.detecting when the battery gets plugged into a charger or load device, waking devices from sleep, lighting up the indicator, 
+some animations, and going back to sleep when it get's disconnected 
+
+Various companies advantages:
+- ST lower than 600MHz
+- NXP high performance MCUs over 600MHz
+- Texas Instruments speciality for analog peripherals
+- Renesas and Infineon for automotive industry
+
+the jump from hobby to product is efficiency, security, reliabilty (e.g. fails without wifi) 
+and repeatability (e.g. doesn't work on rerun)
+
+key to remember that it could work in a demo and that the technology to do that task is possible, 
+but it can't satisfy the above criteria
+
+comparing temp. sensor datasheets:
+1. operating voltage, e.g. can run at 3.3V
+2. accuracy, e.g. += 0.5degrees, -50-150degree range
+3. output, e.g. want purely linearly output for simplicity (IMPORTANT: look into datasheet, as sometimes 'more accurater non-linear' formula is given
+quiescent/overhead current (i.e. enabled but not giving output)
+pin-out configurations, e.g. does it have both breadboard and smt?
+
+## Performance
+TODO: refer to 'perf' repo
+
+Often need to guarantee response in say 40ms. 
+Know CPU frequency and routine cycle count.
+Generally in embedded, 5ms is an eternity for an ISR.
+Conceivable for 25us of work.
 
 And it frequently comes from someone asking how long it takes this system to boot. Oh around 600 uS"
 Most of which is waiting for the power supply to settle down and send the power-good signal...
 Or the PLL to lock, or the 32 khz crystal to stabilize
 
-I ran a timer at 20kHz and did 25us of work in the ISR every time. 
-That was on a 168MHz F4. It was absolutely fine. 
-The system had plenty of steam left for comms, UI and so on
-Depending on the application, you could even spend 50-75% of CPU time in the control loop, with the RTOS only managing the other 25%!
-Use an ISR timer, to signal your control loop thread. 
-You can use a timer of up to 100-200 kHz with STM32H7. 
-Above that you need to put the control code in the ISR itself.
-
-If your embedded application runs on battery, it is sometimes more battery-efficient to have a short periodic 
-burst of high-speed communication (such as wi-fi or 5G - that are active for less time and then shut off between transmissions) 
-than a slower, less power-hungry transmission method (LoRa) that must be active for a MUCH longer period of time.
-Depending upon your application, Protocols that utilize UDP, RTSP can be FAR more efficient (and faster) than protocols like REST which rely TCP-based transport protocols (which requires a 3-way handshake). As one other commenter mentioned, you will want to decide how much error correction you wish to add and/or if/how you want to ensure lossless data transfer (retries, etc).
-Sometimes, basic data compression of a file can be effective.
-
-compression for compression speed, e.g. lz4 or resultant size
+For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
+UDP much better as no 3-way handshake.
+Balance between compression for speed or resultant size. 
 
 https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
 You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
@@ -1838,8 +2774,53 @@ for console command groups, have a turn on and turn off command for power analys
 
 Software should be flexible to hardware changes
 
+# RTOS
+Provides:
+- Allow design of functionality with priorities over time 
+  Bare metal interrupt fills buffer and superloop polls buffer.
+  If want faster, then would trigger an interrupt on buffer full.
+  RTOS can sleep on synchronisation primitive and wakeup when buffer full.
+- Consistent driver interfaces across multiple mcus 
+  Useful for complex stacks like lwIP, bluetooth, changing hardware, feature creep etc.
+- Synchronisation primitives and data structures, e.g. message queue, priority queue etc.
+
+Issues:
+- If single core, timing very critical, ultra low power, simple
+- Stacks are easy to overflow and estimate wrong
+- Impossible to test over the complete set of potential states
+
+Real time scheduling is deterministic (hard time is absolutely, soft time should)
+
+As every thread needs a control block and a stack, don't have task per sensor.
+Have tasks for parallel events. So, could merge all communication interfaces into one task, etc.
+
+Yielding marks task as ready, so will switch to an equal priority task. 
+To allow lower priority tasks to run, must suspend/block task.
+
+Priority inversion is a concurrency bug that occurs when a high priority task is indirectly pre-empted by a low priority task.
+Requires at least 3 tasks to occur and a shared resource (typically a bus like I2C etc.)
+Say a low priority task obtains a mutex, pre-empted by medium, pre-empted by high.
+High cannot obtain mutex, so is pre-empted by medium, pre-empted by high etc. low never gets to run and release.
+Can be prevented by priority inheritance on mutex, so that mutex holder gets same priority as task trying to acquire it.
+Typically, a hardware watchdog will detect if high priority task hasn't been run and so reset.
+Can get stuck in reset loops.
+
+Task starvation can also occur for a low-priority task. 
+Ascertain this state with watchdog and possibly redesign or block higher running task.
+
+In general, use as few distinct priorities as possible. 
+This reduces task overhead, however may make system unpredictable.
+Only different priority if latency outweighs throughput.
+Typically high are ISR and short-running tasks. Low are I/O bound.
+Different scheduling algorithms may benefit from many different or similar priorities.
+Generally have clear must high priorities and others determined in development.
+ 
+Zephyr an RTOS towards linux with lots of drivers and associated configuration hassles.
+
 
 ## RTOS
+
+
 Superloop would be a task. Periodically queue and dequeue data from interrupts
 
 Even without RTOS, still have a timer subsystem and separation of tasks, which is backbone of RTOS
