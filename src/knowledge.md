@@ -18,6 +18,52 @@ For low power, sometimes highspeed more power hungry WiFI better as active for s
 UDP much better as no 3-way handshake.
 Balance between compression for speed or resultant size. 
 
+Perhaps variable power at 2V for 3.3V to test in low power situations
+
+Seems that common to sleep at end of superloop and wait for an interrupt to occur?
+
+For low power, sleep has to be at forefront (long and as deep as possible)
+We don't explicitly wait for things to happen
+More concerned with peripherals, rather than actual core
+
+Reduce power by reducing:
+  * Voltage, Resistance (component selection, e.g. less components in sensor)
+  * Current (less code)
+  * Time (slowly, sleep)
+
+Light sleep (low milliamp to microamp)
+Deep sleep (microamp)
+Hibernate (nanoamp; here things like cleanliness of board matter, e.g. flux)
+
+Low Power Questions (At Start):
+1. How big battery can fit and what price?
+11mm x 4mm ($5)
+Found 40mAh, 3.7V
+2. How long must unit work between charging?
+At least 24 hours
+System can average (0.004 / 24) mA
+3. What are estimated pieces of system?
+oled (12mA, 0), accelerometer (0.165mA, 0.006mA), battery
+on state last (), sleep state last ()
+We see that cannot be on all the time, as average current less than what battery can provide
+4. Resultant restrictions
+Tweak on percentage until average current usage is within bounds
+Screen only on 5% of time
+
+Low Power Questions (At End):
+1. Different states device can be in?
+on, light sleep
+2. How long in each state
+on 5 seconds every 5 minutes, i.e:
+on (5seconds, 0.02), sleep (300seconds, 0.98)
+3. How much current in each state
+on (12mA), sleep (0.14mA)
+4. How long device last on 40mAh battery?
+(0.004) / ((0.12 * 0.02) + (0.00014 * 0.98)) hours
+
+Always use internal pull-ups if possible (sometimes not because too weak),
+so can disable for lower power
+
 Size:
 * Map file for RAM/Flash contents
 
@@ -73,8 +119,125 @@ Aardvark adapter essential for automated testing (so, an adapter of sorts should
 
 Thermal imaging coupled with camera more 'deterministic/maintainable' than AI vision
 
+AI seems to address toy problems and not deal with permutations of problem, e.g. design, corner cases, performance, etc.
+Expressing all possibilities is best done in a programming language not English.
+
 
 # Protocols
+
+ISM (Industrial, Scientific and Medical) bands (900MHz, 2.4GHz, 5GHz) occupy unlicensed RF band.
+They include Wifi, Bluetooth but exclude telecommunication frequencies
+
+GNSS (Global Navigation Satellite Systems) contain constellations GPS (US), GLONASS (Russia), Galileo (EU) and Beido (China)
+They all provide location services, however implement different frequencies, etc.
+
+GSM (Global System for Mobile Communications) uses SIM (Subscriber Identification Module) cards to authenticate (identity) and authorise (privelege) access
+
+4G (Generation; 1800MHz) outlines min/max upload/download rates and associated frequencies.
+Many cell towers cannot fully support the bandwidth capabilities outlined by 4G. 
+As a result, the term 4G LTE (Long Term Evolution) is used indicate that some of the 4G spec is implemented.
+More specifically have 4G LTE cat 13 to indicate particular features implemented.
+
+SMS (Short Message Service) are stored as clear text by provider
+SS7 (Signaling System Number 7) protocol connects various phone networks across the world
+
+Between protocols, tradeoffs between power and data rate
+IEEE (Institute of Electrical and Electronic Engineers):
+* 802.11 group for WLANs (WiFi 6E - high data rate), 
+* 802.15 for WPANs; 802.15.1 (Bluetooth), 
+* 802.15.4 low data rate (ZigBee, LoRa, Sigfox, Z-Wave)
+
+Wifi, Bluetooth, ZigBee, Z-Wave (lowest power) are for local networks.
+LoRa is like a low bandwidth GSM
+LoRa (Long Range) has low power requirements and long distance. AES-128 encrypted by default.
+LoRa useful if only sending some data a few times a day.
+LoRa has configurable bandwitdh, so can go up to 500KHz if regulations permit
+Lower frequency yields longer range as longer wavelength won't be reflected off objects. Will be called narrowband
+Doesn't require IP addresses.
+LoRaWAN allows for large star networks to exist in say a city, but will require at least 1 IP address for a gateway
+Sigfox uses more power.
+
+A BLE (Bluetooth Low Energy) transceiver only on if being read or written to
+GATT (Generic Attribute Profile) is a database that contains keys for particular services and characteristcs (actual data) 
+When communicating with a BLE device, we are querying a particular characteristic of a service
+
+A QR (Quick Response) code is a 2D barcode with more bandwidth. Uses a laser reader.
+RFID (Radio Frequency Identification) does not require line-of-sight and can read multiple objects at once. 
+Uses RFID tag. 
+NFC (Near Field Communication) is for low-power data transfer. 
+Uses NFC tag
+
+TV standards
+Americas: NTSC (30fps, less scanlines per frame) 4.4MHz
+Europe, Asia, Australia: PAL (Phase alternate line) (25fps) 2.5MHz
+
+IMPORTANT: know MISRA C subset (i.e. so can say embedded C)
+    Serial
+    USB
+    Ethernet
+    WiFi
+    Bluetooth
+    Zigbee
+    Cellular
+    checksum, TLS, CRC, OSI, TLS, AES, PID, feedback loop, flash filesystem
+
+NB-IoT (narrowband, i.e. low power). 
+Also have CoAP (constrained application protocol) for embedded devices to access Internet 
+
+Intel thunderbolt faster than USB-C, yet ports still look very similar
+
+(TODO: give protocol speeds!)
+QSPI can be used without CPU with data queues
+MIDI (Musical Instrument Digital Interface) 3 byte messages that describe note type, how hard pressed and what channel
+
+SPDIF (Sony Phillips Digital Interface) carries digital audio over a relatively short distance
+without having to convert to analog, thereby preserving audio quality.
+
+QI is a wireless charging standard most supported by mobile-devices for distances up to 4cm
+FreePower technology allows QI charging mats to support concurrent device charging
+
+* USART: 
+* SPI:
+* I2C:
+
+infrared is heat. LED can give of narrow band of infrared.
+Therefore, can be used as an IR remote control that requires line of sight.
+Hence RMT (remote control reciever) refers to infrared
+the lackof modulation and frequency range of human IR reason for not triggering IR reciever
+
+In fact fastest possible is USB. If enough pins, SPI as simpler than I2C
+
+CAN
+
+TODO: AES, RSA, SHA, RNG
+
+I2S for reading microphone? So I2S PCM interface for audio? 
+
+SDIO is high-speed SD card protocol, (sd 3.0?)
+NO, SDIO IS FAST SPI?
+
+TODO: what is considered fast in embedded, e.g. 5MHz for I2C, 10us for loop?
+
+PCM (pulse code modulation) requires changing values to generate noise
+
+UWD (ultra-wideband) is short range RF used to detect people and devices
+
+* JTAG (Joint Test Action Group):
+hardware interface to connect chips to testing hardware
+Testing method in standard is known as a boundary scan
+TAP (Test Access Port) is on supported chip that is controlled with TMS signal.
+Contains IR and DR registers. Will process JTAG instructions
+TDI, TDO, TCK, TMS, TRST (optional)
+
+jtag flashing faster than uart as parallel
+
+
+* UART
+EN/RST (enable/reset) signal will trigger a hard reset
+asserting BOOT button will trigger DTR/RTS RS-232 signal to put board in download mode after reset
+due to improper FTDI serial driver while holding BOOT button press EN and flash
+$(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
+
 RSSI how well can recieve signal. It's particular to a chipset, so Cisco might have 1-100, another might be 0-60 etc.
 decibels are logarithmic units relative to a reference level.
 dbM (decibel milliwatts) represents recieved signal strength compared to 0.001watts.
@@ -141,6 +304,333 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+MEMS (Micro Electro Mechanical Systems) combines mechanical parts with electronics like some IC, i.e. circuitry with moving parts.
+e.g. microphone (sound waves cause diaphragm to move and cause induction), accelerometer, gyroscope (originally mechanical)
+
+On phone, many sensors implemented as non-wakeup.
+This means the phone can be in a suspended state and the sensors don't wake the CPU up to report data
+
+Accelerometer measures rate of change in velocity, i.e. vibrations associated with movement (m/s²)
+So can check changes in orientation.
+It will have a housing that is fixed to the surface and a mass that can move about.
+Detecting the amount of movement in the mass, can determine acceleration in that plane.
+
+Gyroscope measures rotational acceleration, unlike an accelerometer which is unable to distinguish it from linear (rad/s²)
+Gyroscope resists changes to its orientation due to intertial forces of a vibrating mass.
+So can detect angular momentum which can be useful for guidance correction.
+
+A gimbal is a pivoted support that permits rotation about an axis
+
+IMU (Inertial Measurement Unit) is an accelerometer + gyroscope + magnetometer (teslas)
+The magnetometer is used to correct gyroscope drift as it can provide a point of reference
+
+Quartz is piezoelectric, meaning mechanical stress results in electric charge and vice versa.
+In an atomic clock, Caesium atoms are used to control the supply of voltage across quartz.
+This is done, in order to keep it oscillating at the same frequency.
+
+NTP (Network Time Protocol) is TCP/IP protocol for clock synchronisation. 
+It works by comparing with atomic clock servers
+
+iSIM is eSIM except on SoC, instead of separate chip
+
+Many 'ultra-zoom 100x' on phone cameras are just artificially injecting pixels
+
+MOSFET type of transistor that is voltage controlled
+CMOS technology allows the creation of low standby-power devices, e.g. non-volatile CMOS static RAM 
+
+Realise you can overclock RAM with Intel XMP (extreme memory profile)
+
+oscilloscope 200MHz, 1Gsamples/sec 
+multimeter 10samples/sec 
+
+oscilloscope triggering (signal inspection), timing, and decoding
+
+crystal (ppm parts per million is how much crystal will deviate), 
+
+LCD:
+Will interact with a display like Nokia 5110 (resolution, monochrome) via relevent driver, 
+e.g. PCD8544 (SPI)
+* CMOS:
+* IPS: clear, more power
+* OLED
+
+PSoC is type of MCU made by Cypress where some peripherals can be programmable from software like in a FPGA? 
+Combines FPGA and MCU 
+
+* Multimeter: continuity
+* Logic Analyser: communication protocol
+
+breadboard: eeprom DIP (dual in-line package)
+smd-components: eeprom SOP (small outline package)
+mcus: QFN, QFP, BGA (better thermal)
+TODO: package information QFN 5*5, i.e. 5mmx5mm (QFN is fab process? this is small size so good for portable projects)
+(ultimately want balance of space efficiency and ease of manufacturing, thermal considerations
+
+Whenever some conversion, want to minimise power loss (so, think in watts?)
+Voltage regulators maintain constant voltage across input and load:
+- LDO (low drop-out): drop-out is minimum voltage difference for correct functionining 
+- buck converter/step-down (more complex, more efficient, wider range of input and load voltage)
+
+synchronous (more expensive than asynchronous) switching (more expensive than linear) step-down (or buck) regulator
+(expensive as gets higher efficiency at lighter loads)
+
+New display electroluminescent quantum dots to possible replace OLED
+New memory packaging with higher density to replace SO-DIMM, CAMM (Compression Attached Memory Module)
+
+Resistive RAM uses analog memory cells to store more information with less energy
+
+Mass production to TMSC advanced 3-nm chip underway
+Unfortunately most likely due to Samsung chips having low yield, 
+they don't have high QA for voltage regulation as compared to TSMC
+
+Have GPU microarchitectures like RNDA.
+GPU structure similar to CPUs, e.g have cache, GDDR6 memory (more simple parrellisation)
+
+Chiplets seem future of shrinking size and expanding computing power, now seen in GPUs
+They can be easily be recombined to create custom designs
+
+EMV (europay, mastercard, visa) chip implements NFC for payments
+
+Various synthetic benchmarks indicative of performace, e.g. 
+DMIPS (Dhrystone Million Instructions per Second) for integer and
+WMIPS (Whetstone) for floating point
+
+The polarity of the magnetic field created by power and ground wires will be opposite.
+So, having the same position in each wire line up will reduce outgoing noise as superposition of
+their inverse magnetic fields will cancel out. Furthermore, incoming noise will affect each
+wire similarly
+Coaxial has the two conductors share an axis with shielding outside.
+Twisted pair wire is a cheaper way of implementing coaxial
+Glass fibre optic does not have this issue.
+
+ASIC (Application Specific Integrated Circuit) MCU for specific task 
+
+On startup, copy from Flash to RAM then jump to reset handler address
+No real need for newlib, just use standalone mpaland/printf
+Some chips have XIP (execute-in-place) which allows for running directly from flash 
+
+Chrom-ART Accelerator offers DMA for graphics, i.e. fast copy, pixel conversion, blending etc.
+
+LED anode is positive longer lead
+
+5ATM is 5 atmospheres. 1 atmosphere is about 10m (however calculated when motionless)
+50m for 10 minutes
+
+FRAM (ferroelectric) is non-volatile gives same access properties as RAM
+
+Storage device sizes are advertised with S.I units, whilst OS works with binary so
+will show smaller than advertised (1000 * 10³ < 1024 * 2¹⁰)
+Also, storage device write speeds are sustained speeds.
+So, for small file sizes expect a lot less
+
+A flip-flop is a circuit that can have two states and can store state.
+Various types of flip-flops, e.g. clock triggered, data only etc.
+A latch is a certain type of flip-flop.
+Called this as output is latched onto state until another change in input.
+
+Registers and SRAM stored as flip-flops. 
+DRAM is a single transistor and capacitor
+
+SRAM (static) is fast, requires 6 transistors for each bit.
+So, 3.2billion transistors for 64MB cache. Sizeable percentage of die-area
+SRAM more expensive, faster as not periodically refreshed.
+
+DRAM (dynamic) is 1 transistor per bit refreshed periodically.
+SDRAM (synchronises internal clock and bus clock speed).
+SDRAM. LPDDR4 
+(low-power; double pumping on rising and falling edge of clock, 
+increasing bus clock speed while internal typically stays the same, amount prefetched etc.)
+
+DIIM (Dual In-Line Memory Module) is form factor with a wider bus
+SODIMM (Small Outline)
+
+CAS (Column Address Strobe), or CL (CAS latency) is time between RAM controller
+read and when data is available.
+RAM frequency gives maximum throughput, however CL affects this also.
+In addition, RAM access is after cache miss, so direct RAM latency is only a percentage
+of total latency as time taken to traverse cache and copy to it.
+
+NAND and NOR flash are two types of non-volatile memory
+NOR has faster read, however more expensive per bit and slower write/erase
+NOR used in BIOS chips (firmware will be motherboard manufacturer, e.g. Lenovo)
+A NAND mass storage device will require a controller chip, i.e. a microcontroller
+How the controller accesses the NAND flash, i.e. the protocol under which its 
+Flash Translation Layer operates, will determine what type of storage it is:
+* SD (secure digital)
+* eMMC (embedded multimedia card): Typically SD soldered on motherboard
+(For SD/MMC protocol, will have a RCA, i.e. Relative Card Address for selecting card)
+* USB (universal serial bus) 
+* SSD (solid state drive): Parallel NAND access, more intelligent wear leveling and block sparring
+3D VNAND (Vertical) memory increases memory density by vertically stacking NAND flash
+
+Form factors include M.2 keying and PCIe (Peripheral Component Interconnect)
+Interface includes SATAIII, NVMe (non-volatile memory host controller) and PCIe
+SATA (Serial Advanced Technology Attachment) SSD is the lowest grade SSD.
+A single form factor may support multiple interfaces, so ensure motherboard has
+appropriate chipset
+
+Each CPU socket has memory banks that are local to it, i.e. can be accessed from it directly.
+NUMA (non-uniform memory access) means that accessing memory from a non-local bank will not
+be the same speed. A NUMA-aware OS will try to mitigate these accesses.
+
+RAID (redundant array of independent disks) is method of combining multiple disks 
+together so as to appear like one disk called an array.
+Various types, e.g. RAID0 (striping) some parts of file in multiple disks, 
+RAID1 (mirroring) each disk is duplicate so could give speed increase etc.
+
+Battery will have two electrodes, say lithium cobalt oxide and graphite.
+When going through a charging/discharging cycle, ions move between electrodes.
+So, charging cycles will affect the atomic structure of the electrodes and hence
+affect battery life.
+
+Circuits based on conventional current, i.e. + to -
+Cathode is terminal from which conventional current flows out of, i.e. negative
+
+LiPo (lithium-ion polymer) uses polymer electrolyte instead of liquid.
+Standard lithium-ion has higher energy density, cheaper, not available in small sizes 
+and more dangerous due to liquid electrolyte
+LiPo more expensive, shorter lifespan, less energy, more robust 
+LiPo battery is structured to allow a current to be passed to it to 
+reverse the process of oxidation (loss of electrons), i.e. is rechargeable
+
+Battery 51Watt/hr, which is A/hr * V is not a fixed value, 
+e.g. 1A/hr could run 0.1A for 10 hours 
+
+Petrol cars still use lead-acid as they have lower internal resistance and 
+so can give higher peak current then equivalent LiPo (just not for as long)
+
+HDMI(High Definition Multimedia Interface)-A, C (mini), D (micro) carry audio and visual data
+DisplayPort has superior bandwidth to HDMI
+
+USB-A,USB-B,USB-B(mini)
+USB-C is USB3.0
+
+3.5mm audio jack (3 pole number of shafts (internal wires), 4 pole for added microphone)
+
+Ethernet CAT backwards compatible. 
+
+Telephone cable called RJ11
+
+IEC (International Electrotechnical Commission) power cords used for 
+connecting power supplies up to 250V, e.g. kettleplug, cloverleaf
+
+DC barrel jack
+
+Touch screen types need some external input to complete circuit
+Resistive works by pressure pushing down plastic<-electric coating->glass
+Unresponsive, durable, cheap
+Capacitive contains a grid of nodes that store some charge.
+When our finger touches charge flows through us and back to the phone, 
+changing the electric current read. 
+We are good conductor due to impure water ion in us.
+So, things electrically similar to our fingers will work also like sausages, banana peels
+
+1080i/p
+1080 references vertical height in pixels
+Interlaced means display even and odd rows for each frame.
+Due to modern high bandwith not used anymore.
+Progressive will display each row sequentially for a given frame
+
+4k means horizontal resolution of approximately 4000 pixels. 
+standard different for say television and projection industry, e.g. 3840 pixels
+
+Screen density is a ratio between screen size and resolution measured in PPI (Pixels Per Inch) 
+
+A voltage applied to ionised gas, turning them into superheated matter that is plasma.
+Subsequent UV is released.
+
+LCD (Liquid Crystal Display) involves backlight through crystals.
+IPS (In-Plane Switching) and TFT (Thin Film Transistor) are example crystal technologies.
+For an LED monitor, the LED is the backlight, as oppose to a fluorescent.
+However still uses LCD backlight, so really LED LCD.
+
+Quantum science deals with quanta, i.e. smallest unit that comprises something
+They behave strangely and don't have well defined values for common properites like position, energy etc., e.g. uncertainty principle
+A 'quantum dot' is a semiconductor nanoparticle that has different properties to larger particles as a result of quantum mechanics.
+QLED/QNED (Quantum NanoCell) adds a 'quantom dot' layer into 
+the white LED backlight LCD sandwich.
+
+OLED is distinct. 
+It produces own light, i.e. current passed through an OLED diode to produce light. 
+LTPO (Low Temperature Polycrystalline Oxide) is a backplane for OLED technology.
+
+E-ink display uses less power than LCD as only uses power when arrangment of colours changes.
+
+HDR (High Dynamic Range) and XDR (Extreme Dynamic Range) increase ability
+to show contrasting colours. 
+
+5.1 means 5 speakers, 1 subwoofer
+In order of ascending levels of audible frequencies 20Hz-20000Hz have devices
+woofer, subwoofer, speaker and tweeter.
+
+Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
+Similar to Zigbee and Z-Wave
+
+MOSFETs are a type of transistor.
+different transistors for say quick-switching, low signal, high frequency, amplifier etc.
+
+transduction converts one energy form to another
+CCD (charged couple device; less noise, more power, lower speed) 
+and CMOS (consumer grade) common camera sensors
+digital cameras convert photons to array of pixels, 
+represented as voltage levels
+quad pixel camera sensor combines four adjacent pixels in this array
+
+USB-4, PCI5, DDR5 emerging standards.
+
+hierarchy:topology
+p2p:(mesh, bus)
+client-server:star
+
+Silicon carbide power supplies more efficient
+
+Hardware subscription issues: lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
+
+Unfortunate that 'true security' makes things more complex and inconvenient, e.g. yubikey 
+
+Oh dear, Java is not dying out  (state of the octoverse)
+Frequent STMicroelectronics newsletter coverage of IoT (and the many, many protocols) and machine learning indicative of trend in industry
+
+Hi-fi audio. Newer terms to mean higher fidelity/data resolution 
+new OLED TVs (contrast, blacks). 
+QLED/QNED (brightness) is a adding a 'quantom dot' layer into the white LED backlight LCD sandwich
+
+5.1 means 5 speakers, 1 subwoofer
+woofer, subwoofer, speaker, tweeter
+
+Are we moving down the road of homogenous, e.g. specifically target CPU or GPU or hetereogenous programming, e.g. CUDA  
+
+Bitcoin is a Ponzi scheme as almost no one actually uses it in transactions, and is purely speculative.
+Does not create anything. Interesting manifestation of capitalism.
+
+Moore's law number of transistors doubles every 2 years. Although not strictly true, general trend is holding. 
+Proebsting's law states that compiler improvements will double program performance every 18 years. 
+Therefore, cautious about the performance benefits a compiler brings. Focusing on programmer productivity is more fruitful
+In general, newer compilers take longer to compile, but produce slightly faster code maybe 20% faster.
+
+Amazing that certain old rpm harddrives were susceptible to crashing when 'Rhythm Nation' played as the resonant frequency was the same
+
+Although the open nature of RISC-V gives it some economical advantages, historically the ISA
+has not been the major driving factor in widespread adoption. Rather, who invests the most in
+R&D, e.g. many places will develop ARM, with RISC-V go on your own.  
+
+Chiplets connection of chips. So, can build chiplets that aren't SoC, e.g. just CPUs and SoCs without chiplets
+Intel R&D into chiplet technology stacking presents it as a future possibility (Apple already uses it with two M1 max chips to M1 ultra)
+
+ACM (Association for Computing Machinery) Turing Award is essentially Nobel Prize for Computer Science.
+Not applicable for me as awards largely for academic contributions like papers/reports published e.g data abstraction (Liskov substitution, Byzantine fault tolerance), parallel computing (OpenMP standard).
+In some sense, the modern day Booles and Babbages
+I'm more concerned with engineering feats in software products. 
+
+Read a Google research project on removing noise in photos. 
+Investigate source to test and am completely put off by the amount of
+dependencies involved: conda (why not just whole hog and docker), python, jax for TPU (python to tensor processing unit), external repositories
+This also applied to the 'amazing' AI image generator Stable Diffusion (I suppose high VRAM requirements also)
+Docker has uses in CI
+
+As Moore's law is widening, i.e. was 2 years now 4 years, companies creating own hardware, e.g.
+YouTube chip to handle transcoding
+
 PLCs are hardened (physically and electrically) over typically SoC
 
 Antennas have ideal impedance. 
@@ -539,102 +1029,6 @@ we compromise on r² and √2
 without gamma correction, resultant image will look very dim (due to nature of monitor gamma curve) 
 so with rgb values, preface with linear or srgb
 
-## AI
-Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
-
-Often times I'm subject to the Dunning-Kruger effect (over confident from lack of experience) when it comes to programming
-
-
-Tech companies becoming conglomerate monopolies, e.g. tiktok music, apple tv etc.
-
-Much like the C++ standards committee, concerns of 'ivory tower' nature of smart home Matter standards
-
-The importance of programming to a physical machine is paramount.
-The underlying technology is always changing, e.g. arcade machines, consoles, phones, watches, plastic 4bit processors 
-
-iSIM is eSIM except on SoC, instead of separate chip
-
-Many 'ultra-zoom 100x' on phone cameras are just artificially injecting pixels
-
-Containers are new OSs, LLM are new CPUs
-
-Advantageous for apps to not be standalone and only be accessible via web.
-More ad targeting metrics
-
-ESP32 a unicorn that combines WiFi, BLE and Zigbee in one
-
-AI seems to address toy problems and not deal with permutations of problem, e.g. design, corner cases, performance, etc.
-Expressing all possibilities is best done in a programming language not English.
-
-## Hardware
-Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
-Similar to Zigbee and Z-Wave
-
-MOSFETs are a type of transistor.
-different transistors for say quick-switching, low signal, high frequency, amplifier etc.
-
-transduction converts one energy form to another
-CCD (charged couple device; less noise, more power, lower speed) 
-and CMOS (consumer grade) common camera sensors
-digital cameras convert photons to array of pixels, 
-represented as voltage levels
-quad pixel camera sensor combines four adjacent pixels in this array
-
-USB-4, PCI5, DDR5 emerging standards.
-
-hierarchy:topology
-p2p:(mesh, bus)
-client-server:star
-
-Silicon carbide power supplies more efficient
-
-Hardware subscription issues: lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
-
-Unfortunate that 'true security' makes things more complex and inconvenient, e.g. yubikey 
-
-Oh dear, Java is not dying out  (state of the octoverse)
-Frequent STMicroelectronics newsletter coverage of IoT (and the many, many protocols) and machine learning indicative of trend in industry
-
-Hi-fi audio. Newer terms to mean higher fidelity/data resolution 
-new OLED TVs (contrast, blacks). 
-QLED/QNED (brightness) is a adding a 'quantom dot' layer into the white LED backlight LCD sandwich
-
-5.1 means 5 speakers, 1 subwoofer
-woofer, subwoofer, speaker, tweeter
-
-Are we moving down the road of homogenous, e.g. specifically target CPU or GPU or hetereogenous programming, e.g. CUDA  
-
-Bitcoin is a Ponzi scheme as almost no one actually uses it in transactions, and is purely speculative.
-Does not create anything. Interesting manifestation of capitalism.
-
-Moore's law number of transistors doubles every 2 years. Although not strictly true, general trend is holding. 
-Proebsting's law states that compiler improvements will double program performance every 18 years. 
-Therefore, cautious about the performance benefits a compiler brings. Focusing on programmer productivity is more fruitful
-In general, newer compilers take longer to compile, but produce slightly faster code maybe 20% faster.
-
-Amazing that certain old rpm harddrives were susceptible to crashing when 'Rhythm Nation' played as the resonant frequency was the same
-
-Although the open nature of RISC-V gives it some economical advantages, historically the ISA
-has not been the major driving factor in widespread adoption. Rather, who invests the most in
-R&D, e.g. many places will develop ARM, with RISC-V go on your own.  
-
-Chiplets connection of chips. So, can build chiplets that aren't SoC, e.g. just CPUs and SoCs without chiplets
-Intel R&D into chiplet technology stacking presents it as a future possibility (Apple already uses it with two M1 max chips to M1 ultra)
-
-ACM (Association for Computing Machinery) Turing Award is essentially Nobel Prize for Computer Science.
-Not applicable for me as awards largely for academic contributions like papers/reports published e.g data abstraction (Liskov substitution, Byzantine fault tolerance), parallel computing (OpenMP standard).
-In some sense, the modern day Booles and Babbages
-I'm more concerned with engineering feats in software products. 
-
-Read a Google research project on removing noise in photos. 
-Investigate source to test and am completely put off by the amount of
-dependencies involved: conda (why not just whole hog and docker), python, jax for TPU (python to tensor processing unit), external repositories
-This also applied to the 'amazing' AI image generator Stable Diffusion (I suppose high VRAM requirements also)
-Docker has uses in CI
-
-As Moore's law is widening, i.e. was 2 years now 4 years, companies creating own hardware, e.g.
-YouTube chip to handle transcoding
-
 ## Quantum
 RSA public key is two primes multiplied together. 
 These primes constitute private key.
@@ -650,14 +1044,6 @@ trace elements of uranium releasing alpha particles that interfered with transis
 cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running, plane system
 in fact, laboratories have neutron detectors for this
 so, could have duplicate computers to account for this, say on an airplane
-
-## Science Media
-press-releases for science are oversimplified and sensationalised to attract attention
-also pressure to publish first
-e.g. worm hole created in quatum computer, really just mathematical simulation
-quite often early reports are wrong, e.g. ambient pressure, room-temperature superconductor
-some areas in computer science over-hyped, e.g. AI, quantum computing
-there can infinite falsities, but only one truth, so most likely wrong
 
 ## Lightbulb vacuum triodes
 0 kelvin is absence of thermal energy. 247 kelvin is 0celsius
@@ -699,6 +1085,11 @@ wayland and mor are compositors
 - what are the compute resources required by your algorithm? 
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
+
+They might ask you how they work, 
+where they would be appropriate to use, 
+what tradeoffs there might be among various options, 
+how you would implement them.
 
 embedded systems special purpose, constrained, 
 often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
@@ -858,6 +1249,15 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
 1 *     2² *      0.1234
 
+Software breakpoint requires modification of code to insert breakpoint instruction
+
+Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
+Dunning-Kruger effect (over confident from lack of experience) 
+
+Schematics useful for looking into electrical diagrams of board components, 
+e.g. mcu pins that are pull-up (will read 1 by default), 
+peripherals (leads to resistors, etc.), st-link, audio, eTc.
+
 NOTE: suspend to RAM is a type of sleep mode
 
 System boot time is typically around 600uS.
@@ -938,6 +1338,20 @@ e.g. Whats there NAT type?
 
 
 ## Security
+ * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
+ * Using and verifying hashes of executables during updates
+ * Actually test your software (e.g., fuzzing, to make sure you validate your inputs)  
+
+MCU control bits, e.g. read/write protection on flash, usage of SWD.
+Only removed with entire chip erase.
+
+General security:
+  * CI
+  * static analysers
+  * treat all external data as malicious:
+    - buffer overflows; generally from malformed user input (prevent stack frame overwrite for code execution)
+    (IoT chipset has more attack vectors than traditional embedded, so more careful) 
+
 Most dangerous form of buffer overflow is overwriting return address of function to external code.
 Can be solved by having a shadow stack, i.e. two stacks, one for variables, one for compiler stuff
 
@@ -1344,32 +1758,6 @@ run this on side (lm-sensors): https://superuser.com/questions/25176/how-can-i-m
 
 ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
 
-## Networking
-event-driven/interrupt or polling for networking? 
-IMPORTANT: interrupt not really possible on linux; asynchronous more means callbacks in threads
-so, asynchronous for desktop; interrupt for embedded (for performance)
-
-curl -H "Authorization: Bearer <access-token>" https://api.particle.io/devices -d arg="D7 HIGH"
-
-webpage on cloud. when connected to esp32 ssid, then send credentials.
-will send a packet to device ssid.
-turn esp32 into softAP. have user connect to its SSID and input credentials via webpage 
-
-amazon s3 doesn't support https.
-however using amazon cloudfront cdn can reroute http to https
-(require CNAME setting on site DNS...?)
-
-Cloud excels when application simple and low traffic (managing a large application in the cloud is just as difficult as on bare metal)
-Or, your traffic patterns are unpredictable
-Otherwise, paying an unjustified premium
-
-Serverless is just a term for a caching server closer to clients
-
-https://github.com/icopy-site/awesome/blob/master/docs/awesome/Awesome-Game-Networking.md?plain=1
-
-Networking Chapter in the book Hacking The Art of Exploitation
- 
-Distinction between unicast (device to device), multicast (device to some devices) and broadcast (device to all devices) is at network layer 3. (the signals are all technically recieved)
 
 ## Math
 
@@ -1472,20 +1860,6 @@ CMSIS (Common Microcontroller Software Interface Standard) is standard from ARM,
 CMSIS has reference for neural networks, fft, etc.
 
 
-## Security
- * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
- * Using and verifying hashes of executables during updates
- * Actually test your software (e.g., fuzzing, to make sure you validate your inputs)  
-
-MCU control bits, e.g. read/write protection on flash, usage of SWD.
-Only removed with entire chip erase.
-
-General security:
-  * CI
-  * static analysers
-  * treat all external data as malicious:
-    - buffer overflows; generally from malformed user input (prevent stack frame overwrite for code execution)
-    (IoT chipset has more attack vectors than traditional embedded, so more careful) 
 
 
 ## Multidisciplinary
@@ -1608,270 +1982,6 @@ NMI cannot be ignored, e.g. HardFault
 
 The 'startup' file in assembly to allow for easy placement of interrupts to memory addresses.
 
-
-## Hardware
-MOSFET type of transistor that is voltage controlled
-CMOS technology allows the creation of low standby-power devices, e.g. non-volatile CMOS static RAM 
-
-Realise you can overclock RAM with Intel XMP (extreme memory profile)
-
-
-New display electroluminescent quantum dots to possible replace OLED
-New memory packaging with higher density to replace SO-DIMM, CAMM (Compression Attached Memory Module)
-
-Resistive RAM uses analog memory cells to store more information with less energy
-
-Mass production to TMSC advanced 3-nm chip underway
-Unfortunately most likely due to Samsung chips having low yield, 
-they don't have high QA for voltage regulation as compared to TSMC
-
-Have GPU microarchitectures like RNDA.
-GPU structure similar to CPUs, e.g have cache, GDDR6 memory (more simple parrellisation)
-
-Chiplets seem future of shrinking size and expanding computing power, now seen in GPUs
-They can be easily be recombined to create custom designs
-
-EMV (europay, mastercard, visa) chip implements NFC for payments
-
-Various synthetic benchmarks indicative of performace, e.g. 
-DMIPS (Dhrystone Million Instructions per Second) for integer and
-WMIPS (Whetstone) for floating point
-
-The polarity of the magnetic field created by power and ground wires will be opposite.
-So, having the same position in each wire line up will reduce outgoing noise as superposition of
-their inverse magnetic fields will cancel out. Furthermore, incoming noise will affect each
-wire similarly
-Coaxial has the two conductors share an axis with shielding outside.
-Twisted pair wire is a cheaper way of implementing coaxial
-Glass fibre optic does not have this issue.
-
-ASIC (Application Specific Integrated Circuit) MCU for specific task 
-
-On startup, copy from Flash to RAM then jump to reset handler address
-No real need for newlib, just use standalone mpaland/printf
-Some chips have XIP (execute-in-place) which allows for running directly from flash 
-
-Chrom-ART Accelerator offers DMA for graphics, i.e. fast copy, pixel conversion, blending etc.
-
-LED anode is positive longer lead
-
-5ATM is 5 atmospheres. 1 atmosphere is about 10m (however calculated when motionless)
-50m for 10 minutes
-
-FRAM (ferroelectric) is non-volatile gives same access properties as RAM
-
-Storage device sizes are advertised with S.I units, whilst OS works with binary so
-will show smaller than advertised (1000 * 10³ < 1024 * 2¹⁰)
-Also, storage device write speeds are sustained speeds.
-So, for small file sizes expect a lot less
-
-A flip-flop is a circuit that can have two states and can store state.
-Various types of flip-flops, e.g. clock triggered, data only etc.
-A latch is a certain type of flip-flop.
-Called this as output is latched onto state until another change in input.
-
-Registers and SRAM stored as flip-flops. 
-DRAM is a single transistor and capacitor
-
-SRAM (static) is fast, requires 6 transistors for each bit.
-So, 3.2billion transistors for 64MB cache. Sizeable percentage of die-area
-SRAM more expensive, faster as not periodically refreshed.
-
-DRAM (dynamic) is 1 transistor per bit refreshed periodically.
-SDRAM (synchronises internal clock and bus clock speed).
-SDRAM. LPDDR4 
-(low-power; double pumping on rising and falling edge of clock, 
-increasing bus clock speed while internal typically stays the same, amount prefetched etc.)
-
-DIIM (Dual In-Line Memory Module) is form factor with a wider bus
-SODIMM (Small Outline)
-
-CAS (Column Address Strobe), or CL (CAS latency) is time between RAM controller
-read and when data is available.
-RAM frequency gives maximum throughput, however CL affects this also.
-In addition, RAM access is after cache miss, so direct RAM latency is only a percentage
-of total latency as time taken to traverse cache and copy to it.
-
-NAND and NOR flash are two types of non-volatile memory
-NOR has faster read, however more expensive per bit and slower write/erase
-NOR used in BIOS chips (firmware will be motherboard manufacturer, e.g. Lenovo)
-A NAND mass storage device will require a controller chip, i.e. a microcontroller
-How the controller accesses the NAND flash, i.e. the protocol under which its 
-Flash Translation Layer operates, will determine what type of storage it is:
-* SD (secure digital)
-* eMMC (embedded multimedia card): Typically SD soldered on motherboard
-(For SD/MMC protocol, will have a RCA, i.e. Relative Card Address for selecting card)
-* USB (universal serial bus) 
-* SSD (solid state drive): Parallel NAND access, more intelligent wear leveling and block sparring
-3D VNAND (Vertical) memory increases memory density by vertically stacking NAND flash
-
-Form factors include M.2 keying and PCIe (Peripheral Component Interconnect)
-Interface includes SATAIII, NVMe (non-volatile memory host controller) and PCIe
-SATA (Serial Advanced Technology Attachment) SSD is the lowest grade SSD.
-A single form factor may support multiple interfaces, so ensure motherboard has
-appropriate chipset
-
-Each CPU socket has memory banks that are local to it, i.e. can be accessed from it directly.
-NUMA (non-uniform memory access) means that accessing memory from a non-local bank will not
-be the same speed. A NUMA-aware OS will try to mitigate these accesses.
-
-RAID (redundant array of independent disks) is method of combining multiple disks 
-together so as to appear like one disk called an array.
-Various types, e.g. RAID0 (striping) some parts of file in multiple disks, 
-RAID1 (mirroring) each disk is duplicate so could give speed increase etc.
-
-Battery will have two electrodes, say lithium cobalt oxide and graphite.
-When going through a charging/discharging cycle, ions move between electrodes.
-So, charging cycles will affect the atomic structure of the electrodes and hence
-affect battery life.
-
-Circuits based on conventional current, i.e. + to -
-Cathode is terminal from which conventional current flows out of, i.e. negative
-
-LiPo (lithium-ion polymer) uses polymer electrolyte instead of liquid.
-Standard lithium-ion has higher energy density, cheaper, not available in small sizes 
-and more dangerous due to liquid electrolyte
-LiPo more expensive, shorter lifespan, less energy, more robust 
-LiPo battery is structured to allow a current to be passed to it to 
-reverse the process of oxidation (loss of electrons), i.e. is rechargeable
-
-Battery 51Watt/hr, which is A/hr * V is not a fixed value, 
-e.g. 1A/hr could run 0.1A for 10 hours 
-
-Petrol cars still use lead-acid as they have lower internal resistance and 
-so can give higher peak current then equivalent LiPo (just not for as long)
-
-HDMI(High Definition Multimedia Interface)-A, C (mini), D (micro) carry audio and visual data
-DisplayPort has superior bandwidth to HDMI
-
-USB-A,USB-B,USB-B(mini)
-USB-C is USB3.0
-
-3.5mm audio jack (3 pole number of shafts (internal wires), 4 pole for added microphone)
-
-Ethernet CAT backwards compatible. 
-
-Telephone cable called RJ11
-
-IEC (International Electrotechnical Commission) power cords used for 
-connecting power supplies up to 250V, e.g. kettleplug, cloverleaf
-
-DC barrel jack
-
-Touch screen types need some external input to complete circuit
-Resistive works by pressure pushing down plastic<-electric coating->glass
-Unresponsive, durable, cheap
-Capacitive contains a grid of nodes that store some charge.
-When our finger touches charge flows through us and back to the phone, 
-changing the electric current read. 
-We are good conductor due to impure water ion in us.
-So, things electrically similar to our fingers will work also like sausages, banana peels
-
-1080i/p
-1080 references vertical height in pixels
-Interlaced means display even and odd rows for each frame.
-Due to modern high bandwith not used anymore.
-Progressive will display each row sequentially for a given frame
-
-4k means horizontal resolution of approximately 4000 pixels. 
-standard different for say television and projection industry, e.g. 3840 pixels
-
-Screen density is a ratio between screen size and resolution measured in PPI (Pixels Per Inch) 
-
-A voltage applied to ionised gas, turning them into superheated matter that is plasma.
-Subsequent UV is released.
-
-LCD (Liquid Crystal Display) involves backlight through crystals.
-IPS (In-Plane Switching) and TFT (Thin Film Transistor) are example crystal technologies.
-For an LED monitor, the LED is the backlight, as oppose to a fluorescent.
-However still uses LCD backlight, so really LED LCD.
-
-Quantum science deals with quanta, i.e. smallest unit that comprises something
-They behave strangely and don't have well defined values for common properites like position, energy etc., e.g. uncertainty principle
-A 'quantum dot' is a semiconductor nanoparticle that has different properties to larger particles as a result of quantum mechanics.
-QLED/QNED (Quantum NanoCell) adds a 'quantom dot' layer into 
-the white LED backlight LCD sandwich.
-
-OLED is distinct. 
-It produces own light, i.e. current passed through an OLED diode to produce light. 
-LTPO (Low Temperature Polycrystalline Oxide) is a backplane for OLED technology.
-
-E-ink display uses less power than LCD as only uses power when arrangment of colours changes.
-
-HDR (High Dynamic Range) and XDR (Extreme Dynamic Range) increase ability
-to show contrasting colours. 
-
-5.1 means 5 speakers, 1 subwoofer
-In order of ascending levels of audible frequencies 20Hz-20000Hz have devices
-woofer, subwoofer, speaker and tweeter.
-
-### Oscilloscope
-oscilloscope default noise is mains (200MHz, 1Gsamples/sec as oppose to multimeter which is maybe 
-10samples/sec so really only applicable for perhaps a logic gate or 0.1hz square wave)
-
-Ensure BNC connector is plugged in correctly (affect probe compensation; similar to banana plugs in multimeter not being plugged in correctly)
-
-IMPORTANT: ensure offset dials are correct first, i.e. at 0 so 0 is centre
-with menu, end-arrows can still be pressed even if not visible
-change to 24mega points for memory when just wanting wave length (not zooming in?)
-
-Continous triggering enables us to view from start point, i.e. static image not free flowing. 
-Will show before and after trigger point, i.e. start in centre of screen
-
-single-shot triggering contact bounce first then ringing as stablises 
-(makes it a balancing act between selecting triggering level for button press and release)
-verify signal ringing (e.g. clock signal), i.e. inspect ramp-up/down (measure time to completely bottom out)
-
-Normal-mode triggering the best of both worlds (will show black screen unless triggered)
-
-Using RS232 (recommended standard) decoder functionality (there is also SPI/I2C decoding).
-https://www.youtube.com/watch?v=SarsWOCMvjg&t=76s
-Also investigate PWM  
-
-math -> decoder on; event table on (make sure zoomed out enough to view multiple packets (this will increase memory automatically?); increase baud also)
-
-
-Schematics useful for looking into electrical diagrams of board components, 
-e.g. mcu pins that are pull-up (will read 1 by default), peripherals (leads to resistors, etc.), st-link, audio, etc.
-
-PSoC is type of MCU made by Cypress where some peripherals can be programmable from software like in a FPGA? 
-Combines FPGA and MCU 
-
-breadboard: eeprom DIP (dual in-line package)
-smd-components: eeprom SOP (small outline package)
-mcus: QFN, QFP, BGA (better thermal)
-TODO: package information QFN 5*5, i.e. 5mmx5mm (QFN is fab process? this is small size so good for portable projects)
-(ultimately want balance of space efficiency and ease of manufacturing, thermal considerations
-
-Whenever some conversion, want to minimise power loss (so, think in watts?)
-Voltage regulators maintain constant voltage across input and load:
-- LDO (low drop-out): drop-out is minimum voltage difference for correct functionining 
-- buck converter/step-down (more complex, more efficient, wider range of input and load voltage)
-
-synchronous (more expensive than asynchronous) switching (more expensive than linear) step-down (or buck) regulator
-(expensive as gets higher efficiency at lighter loads)
-
-Dev. section may have a USB-UART chip
-
-is 12-bit SAR (successive approximation) ADC with 18 channels good?
-
-RTC is intertwined with low-power functioning, i.e. when main cpu in deep sleep (has own power source, can signal awake)
-
-Schematic has power supply, crystal (ppm parts per million is how much crystal will deviate), flash and RF antenna 
-Does the minimum system schematic mean the essential components that have to be connected to the MCU for it to work? 
-So the simple minimum system here makes PCB design simpler
-However, are all schematics shown indicative of this 'minimum system'?
-
-* Multimeter: continuity
-* Logic Analyser: communication protocol
-
-
-### LCD
-Will interact with a display like Nokia 5110 (resolution, monochrome) via relevent driver, e.g. PCD8544 (SPI)
-* CMOS:
-* IPS: clear, more power
-* OLED
-
 ### Memory
 RAM usage:
   .cinit (globals and static with initialisers)
@@ -1957,20 +2067,9 @@ Going from devboard, e.g. Discovery to PCB:
     (can actually search for product on ffcid.io)
 
 ## DFU
-Schedule slips, so decide features included in update in the field 
-(even more so as time between sending to factory and in user hands is a few months for consumer products)
+A bootloader can also validate code.
 
-On board bootloader cannot be changed after leaving factory
-Code will be communicated to it and written to codespace
-If programming fails due to power outage, bootloader can retry
-Really only use on-board bootloader if multiple MCUs or bootloader is built into silicon for extremely resource constrained
-(multiple MCUs useful for low-power as can have large one mostly dormant until required?)
-(or STM MCU and say a BLE MCU?)
-
-We want an custom bootloader:
-  * both bootloader and runtime code updated separately
-  * code can be validated
-  * 2x size of programmed code in flash
+Really only use on-board bootloader if built into silicon for extremely resource constrained.
 
 Use CRC (hash is better) to ensure image sent is image recieved 
 Also, sign so we know where it came from
@@ -1991,124 +2090,42 @@ Memory layout in Flash
   * nv storage? (could also have some storage system, file system etc.)
   * bootloader?
 
-
-## Power
-Perhaps variable power at 2V for 3.3V to test in low power situations
-
-Seems that common to sleep at end of superloop and wait for an interrupt to occur?
-
-For low power, sleep has to be at forefront (long and as deep as possible)
-We don't explicitly wait for things to happen
-More concerned with peripherals, rather than actual core
-
-Reduce power by reducing:
-  * Voltage, Resistance (component selection, e.g. less components in sensor)
-  * Current (less code)
-  * Time (slowly, sleep)
-
-Light sleep (low milliamp to microamp)
-Deep sleep (microamp)
-Hibernate (nanoamp; here things like cleanliness of board matter, e.g. flux)
-
-Low Power Questions (At Start):
-1. How big battery can fit and what price?
-11mm x 4mm ($5)
-Found 40mAh, 3.7V
-2. How long must unit work between charging?
-At least 24 hours
-System can average (0.004 / 24) mA
-3. What are estimated pieces of system?
-oled (12mA, 0), accelerometer (0.165mA, 0.006mA), battery
-on state last (), sleep state last ()
-We see that cannot be on all the time, as average current less than what battery can provide
-4. Resultant restrictions
-Tweak on percentage until average current usage is within bounds
-Screen only on 5% of time
-
-Low Power Questions (At End):
-1. Different states device can be in?
-on, light sleep
-2. How long in each state
-on 5 seconds every 5 minutes, i.e:
-on (5seconds, 0.02), sleep (300seconds, 0.98)
-3. How much current in each state
-on (12mA), sleep (0.14mA)
-4. How long device last on 40mAh battery?
-(0.004) / ((0.12 * 0.02) + (0.00014 * 0.98)) hours
-
-Always use internal pull-ups if possible (sometimes not because too weak),
-so can disable for lower power
-
-They might ask you how they work, where they would be appropriate to use, what tradeoffs there might be among various options, how you would implement them.
-## Protocols
-IMPORTANT: know MISRA C subset (i.e. so can say embedded C)
-    Serial
-    USB
-    Ethernet
-    WiFi
-    Bluetooth
-    Zigbee
-    Cellular
-    checksum, TLS, CRC, OSI, TLS, AES, PID, feedback loop, flash filesystem
-
-NB-IoT (narrowband, i.e. low power). 
-Also have CoAP (constrained application protocol) for embedded devices to access Internet 
-
-Intel thunderbolt faster than USB-C, yet ports still look very similar
-
-(TODO: give protocol speeds!)
-QSPI can be used without CPU with data queues
-MIDI (Musical Instrument Digital Interface) 3 byte messages that describe note type, how hard pressed and what channel
-
-SPDIF (Sony Phillips Digital Interface) carries digital audio over a relatively short distance
-without having to convert to analog, thereby preserving audio quality.
-
-QI is a wireless charging standard most supported by mobile-devices for distances up to 4cm
-FreePower technology allows QI charging mats to support concurrent device charging
-
-* USART: 
-* SPI:
-* I2C:
-
-infrared is heat. LED can give of narrow band of infrared.
-Therefore, can be used as an IR remote control that requires line of sight.
-Hence RMT (remote control reciever) refers to infrared
-the lackof modulation and frequency range of human IR reason for not triggering IR reciever
-
-In fact fastest possible is USB. If enough pins, SPI as simpler than I2C
-
-CAN
-
-TODO: AES, RSA, SHA, RNG
-
-I2S for reading microphone? So I2S PCM interface for audio? 
-
-SDIO is high-speed SD card protocol, (sd 3.0?)
-NO, SDIO IS FAST SPI?
-
-TODO: what is considered fast in embedded, e.g. 5MHz for I2C, 10us for loop?
-
-PCM (pulse code modulation) requires changing values to generate noise
-
-UWD (ultra-wideband) is short range RF used to detect people and devices
-
-* JTAG (Joint Test Action Group):
-hardware interface to connect chips to testing hardware
-Testing method in standard is known as a boundary scan
-TAP (Test Access Port) is on supported chip that is controlled with TMS signal.
-Contains IR and DR registers. Will process JTAG instructions
-TDI, TDO, TCK, TMS, TRST (optional)
-
-jtag flashing faster than uart as parallel
-
-
-* UART
-EN/RST (enable/reset) signal will trigger a hard reset
-asserting BOOT button will trigger DTR/RTS RS-232 signal to put board in download mode after reset
-due to improper FTDI serial driver while holding BOOT button press EN and flash
-$(dmesg | grep /dev/ttyUSB0; lsof; dialout group)
-
 ## Wireless
+  * heartbeat log (to show alive, e.g. power usage and battery life)
+
+Now, as scaling to 1million devices; will encounter 1 in a million problems
+
+IoT (all require some form of online device sign up?):
+  * BLE -> Phone -> WiFi (portable)
+    id 
+  * WiFi (stationary)
+    SSID, password, AP mode
+  * Cell modem (portable constant coverage)
+  * Lora (intermittent data; not really for consumer products as configuration esoteric, noise susceptible and particular base stations)
+  (ZigBee like BLE and WiFi but slow)
+
+curl -H "Authorization: Bearer <access-token>" https://api.particle.io/devices -d arg="D7 HIGH"
+
+webpage on cloud. when connected to esp32 ssid, then send credentials.
+will send a packet to device ssid.
+turn esp32 into softAP. have user connect to its SSID and input credentials via webpage 
+
+amazon s3 doesn't support https.
+however using amazon cloudfront cdn can reroute http to https
+(require CNAME setting on site DNS...?)
+
+Cloud excels when application simple and low traffic (managing a large application in the cloud is just as difficult as on bare metal)
+Or, your traffic patterns are unpredictable
+Otherwise, paying an unjustified premium
+
+Serverless is just a term for a caching server closer to clients
+
+https://github.com/icopy-site/awesome/blob/master/docs/awesome/Awesome-Game-Networking.md?plain=1
+
+Networking Chapter in the book Hacking The Art of Exploitation
+ 
+Distinction between unicast (device to device), multicast (device to some devices) and broadcast (device to all devices) is at network layer 3. (the signals are all technically recieved)
+
 ### App-Device
 https://www.youtube.com/watch?v=DEFPSfLRObk
 https://www.youtube.com/watch?v=WeXjPkm4djg
@@ -2193,81 +2210,6 @@ Ionising X-Rays
 Ionising Gamma-Rays
 Sterilisation and radiotherapy
 
-## Wireless Protocols
-ISM (Industrial, Scientific and Medical) bands (900MHz, 2.4GHz, 5GHz) occupy unlicensed RF band.
-They include Wifi, Bluetooth but exclude telecommunication frequencies
-
-GNSS (Global Navigation Satellite Systems) contain constellations GPS (US), GLONASS (Russia), Galileo (EU) and Beido (China)
-They all provide location services, however implement different frequencies, etc.
-
-GSM (Global System for Mobile Communications) uses SIM (Subscriber Identification Module) cards to authenticate (identity) and authorise (privelege) access
-
-4G (Generation; 1800MHz) outlines min/max upload/download rates and associated frequencies.
-Many cell towers cannot fully support the bandwidth capabilities outlined by 4G. 
-As a result, the term 4G LTE (Long Term Evolution) is used indicate that some of the 4G spec is implemented.
-More specifically have 4G LTE cat 13 to indicate particular features implemented.
-
-SMS (Short Message Service) are stored as clear text by provider
-SS7 (Signaling System Number 7) protocol connects various phone networks across the world
-
-Between protocols, tradeoffs between power and data rate
-IEEE (Institute of Electrical and Electronic Engineers):
-* 802.11 group for WLANs (WiFi 6E - high data rate), 
-* 802.15 for WPANs; 802.15.1 (Bluetooth), 
-* 802.15.4 low data rate (ZigBee, LoRa, Sigfox, Z-Wave)
-
-Wifi, Bluetooth, ZigBee, Z-Wave (lowest power) are for local networks.
-LoRa is like a low bandwidth GSM
-LoRa (Long Range) has low power requirements and long distance. AES-128 encrypted by default.
-LoRa useful if only sending some data a few times a day.
-LoRa has configurable bandwitdh, so can go up to 500KHz if regulations permit
-Lower frequency yields longer range as longer wavelength won't be reflected off objects. Will be called narrowband
-Doesn't require IP addresses.
-LoRaWAN allows for large star networks to exist in say a city, but will require at least 1 IP address for a gateway
-Sigfox uses more power.
-
-A BLE (Bluetooth Low Energy) transceiver only on if being read or written to
-GATT (Generic Attribute Profile) is a database that contains keys for particular services and characteristcs (actual data) 
-When communicating with a BLE device, we are querying a particular characteristic of a service
-
-A QR (Quick Response) code is a 2D barcode with more bandwidth. Uses a laser reader.
-RFID (Radio Frequency Identification) does not require line-of-sight and can read multiple objects at once. 
-Uses RFID tag. 
-NFC (Near Field Communication) is for low-power data transfer. 
-Uses NFC tag
-
-TV standards
-Americas: NTSC (30fps, less scanlines per frame) 4.4MHz
-Europe, Asia, Australia: PAL (Phase alternate line) (25fps) 2.5MHz
-
-
-## Sensors
-MEMS (Micro Electro Mechanical Systems) combines mechanical parts with electronics like some IC, i.e. circuitry with moving parts.
-e.g. microphone (sound waves cause diaphragm to move and cause induction), accelerometer, gyroscope (originally mechanical)
-
-On phone, many sensors implemented as non-wakeup.
-This means the phone can be in a suspended state and the sensors don't wake the CPU up to report data
-
-Accelerometer measures rate of change in velocity, i.e. vibrations associated with movement (m/s²)
-So can check changes in orientation.
-It will have a housing that is fixed to the surface and a mass that can move about.
-Detecting the amount of movement in the mass, can determine acceleration in that plane.
-
-Gyroscope measures rotational acceleration, unlike an accelerometer which is unable to distinguish it from linear (rad/s²)
-Gyroscope resists changes to its orientation due to intertial forces of a vibrating mass.
-So can detect angular momentum which can be useful for guidance correction.
-
-A gimbal is a pivoted support that permits rotation about an axis
-
-IMU (Inertial Measurement Unit) is an accelerometer + gyroscope + magnetometer (teslas)
-The magnetometer is used to correct gyroscope drift as it can provide a point of reference
-
-Quartz is piezoelectric, meaning mechanical stress results in electric charge and vice versa.
-In an atomic clock, Caesium atoms are used to control the supply of voltage across quartz.
-This is done, in order to keep it oscillating at the same frequency.
-
-NTP (Network Time Protocol) is TCP/IP protocol for clock synchronisation. 
-It works by comparing with atomic clock servers
 
 
 ## CPU
@@ -2436,7 +2378,6 @@ VP9 is a open source Google video coding format
 
 When people say vector operations, they mean SIMD.
 SSE registers are 128bits (4 lanes) XMM, AVX are 256bits (8 lanes) YMM
-TODO: performance-aware; vector slightly different properties to sse?
 
 Average CPU die-size is 100mm².
 GPU much larger at 500mm² as derives more benefits from more control units, i.e. parallelisation
@@ -2476,28 +2417,8 @@ Cache coherency performance issues are difficult to debug,
 e.g. one value changed in cache line invalidates it, even though another value in cache line
 remains unchanged
 
-
-
-
-## Clocks
-
-## Timers
-Start out by setting prescaler low to give as much resolution as possible (power savings neglible)
-Play with prescaler and period values that fit within say 16 bits provided
-e.g:
-24MHz / 24 = 1MHz, so ns resolution
-2000 period is 2ms
-
-
-pwm
-
-## Driver
-Technically everything with an 'if' is a state machine
-If have to give to QA, encode in a spreadsheet to present as a state table
-Adding a state is cheap
-TODO: understand table based state machine
-
-## Motion
+## Peripherals
+IMU:
 A MEMS IMU sensor giving 9DOF, should be pre-calibrated and hopefully digital to avoid analog noise:
 * accelerometer (90% of time tell us which way is down, i.e. what side are you facing)
 * gyroscope (how fast is something turning/rotating, i.e. gesture detection)
@@ -2513,8 +2434,36 @@ Used to remove discontinuities, e.g. 359-0 boundary
 
 Like cryptography, use well established boffin libraries
 
-## Peripherals
+
+Timer:
+Start out by setting prescaler low to give as much resolution as possible (power savings neglible)
+Play with prescaler and period values that fit within say 16 bits provided
+e.g:
+24MHz / 24 = 1MHz, so ns resolution
+2000 period is 2ms
+
+DMA:
+A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU
+The system bus (could be cortex-m AHB) that connects each can only be used at one time. 
+So, DMA arbitration occurs on channels. 
+In general DMA copies data from place to place
+CPU analyses data
+CPU should be used to analyse data
+
+ADC:
+When using ADC, must know nature of signal:
+- Ensure can sample at relevent Nyquist 
+- If noisy, might need a low-pass filter
+- If high dynamic range (ratio to lowest/highest) will need higher bit depth (which in turn gives lower quantisation errors)
+- If pure signal should, low bit depth to save on data
+
+Reference voltage for analog sensors and ADCs is main source of noise, so it should be as stable as possible
+
 TODO: Have excel spreadsheet with these peripheral calculations
+
+Spreadsheet to encode state machine for QA.
+Often drivers are state machines
+
 TODO: also have a power section (e.g. how many volts, does it have low-power mode?)
 
 Circular buffer size deal with tangibles, e.g. seconds, temperature values, etc.
@@ -2524,20 +2473,10 @@ Does board have enough RAM + Flash (internal and external) + CPU power?
 (12bits * 512Hz * 2channels) * 1.2protocol-overhead = 1.8kBps 
 looking at UART baud rates, we see that it satisfies (no need for USB)
 
-### ADC
-When using ADC, must know nature of signal:
-- Ensure can sample at relevent Nyquist 
-- If noisy, might need a low-pass filter
-- If high dynamic range (ratio to lowest/highest) will need higher bit depth (which in turn gives lower quantisation errors)
-- If pure signal should, low bit depth to save on data
-
-Reference voltage for analog sensors and ADCs is main source of noise, so it should be as stable as possible
 
 ## Error Handling
 Have all codepaths be able to operate on 0/nil input (no needless validation)
-
 If needing to inquire about warnings, return in addition to result.
-
 Error is when cannot possibly continue. Aim for early into callstack:
 1. Go to failsafe, i.e. rollback state to known good condition (retry, reboot, wait)
 2. Crash and wait for reboot
@@ -2546,50 +2485,24 @@ Log warnings and errors:
  - dev: capture state of the device (heap, stacks, registers, firmware version, the works) and breakpoint
  - release: error code (everything if error)
 
-Now, as scaling to 1million devices; will encounter 1 in a million problems
-  // if could fail, log
-  // if unlikely to fail, just log and if crops up with testing then handle 
-  // TODO: add this as things to check in these tests: (a lot of system libs fail due to lack of memory, permissions etc.)
-  // if likely to fail, handle
-
-
-## DMA
-A certain configuration of peripheral data-register <-> DMA2->channel 0->stream 1 will be set by MCU
-The system bus (could be cortex-m AHB) that connects each can only be used at one time. So, DMA arbitration occurs on channels. 
-
-In general DMA copies data from place to place
-CPU analyses data
-CPU should be used to analyse data
-
-
 ## Battery
-To ensure within ADC limits, attach a voltage divider. Having 2 resistors will give slightly more current to prevent slower sampling times.
-Could use optocoupler board (EVAL-ADuM4160EBZ) when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
+Battery monitor, to ensure within ADC limits, attach a voltage divider. 
 
-about power investigation (importance of having subsystems): 
-https://twitter.com/josecastillo/status/1491897251148533769
-https://twitter.com/josecastillo/status/1492883606854942727?t=Wlj1lyg3WgWpewxXkvFPOw&s=19
+Could use optocoupler board (EVAL-ADuM4160EBZ) 
+when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
 
+peripheral clock source can affect power.
+faster clock, more power.
+however, a 32KHz accurate crystal more voltage than less accurate oscillator
 
 ## Testing
-Software breakpoint requires modification of code to insert breakpoint instruction
- * bugs not just in domain of software. 
-   however, best to assume software, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
-   (necesity of HIL to reveal hardware issues?)
+Assume software bug, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
 
-EM100Pro-G2 SPI NOR Flash Emulator
+TODO: POSTS tests like checking battery level, RAM R/W, CRC check? (castor-and-pollux test types)
 
-Have standard unit/integration tests and 
-   POST (power-on-self-tests) which run every time on board power-up
-  TODO: POSTS tests like checking battery level, RAM R/W, CRC check? (castor-and-pollux test types)
+Serial console essential for embedded device for HIL, power analysis and problem reproducability
 
-ESSENTIAL:
-serial console (performs HIL testing to MCU works with each peripheral successfully before putting in enclosure) 
-(can be used to create a reproducible problem on multiple boards; or on cue for an oscilloscope capture/EE to see)
-
-for console command groups, have a turn on and turn off command for power analysis
-
-Software should be flexible to hardware changes
+Emulators for thorough HIL, e.g. aardvark spi/i2c, empro flash etc.
 
 # RTOS
 Provides:
@@ -2634,10 +2547,6 @@ Generally have clear must high priorities and others determined in development.
  
 Zephyr an RTOS towards linux with lots of drivers and associated configuration hassles.
 
-
-## RTOS
-
-
 Superloop would be a task. Periodically queue and dequeue data from interrupts
 
 Even without RTOS, still have a timer subsystem and separation of tasks, which is backbone of RTOS
@@ -2672,17 +2581,3 @@ Various implementations of locks:
 * Hybrid Mutex/Spinlock
   Most OSs implement them for efficiency.
   They will first behave as a standard mutex/spinlock that will revert to the other after some predefined condition
-
-## IOT
-  * heartbeat log (to show alive, e.g. power usage and battery life)
-
-IoT (all require some form of online device sign up?):
-  * BLE -> Phone -> WiFi (portable)
-    id 
-  * WiFi (stationary)
-    SSID, password, AP mode
-  * Cell modem (portable constant coverage)
-  * Lora (intermittent data; not really for consumer products as configuration esoteric, noise susceptible and particular base stations)
-  (ZigBee like BLE and WiFi but slow)
-
-
