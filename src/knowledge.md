@@ -1,16 +1,19 @@
 # Performance
 TODO: refer to 'perf' repo
 
+Compile with different compilers to see performance benefits at end.
+
 how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
 so, IO line if want to reduce timing overhead
 could take several lines together and send out on a DAC to combine into a single signal for easier viewing
 
-  TODO: https://jaycarlson.net/microcontrollers (for stats about mcus)
-  want to be able to measure current and cycles
+measure ISR latency, cycles, power usage; relate to CPU frequency
+
+Often need to guarantee response in say 40ms. 
+Generally in embedded, 5ms is an eternity for an ISR.
+Conceivable for 25us of work.
 
 Map file can be used to see what is taking up RAM or Flash, e.g. string constants
-Look at largest consumers first
-Could be monolithic library functions that need replacing
 
 Taylor series useful for approximating functions, e.g. quicker to perform Taylor series expansion of say `e**0.1`
 
@@ -21,14 +24,13 @@ With UART, recieve an interrupt per byte.
 With DMA, recieve an interrupt per packet.
 So, if 400Kb/s, interrupt difference is considerable.
 
-Often need to guarantee response in say 40ms. 
-Know CPU frequency and routine cycle count.
-Generally in embedded, 5ms is an eternity for an ISR.
-Conceivable for 25us of work.
+A power supply will have 'settling time' before sending a power good signal.
+This time is to charge capacitors, feedback stabilisation etc.
 
-And it frequently comes from someone asking how long it takes this system to boot. Oh around 600 uS"
-Most of which is waiting for the power supply to settle down and send the power-good signal...
-Or the PLL to lock, or the 32 khz crystal to stabilize
+And it frequently comes from someone asking how long it takes this system to boot. 
+System boot time is typically around 600 uS.
+This time is largely waiting for PSU to settle.
+Then time for PLL to lock onto reference clock or crystal to stabilise.
 
 For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
 UDP much better as no 3-way handshake.
@@ -36,31 +38,14 @@ Balance between compression for speed or resultant size.
 
 https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
 You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
-e.g. establish a baseline for idle system, then enable some component and check the difference from idle.
+e.g. establish a baseline for idle system, 
+then enable some component and check the difference from idle.
 e.g. log power usage during a wireless transmission
-
-verify with a profiler: 
-stm32 better ADC accuracy, lower ISR latency, good documentation, better power efficiency, more IO
-
-Using third party libraries like ESP-IDF opens up to issues like setting wake up pin enables an internal pull-up resistor behind-the-scenes, 
-causing unstable wake times
-
 
 - Full HD (1920x1080) @ 60fps @ 8bit-colour
 Assume 20cycles per pixel. 10cycles pixel transfer.
 (1920x1080x60x8) x (20 + 10) = min. frequency
 Now, although bandwidth linked to frequency, ignores cache hits etc.
-
-A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
-
-memory bus set up to transfer 4 bytes at a time on exactly 4 byte boundaries.
-this alignment is for hardware efficiency
-if unaligned, and if the hardware supports it, 2 cycles required to get 4bytes
-
-
-signed + unsigned (unsigned converted to signed)
-will typically do sign extension when converting from signed to unsigned
-
 
 # DSP
 Shannon-Nyquist: sampling rate at least twice highest frequency component to prevent aliasing.
@@ -70,6 +55,13 @@ You will always need a lowpass filter before you quantize your signals.
 Plotting an FFT of signal can see noise. 
 If noise overlaps with our band, then require noise cancellation, otherwise bandpass filter.
 
+Convert from time-domain into frequency-domain to divide signal into various subcarrier frequencies.
+This allows to send parallel data, i.e. higher bandwidth in 5G
+FFT developed to detect nuclear testing
+Thermonuclear/hydrogen bomb first uses fission which triggers fusion
+Peace sign made by combining semaphores of N and D (nucler deterrant)
+Around 55 earthquakes a day
+So, FFT to have fast way determining underground nuclear tests
 
 # OS
 Micro and monolithic kernel just features of kernel.
@@ -124,46 +116,6 @@ ieee 802.11 group for WLANs (wifi - high data rate),
 802.15 for WPANs; 802.15.1 (bluetooth - le variant - heavily used in audio), 
 802.15.4 low data rate (zigbee implements this standard)
 
-# Other
-Resistance is purely electric opposition to current flow.
-Impedance is total opposition to current flow.
-When current flows, creates magnetic field.
-For AC, as current changes direction, magnetic field decreases inducing an opposing voltage.
-So, higher frequencies, higher impedance. 
-
-high impedence is floating as no good path for current to flow.
-have tri-state GPIOs for multi-bus controllers, i.e. all but one floating so as to not create short circuit.
-
-A channel in a sensor is quantity measured. 
-So an acceleration sensor could have 3 channels, 1 for each axes
-
-Investigate gcc tunables, e.g. in debug build: export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
-
-Excel can livestream graphs (useful for serial output)
-
-May compile for different architectures in embedded for different product lines 
-e.g. low-end fit bit, high-end fitbit
-
-Compile with different compilers to see performance benefits at end.
-Also possible may have to use a particular compiler for specific hardware.
-
-verification: requirements
-validation: does it solve problem
-authenticate: identity
-authorise: privelege
-token something used to authorise 
-
-HTML not turing-complete, i.e. can't perform data manipulations
-
-embedded systems special purpose, constrained, 
-often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
-challenges are testabilty and software/hardware comprimises for optimisation problem solving, e.g. bit-banging or cheap mcu, external timer or in-built timer, adding hardware increases power consumption, e.g. ray tracing card or just rasterisation, big.LITTLE clusters
-1/4 scalar performance for 1/2 power consumption good tradeoff
-
-malloc and printf are not reentrant 
-
-Garbage collection search is not free
-
 # ARM
 The CPU architecture will have an exception (a cpu interrupt) model. 
 Here, reset behaviour will be defined.
@@ -202,18 +154,6 @@ therefore, at the front will have a table comparing memory, number of gpios, etc
 
 Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
-
-# IOT
-REST:
-curl -H "Authorization: Bearer <access-token>" https://api.particle.io/devices -d arg="D7 HIGH"
-
-webpage on cloud. when connected to esp32 ssid, then send credentials.
-will send a packet to device ssid.
-turn esp32 into softAP. have user connect to its SSID and input credentials via webpage 
-
-amazon s3 doesn't support https.
-however using amazon cloudfront cdn can reroute http to https
-(require CNAME setting on site DNS...?)
 
 # Hardware
 PLCs are hardened (physically and electrically) over typically SoC
@@ -261,11 +201,6 @@ The feedback of the output frequency into the initial phase detector can be chan
 Adding dividers/pre-scalers into this circuit allows to get programmable voltage.
 So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
 
-TODO(Ryan): Why is a floating pin also called high impedance?
-To avoid power dissipation and unknown state, 
-drive with external source, e.g. ground or voltage.
-
-Pull-up/down resistors are to used for unconnected input pins to avoid floating state
 So, a pull-down will have the pin (when in an unconnected state) to ground, i.e. 0V when switch is not on
 
 Vdd (drain, power supply to chip)
@@ -302,7 +237,6 @@ although bluetooth LE say 50m distance, a repeater can be used (and really for a
 H-bridge is IC that switches voltage polarity, e.g. run DC motors forwards or backwards
 Rectifier converts AC to DC (transformer is high voltage AC to low voltage AC)
 
-
 Might see GNSS + INS (inertial navigation system; i.e using IMU as well)
 
 MEMs accelerometers for vibration detection in cars
@@ -320,8 +254,6 @@ position fundamental (e.g. 3D printers)
 
 RJ45 connector
 
-astable means no stable states, i.e. is not predominatley low or high, e.g. square wave, sine wave etc.
-oscillator generates wave (could be for carrier or clock)
 
 RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
 internal mcu oscillators typically RC, so subject to frequency variability
@@ -335,7 +267,6 @@ overall optimisation should always be at forefront
 If wanting to create a new implementation of a function, 
 perhaps don't just delete it entirely, rather change its name to func_old()
 
-ingress (act of entering), egress used for traffic
 
 struct padding largest value wants to be on a byte boundary that is divisible by itself
 trailing members may have padding also to ensure consecutive structs in array are aligned as well
@@ -347,12 +278,11 @@ IN GENERAL, COMPUTE DON'T LOOKUP, e.g. store width, height: compute area
 Remove values that can be computed. Reduces possibility of bugs
 As math is effectively 'free', we can reduce memory size also
 
-If value is very expensive to compute, then wrap dependent values in function, e.g. set_width()
+If value is very expensive to compute, 
+then wrap dependent values in function, e.g. set_width()
 
 IMPORTANT: BUFFER ITERATIONS, USE STRIDE FOR GREATER FLEXIBILITY
 `void colour_iterate(u8 *colours, u32 count, u32 stride);`
-
-IMPORTANT: WANT TO WRITE CODE. NOT STANDALONE, BUT AN EVER HIGHER MOUNTAIN OF KNOWLEDGE.
 
 c compiler can reorder.
 AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due to reordering
@@ -370,38 +300,9 @@ could be more, in fact anything not explicit defined is undefined.
 there could be more undefined behaviour waiting to be noticed. 
 it's just because C is 50 year old language that many corner cases explored
 
-compiler assumes that code that is undefined behaviour cannot be reached and so will optimise away
-GET INTO HABIT OF USING LIKELY AND UNREACHABLE?
-
-coroutine is function that can be suspended at any point, and resume later
-
-asynchronous programming just make things harder to debug;
-
 DIFFERENCE IN APPROACH TO WORKING ON TEAM AND STAGE OF PROJECT
 on a team, 'proper' commit should change one thing and have accompanying tests.
 So, write explorative code on branch and merge when done
-
-perhaps start with this:
-https://github.com/TheSandvichMaker/netgame
-and improve with glenn fielder?
-glenn fielder networking
-codersblock
-javidx9 mmo
-
-techlinked + michel tunnell (this week in linux)
-
-When working with array, always check if length > 0
-
-For production, probably want to `dlopen()` to provide fallbacks for missing libraries 
-
-
-always in software development will have things that aren't working optimally. know they are there.
-will later go back and fix them when required (e.g. when in quality improving mode). 
-just know this will always happen
-
-Working with modern software is going to be a pain at some point.
-Have to stay strong and not belittle situation, rather accept it and move on.
-At times, have to get off high horse and roll up your sleeves.
 
 Linux issues: 1. runtime configurability (difficult part not API, but what to do when settings aren't exact, i.e. what to fall back on when abstraction not there). 2. multiple binaries
 Although possible to dynamically load core libraries like xlib/wayland/alsa and support
@@ -413,21 +314,13 @@ Furthermore, multiple CRT to support, e.g. muslc for Alpine
 Linux desktop suffers from binary compatibility nightmare, e.g. 15 binaries to support all. 
 This is because libraries like glibc are happy to break abi to get minor improvements, e.g spec says this so let's do it even though no one cares
 
-There are no absolutes, just tradeoffs for solving your problem, e.g raw vs smart pointers
-
-Often issue is not hard code, it's because the problem is messy, i.e.  Unwritten assumptions,  
-external constraints, users want lots of generic functionality. 
-So often interesting at the same time, very annoying. 
-
-combinations: 2ⁿ-1, max: 2ⁿ
 introducing negatives we effectively remove one bit
 numbers represented in twos complement to handle addition/subtraction of negatives and positives.
 not because of representation, e.g. sign bit would work fine
 when saying complement, it's with respect to negative number handling:
 ones ➞ invert all bits in positive number to get negative. therefore have -0
-twos ➞ adding a positive and its negative will get a 2 in each place. think about the MSB as the negative place, hence why -1 is all 1s
-
-dave's garage, what's a creel
+twos ➞ adding a positive and its negative will get a 2 in each place. 
+think about the MSB as the negative place, hence why -1 is all 1s
 
 (Serial Advanced Technology Attachment)
 important that these are sustained speeds, so for small file sizes expect a lot less as seconds smaller
@@ -661,179 +554,11 @@ we compromise on r² and √2
 without gamma correction, resultant image will look very dim (due to nature of monitor gamma curve) 
 so with rgb values, preface with linear or srgb
 
-## OS 
-Further proliferation of OSs, e.g. Touch Ubuntu, Edubuntu, Kubuntu etc.
-
-Google wants RISC-V as tier-1 architecture for Android. 
-Part of further push for open source usage so as to not pay licensing fees, 
-e.g. developing their own video codec etc.
-
-Code maintainability the main drawback in reaching a situation where programmers 
-simply query LLM (Large Language Models) and just clean up the output?
-
-New display electroluminescent quantum dots to possible replace OLED
-New memory packaging with higher density to replace SO-DIMM, CAMM (Compression Attached Memory Module)
-Skeptical about copilot AI code writing as doesn't understand architectural issues and beyond.
-
-## Other
-Intel thunderbolt faster than USB-C, yet ports still look very similar
-
-Skeptical of announcements made by budget-starved laboratories (e.g. universities) about breakthroughs for technologies decades away, e.g. fusion 
-There are often caveats, e.g. rarefied and furthermore, commerciality is most likely decades away
-
-Seems that bipartisan government action required to fix rats nest of drivers in modern OSs in a similar vein to EU enforcing anti-competitive laws on Apple to allow third-party apps, USB-C etc.
-
-Have to be careful not to engage in technological contempt culture, e.g. language wars.
-As technology changes rapidly, address changes with temperance
-
-If social media was all RSS (really simple syndication), things would be much simpler
-
-Mass production to TMSC advanced 3-nm chip underway
-Unfortunately most likely due to Samsung chips having low yield, 
-they don't have high QA for voltage regulation as compared to TSMC
-
-Unikernel has applications bundled inside kernel (so like eBPF) for high performance
-
-Amusing Dead Internet Theory that the Internet died around 2016 and is now largely bots
-
-Interesting can just buy off the shelf drone and attach something like an ESP32 to send data back to us
-
-Like 'Scrum Certification' now with Matter have an official certification process
-
-Have GPU microarchitectures like RNDA.
-
-Chiplets seem future of shrinking size and expanding computing power, now seen in GPUs
-They can be easily be recombined to create custom designs
-
-VSR (virtual super technology) has GPU scale to 4K and then downscale if necessary to monitor's resolution
-However, if want say 8K gaming, will require a DisplayPort cable
-
-Resistive RAM uses analog memory cells to store more information with less energy
-
-Silicon carbide power supplies more efficient
-
-Unfortunate that Intel releasing software-defined-silicon, i.e. pay-as-you-go to enable certain hardware features
-
-
-interesting set of questions to inspect a software engineering workplace:
-https://neverworkintheory.org/2022/08/30/software-engineering-research-questions.html?utm_source=tldrnewsletter
-
-MOSFETs are a type of transistor.
-different transistors for say quick-switching, low signal, high frequency, amplifier etc.
-
-USB-4, PCI5, DDR5 emerging standards.
-
-Could buy a GPU for running interesting machine learning applications like Stable Diffusion (prompt engineers, oh dear...)
-https://www.krea.ai/
-GPU structure similar to CPUs, e.g have cache, GDDR6 memory (more simple parrellisation)
-
-interestingly CRT can scale better than fixed-set resolution LCD
-
-new TV monitor combination QD-OLED
-curved monitors less fatiguing as physically matches our eye's shape
-flexible/bendable monitors no one asked for...
-
-cool looking completely submerged server desktops. 
-pure water is a very good insulator (our tap water will have chlorine for example)
-obtained via ozone treatment
-
-	static_assert((sizeof(sound_signature) / sizeof(*sound_signature)) >= 4,
-		"There should be at least 4 elements in this array.");
-
-PLC more expensive microcontroller that is more versatile, e.g. handle voltage overload (often used in assembly lines)
-
-doesn't seem like quantum computers will be able to solve any practical tasks 
-(unless program exploits quantum parrelism to a large extent)
-
-it's sad, but you really could do a stand-up of modern software projects, e.g.
-"introducing Goliath, an automatic external dependency manager. 
-under the hood we use a Nextrus package manager.
-can be scripted with Freasy language extension of Frosty core language"
-
-eyes convert photons to electrochemical signal
-transduction converts one energy form to another
-CCD (charged couple device; less noise, more power, lower speed) and CMOS (consumer grade) common camera sensors
-digital cameras convert photons to array of pixels, represented as voltage levels
-quad pixel camera sensor combines four adjacent pixels in this array
-
-round design of new Nvidia GPU may be evidence for the 20-year cyclical nature of fashion
-
-YouTube no respect for customers, running clandenstine experiment running up to 5 ads at the start instead of spacing them out
-Furthermore, Mozilla researchers found that buttons like 'Stop recommending', 'Dislike' have next to no effect
-
-Cool USB SAMD boards (possible malware creation)
-
-Finally, alleviating ambigious USB 4.0 v2.0 naming scheme with devices having clear
-USB 40Gbps, 240W printed on them
-
-Record breaking DDos attacks, 17.2million requests per second, 3.4terabits per second, 809million packets per second
-
-Google have size to challenge Dolby with new HD audio standard.
-However, whilst seeming altruistic, is just so they don't have to pay Dolby licensing fees in their hardware 
-
-Interesting Domain Brokerage services to allow you to get already used domains
-
-Cool application of IoT: https://hackaday.com/2015/11/24/building-the-infinite-matrix-of-tamagotchis/
-
-Serverless is just a term for a caching server closer to clients
-
-## Companies
-How nice that Apple's anti-tracking crackdown only applies to third-party apps
-
-With the growth of hardware, really seems that adaptive learning algorithms are going to be used instead of solving the problem explicitly
-
-Although decentralisation sounds good (own cell network etc.), 
-it requires user maintenance which people will pay others to do and we're back to square one in a way
-
-It really isn't tinfoil hat mentality to be wary of updating unless necessary, e.g. most recent kernel patch affected Intel graphics displays
-
-Thanks to TCC compiler, can compile C in memory and load it, hence using it in some way like a scripting language
-
-Despite new phones offering a plethora of new features, don't assume that they are bug-free, e.g. pixel phone crash detection malfunctioning on roller coaster, not allowing dialling to 000, etc.
-
-Realise you can overclock RAM with Intel XMP (extreme memory profile)
-
-The decline of the lone app, as Microsoft 365 leviathan
-
-With improved network performance, perhaps cheaper to offload calculations to powerful servers (VDI: virtual desktop infrastructure)
-NB-IoT (narrowband, i.e. low power). Also have CoAP (constrained application protocol) for embedded devices to access Internet 
-Easy to fall prey to the act of not adding anything useful to a product, but simply adding IoT and calling it smart, e.g. smart condom
-
-HDR (high dynamic range) refers to colour spectrum. Implemented in technologies such as Dobly Vision 
-Dolby Atmos is a surround sound technology
-
-RCS seems to be better than SMS
-
-Cloud excels when application simple and low traffic (managing a large application in the cloud is just as difficult as on bare metal)
-Or, your traffic patterns are unpredictable
-Otherwise, paying an unjustified premium
-
-Are the petabit speeds of research optical chip really that useful 
-if hardware can't process that fast?
-Will radio only get us so far?
-
-Perhaps explainpaper.com could break into reading programming papers
-
-Raptor Lake overclock to over 8GHz (however with liquid nitrogen...)
-
 ## AI
-It seems software licenses need to be updated to account for AI scraping
-
-Microsoft wants to put Windows in Cloud for better AI; which means better data harvesting...
-
-With false uptimes reported by say Telstra, has become Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
-
-Are their sufficient AI generative models to embody the four horsemen for human made technology?
+Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
 
 Often times I'm subject to the Dunning-Kruger effect (over confident from lack of experience) when it comes to programming
 
-Any political software leads down the path of FSF. They're all polite until they're not.
-
-Seems in with big-tech, marketing is often more important than the underlying technology.
-170km 'The Line' ecotopia, metaverse, telsa etc.
-They make wild claims and the general public has no way of knowing the facts behind them (perception vs reality)
-
-ARMs open-model allowed vendors to implement custom MPUs that saw in gain dominance over oher RISCs like MIPS and AVR.
 
 Tech companies becoming conglomerate monopolies, e.g. tiktok music, apple tv etc.
 
@@ -860,9 +585,23 @@ Expressing all possibilities is best done in a programming language not English.
 Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
 Similar to Zigbee and Z-Wave
 
+MOSFETs are a type of transistor.
+different transistors for say quick-switching, low signal, high frequency, amplifier etc.
+
+transduction converts one energy form to another
+CCD (charged couple device; less noise, more power, lower speed) 
+and CMOS (consumer grade) common camera sensors
+digital cameras convert photons to array of pixels, 
+represented as voltage levels
+quad pixel camera sensor combines four adjacent pixels in this array
+
+USB-4, PCI5, DDR5 emerging standards.
+
 hierarchy:topology
 p2p:(mesh, bus)
 client-server:star
+
+Silicon carbide power supplies more efficient
 
 Hardware subscription issues: lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
 
@@ -955,14 +694,6 @@ In fact, neural networks effectively boil down to matrix multiplication
 By storing certain amount of electrons and applying a certain voltage, output currents can be added together
 Size of transistor approaching size of atom, so Moore's law ending
 
-# FFT
-Convert from time-domain into frequency-domain to divide signal into various subcarrier frequencies.
-This allows to send parallel data, i.e. higher bandwidth in 5G
-FFT developed to detect nuclear testing
-Thermonuclear/hydrogen bomb first uses fission which triggers fusion
-Peace sign made by combining semaphores of N and D (nucler deterrant)
-Around 55 earthquakes a day
-So, FFT to have fast way determining underground nuclear tests
 
 # Ground
 Voltage is difference between two points. Ground is reference voltage (as in say a CPU, there is no literal ground)
@@ -984,6 +715,16 @@ wayland and mor are compositors
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
 
+embedded systems special purpose, constrained, 
+often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
+challenges are testabilty and software/hardware comprimises for optimisation problem solving, e.g. bit-banging or cheap mcu, external timer or in-built timer, adding hardware increases power consumption, e.g. ray tracing card or just rasterisation, big.LITTLE clusters
+1/4 scalar performance for 1/2 power consumption good tradeoff
+
+May compile for different architectures in embedded for different product lines 
+e.g. low-end fit bit, high-end fitbit
+
+A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
+
 Often case thinking about what peripherals can be multiplexed to get more I/O pins.
 I/O lines typically either control lines (SPI), IRQ line and power control line (for proper sequencing)
 Most I/Os don't involve a lot of CPU time:
@@ -999,10 +740,13 @@ e.g.detecting when the battery gets plugged into a charger or load device, wakin
 some animations, and going back to sleep when it get's disconnected 
 
 Various companies advantages:
-- ST lower than 600MHz
+- ST lower than 600MHz good documentation and I/O
 - NXP high performance MCUs over 600MHz
 - Texas Instruments speciality for analog peripherals
 - Renesas and Infineon for automotive industry
+
+Using third party libraries like ESP-IDF may have insidious bugs like setting wake up pin enables an internal pull-up 
+resistor behind-the-scenes, causing unstable wake times
 
 the jump from hobby to product is efficiency, security, reliabilty (e.g. fails without wifi) 
 and repeatability (e.g. doesn't work on rerun)
@@ -1128,6 +872,42 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 ## Common
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
 1 *     2² *      0.1234
+
+ingress (act of entering), egress used for traffic
+
+astable means no stable states, i.e. is not predominatley low or high, e.g. square wave, sine wave etc.
+oscillator generates wave (could be for carrier or clock)
+
+A sensor channel is a quantity measured, e.g 3 channel, 3 axis accelerometer
+
+high impedence is floating as no good path for current to flow.
+have tri-state GPIOs for multi-bus controllers, i.e. all but one floating so as to not create short circuit.
+
+malloc and printf are not reentrant 
+coroutine is function that can be suspended at any point, and resume later
+
+Resistance is purely electric opposition to current flow.
+Impedance is total opposition to current flow.
+When current flows, creates magnetic field.
+For AC, as current changes direction, magnetic field decreases inducing an opposing voltage.
+So, higher frequencies, higher impedance. 
+
+pure water (obtained via ozone treatment) is a very good insulator 
+(our tap water will have chlorine for example)
+
+HTML not turing-complete, i.e. can't perform data manipulations
+
+verification: meets requirements (tests)
+validation: meets purpose (clinical trial)
+authenticate: identity (password)
+authorise: privelege (token something used to authorise)
+
+memory bus set up to transfer 4 bytes at a time on exactly 4 byte boundaries.
+this alignment is for hardware efficiency
+if unaligned, and if the hardware supports it, 2 cycles required to get 4bytes
+
+signed + unsigned (unsigned converted to signed)
+will typically do sign extension when converting from signed to unsigned
 
 PIC (Position Independent Code) can be executed anywhere in memory by using relative addresses, e.g. shared libraries
 The process of converting relative to absolute, i.e. query unresolved symbols at runtime adds a level of indirection 
@@ -1572,6 +1352,22 @@ event-driven/interrupt or polling for networking?
 IMPORTANT: interrupt not really possible on linux; asynchronous more means callbacks in threads
 so, asynchronous for desktop; interrupt for embedded (for performance)
 
+curl -H "Authorization: Bearer <access-token>" https://api.particle.io/devices -d arg="D7 HIGH"
+
+webpage on cloud. when connected to esp32 ssid, then send credentials.
+will send a packet to device ssid.
+turn esp32 into softAP. have user connect to its SSID and input credentials via webpage 
+
+amazon s3 doesn't support https.
+however using amazon cloudfront cdn can reroute http to https
+(require CNAME setting on site DNS...?)
+
+Cloud excels when application simple and low traffic (managing a large application in the cloud is just as difficult as on bare metal)
+Or, your traffic patterns are unpredictable
+Otherwise, paying an unjustified premium
+
+Serverless is just a term for a caching server closer to clients
+
 https://github.com/icopy-site/awesome/blob/master/docs/awesome/Awesome-Game-Networking.md?plain=1
 
 Networking Chapter in the book Hacking The Art of Exploitation
@@ -1819,6 +1615,24 @@ The 'startup' file in assembly to allow for easy placement of interrupts to memo
 ## Hardware
 MOSFET type of transistor that is voltage controlled
 CMOS technology allows the creation of low standby-power devices, e.g. non-volatile CMOS static RAM 
+
+Realise you can overclock RAM with Intel XMP (extreme memory profile)
+
+
+New display electroluminescent quantum dots to possible replace OLED
+New memory packaging with higher density to replace SO-DIMM, CAMM (Compression Attached Memory Module)
+
+Resistive RAM uses analog memory cells to store more information with less energy
+
+Mass production to TMSC advanced 3-nm chip underway
+Unfortunately most likely due to Samsung chips having low yield, 
+they don't have high QA for voltage regulation as compared to TSMC
+
+Have GPU microarchitectures like RNDA.
+GPU structure similar to CPUs, e.g have cache, GDDR6 memory (more simple parrellisation)
+
+Chiplets seem future of shrinking size and expanding computing power, now seen in GPUs
+They can be easily be recombined to create custom designs
 
 EMV (europay, mastercard, visa) chip implements NFC for payments
 
@@ -2240,6 +2054,11 @@ IMPORTANT: know MISRA C subset (i.e. so can say embedded C)
     Cellular
     checksum, TLS, CRC, OSI, TLS, AES, PID, feedback loop, flash filesystem
 
+NB-IoT (narrowband, i.e. low power). 
+Also have CoAP (constrained application protocol) for embedded devices to access Internet 
+
+Intel thunderbolt faster than USB-C, yet ports still look very similar
+
 (TODO: give protocol speeds!)
 QSPI can be used without CPU with data queues
 MIDI (Musical Instrument Digital Interface) 3 byte messages that describe note type, how hard pressed and what channel
@@ -2458,6 +2277,8 @@ It works by comparing with atomic clock servers
 ARM core ISA e.g. ARMv8
 Will then have profiles, e.g. M-Profile ARMv8-M 
 R-Profile for larger systems like automotive
+
+ARMs open-model allowed vendors to implement custom MPUs that saw in gain dominance over oher RISCs like MIPS and AVR.
 
 ARM holdings implements profile in own CPU, e.g. Cortex-A72
 This is a synthesisable IP (Intellectual Property) core sold to other 
