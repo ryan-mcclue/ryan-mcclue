@@ -1,51 +1,41 @@
 # Performance
 TODO: refer to 'perf' repo
 
-Compile with different compilers to see performance benefits at end.
-
-how long function takes --> set GPIO line high when in function --> time signal in oscilloscope (so oscilloscope often used to verify timing)
-so, IO line if want to reduce timing overhead
-could take several lines together and send out on a DAC to combine into a single signal for easier viewing
-
-measure ISR latency, cycles, power usage; relate to CPU frequency
-
+Timing:
 Often need to guarantee response in say 40ms. 
 Generally in embedded, 5ms is an eternity for an ISR.
-Conceivable for 25us of work.
+Conceivable for 25us of work in an ISR.
+* ISR latency
+* Cycle count
+* Time I/O line gpio_high/low in oscilloscope 
+  Combine several times to DAC output
 
-Map file can be used to see what is taking up RAM or Flash, e.g. string constants
-
-Taylor series useful for approximating functions, e.g. quicker to perform Taylor series expansion of say `e**0.1`
-
-Q numbers, a.k.a fixed point numbers, Q3.4 has 3 bits for intger, 4 bits for fractional
-
-Say a 10byte packet.
-With UART, recieve an interrupt per byte.
-With DMA, recieve an interrupt per packet.
-So, if 400Kb/s, interrupt difference is considerable.
-
-A power supply will have 'settling time' before sending a power good signal.
-This time is to charge capacitors, feedback stabilisation etc.
-
-And it frequently comes from someone asking how long it takes this system to boot. 
-System boot time is typically around 600 uS.
-This time is largely waiting for PSU to settle.
-Then time for PLL to lock onto reference clock or crystal to stabilise.
+Power:
+Identify states of operation, how long in each and what active component current draw is.
+Better to use power monitor over just component datasheet
 
 For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
 UDP much better as no 3-way handshake.
 Balance between compression for speed or resultant size. 
 
-https://apollolabsblog.hashnode.dev/how-to-estimate-your-embedded-iot-device-power-consumption
-You need to get a power monitor. Then you can enable different components and see what they pull relative to base draw. 
-e.g. establish a baseline for idle system, 
-then enable some component and check the difference from idle.
-e.g. log power usage during a wireless transmission
+Size:
+* Map file for RAM/Flash contents
 
-- Full HD (1920x1080) @ 60fps @ 8bit-colour
-Assume 20cycles per pixel. 10cycles pixel transfer.
-(1920x1080x60x8) x (20 + 10) = min. frequency
-Now, although bandwidth linked to frequency, ignores cache hits etc.
+Math:
+* Taylor series for approximating trigonometric, power, exponential functions 
+
+Compiler:
+* Different compilers at end
+
+Calculations:
+* Say a 10byte packet.
+  With UART, recieve an interrupt per byte.
+  With DMA, recieve an interrupt per packet.
+  So, if 400Kb/s, interrupt rate is considerable.
+* Full HD (1920x1080) @ 60fps @ 8bit-colour
+  Assume 20cycles per pixel. 10cycles pixel transfer.
+  (1920x1080x60x8) x (20 + 10) = min. frequency
+  Now, although bandwidth linked to frequency, ignores cache hits etc.
 
 # DSP
 Shannon-Nyquist: sampling rate at least twice highest frequency component to prevent aliasing.
@@ -55,13 +45,9 @@ You will always need a lowpass filter before you quantize your signals.
 Plotting an FFT of signal can see noise. 
 If noise overlaps with our band, then require noise cancellation, otherwise bandpass filter.
 
-Convert from time-domain into frequency-domain to divide signal into various subcarrier frequencies.
+FFT converts from time-domain into frequency-domain to divide signal 
+into various subcarrier frequencies.
 This allows to send parallel data, i.e. higher bandwidth in 5G
-FFT developed to detect nuclear testing
-Thermonuclear/hydrogen bomb first uses fission which triggers fusion
-Peace sign made by combining semaphores of N and D (nucler deterrant)
-Around 55 earthquakes a day
-So, FFT to have fast way determining underground nuclear tests
 
 # OS
 Micro and monolithic kernel just features of kernel.
@@ -69,6 +55,9 @@ A unikernel is primarily for hypervisors, in that doesn't need to support many d
 
 # Debugging
 Could bit-bash UART (require a timer to keep things aligned) over an LED with a phototransistor and RS232 driver to send to PC.
+
+tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
+(ie: is the i2c correct? are you using the correct spi mode?
 
 When flash programming, use journaling by checking PVD detector state.
 Also make sure BOR programmed.
@@ -84,10 +73,6 @@ Aardvark adapter essential for automated testing (so, an adapter of sorts should
 
 Thermal imaging coupled with camera more 'deterministic/maintainable' than AI vision
 
-tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
-(ie: is the i2c correct? are you using the correct spi mode?
-
-NOTE: suspend to RAM is a type of sleep mode
 
 # Protocols
 RSSI how well can recieve signal. It's particular to a chipset, so Cisco might have 1-100, another might be 0-60 etc.
@@ -872,6 +857,18 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 ## Common
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
 1 *     2² *      0.1234
+
+NOTE: suspend to RAM is a type of sleep mode
+
+System boot time is typically around 600uS.
+This time is largely waiting for PSU to settle.
+Then time for PLL to lock onto reference clock or crystal to stabilise.
+
+A power supply will have 'settling time' before sending a power good signal.
+This time is to charge capacitors, feedback stabilisation etc.
+
+Q numbers, a.k.a fixed point numbers, Q3.4 has 3 bits for intger, 4 bits for fractional
+Only really used if want no rounding errors
 
 ingress (act of entering), egress used for traffic
 
