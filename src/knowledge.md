@@ -795,6 +795,10 @@ c compiler can reorder.
 AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due to reordering
 
 value orientated removes aliasing, inlining candidate, arguments in registers anyway, etc.
+adding `restrict` also useful to prevent aliasing and 
+thereby might allow compiler to vectorise say array loops
+Optimiser allows for lexical scoping of stack variables, i.e. variable referenced inside of for loop
+However, to eliminate aliasing, try to use non-pointers
 
 a write fence informs compiler to complete all writes before this point
 
@@ -811,6 +815,17 @@ Ideally replace with conditional movs or arithmetic branch less techniques.
 Branch less programming is essentially SIMD
 
 Not memory bound is best case for hyper threading
+Hyper-threading useful in alleviating memory latency, e.g. one thread is waiting to get content from RAM, 
+the other hyper-thread can execute
+However, as we are not memory bound (just going through pixel by pixel and not generating anything intermediate; 
+will all probably stay in L1 cache), we are probably saturating the core's ALUs, so hyper-threading not as useful
+hyperthreading, architecture specific information becomes more 
+important when in a situation where memory is constrained in relation to the cache
+(hyper-threads share same L1-L2 cache)
+Hyperthreads useful only if different execution unit
+Cpu reads memory from cache and ram in cache lines (due to programmer access patterns).
+Each item in cache set is cache line size
+
 Intel speeds optimised for gpr arithmetic, boolean and flops
 
 L1 can supply 2 cache lines per clock
@@ -1089,6 +1104,13 @@ when saying complement, it's with respect to negative number handling:
 ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
+
+IMPORTANT: In programming, preface the suitability of something to a particular environment/context
+arrays are faster than linked lists (again, so dependent on what your usage patterns are)
+Saying one instruction is faster than the other ignores context of execution.
+e.g. mul and add same latency, however due to pipelining mul execution unit might be full
+
+memory mapped file only real benefit is file API calls and case of exceeding physical memory
 
 vDSO mechanism to export kernel functions without cost
 

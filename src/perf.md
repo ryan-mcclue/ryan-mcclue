@@ -83,14 +83,16 @@ Mean/median time to see what is typical.
 Binary bloat can lead to icache misses.
 Interpreters add at least 10x overhead in determining types etc.
 Polymorphic object vtables are roughly 1.5x slower than switch (akin to erasing 3-4 years of hardware gains)
-2. IPC from modern superscalar/overlapped CPUs:
-Means that the IP register is just a conceptual thing.
+2. IPC from modern superscalar/overlapped/out-of-order CPUs:
+IP register is just a conceptual thing.
+Furthermore, programmer registers are logical and mapped to much larger RAT table
 CPU executes non-serially-dependent instructions at the same time.
 Can explicitly assist CPU analysing dependency chain, e.g. bi-directional summation
 This lookahead makes branch misprediction so costly.
 3. Cache introduces load and store overhead
 Thinks about how input/output are sourced
 4. SIMD removes front-end work
+Effectively branch-less programming
 5. Multithreading gives distinct instruction streams and effectively bigger caches
 Largely an architectural issue
 
@@ -103,22 +105,10 @@ Instrumentation adds timing code, sampling periodically interrupts.
 1. Run complete profiler and ascertain overall program profile/hotspots.
 2. Remove sections until just hotspots.
    Inspect hotspot assembly with -O1 flag to establish cycles per hotspot.
-   Want to see non-duplicated code, maximum inlining, widest SIMD,
+   Want to see maximum inlining, registers over stack, widest SIMD, etc.
+   (aggregates access off a [base pointer], floats large nums, e.g. 1065353216)
 
 (IMPORTANT save out configuration and timing information for various optimisation stages, e.g. ./app > 17-04-2022-image.txt)
-
-HAVE TO INSPECT/VERIFY ASSEMBLY IS SANE FIRST THEN LOOK AT TIMING INFORMATION
-inspecting compiler generated assembly loops, look for JMP to ascertain looping condition
-due to macro-op fusion (relevent to say Skylake), e.g. cmp-jmp non-programmable instructions could be executed by the cpu
-similarly, instructions that only exist on the frontend but exist programmatically e.g. xmm to xmm might just be a renaming in register allocation table
-also due to concurrent port usage, can identify parts of code as relatively 'free'
-struct access typically off a [base pointer]
-in assembly, 1.0f might be large number e.g. 1065353216
-in assembly loop, repeated instructions may be due to loop unrolling
-we might see:
-* superfluous loading of values off stack
-* more instructions required, e.g not efficiently using SIMD 
-(often this exposes the misconception that compilers are better than programmers; so better to handwrite intrinsics)
 
 look at latency, throughput (how many jobs started per unit time) and dependency chains (independent n-steps)
 then general calculation:
@@ -158,50 +148,25 @@ Ideally, front-end just pulling from uop-cache for your loop
 
 Micro-ops are specific to back-end/architecture, e.g. zen 3, skylake all different
 
-execution ports execute uops.
-however, the days of assembly language registers actually mapping to real registers is gone.
-instead, the registers from the uops are passed through a register allocation table 
-(if we have say 16 general purpose registers, table has about 192 entries; so a lot more) in the back-end
-from execution port, could be fed back into scheduler or to load/store in actual memory
-
-
-TODO: after scheduling, front-end has ports?
+back-end has execution ports that execute uops.
+execution port output could be fed back into scheduler or to load/store in actual memory
 
 intel optimisation manual for specific microarchitecture, e.g. skylake client
 amd documentation hub "software optimisation guide" (sort by relevence)
 amd microarch numbers: https://en.wikipedia.org/wiki/List_of_AMD_CPU_microarchitectures
 
-
-##### OS
-memory mapped file only real benefit is file API calls and case of exceeding physical memory
-
-IMPORTANT(Ryan): mlock() applicable for server applications as can control the machine (also for embedded say)
-
-Saying one instruction is faster than the other ignores context of execution.
-e.g. mul and add same latency, however due to pipelining mul execution unit might be full
-
 Frequent context-switching will give terrible cache coherency
-
-adding `restrict` also useful to prevent aliasing and thereby might allow compiler to vectorise say array loops
 
 CISC gives reduced cache pressure for high-intensive, sustained loops
 CISC simplifies compiler optimisation (more versatile instructions), RISC simplifies hardware (less transistors)
 
-log2(n) number of bits for decimal
-
-Branch less programming is essentially SIMD
-
-Not memory bound is best case for hyper threading
-
 Low cache associativity means fast lookup as less slots, but a lot of misses 
 LRU eviction policy in-play when miss occurs. 
 
-Hyperthreads useful only if different execution unit
-Cpu reads memory from cache and ram in cache lines (due to programmer access patterns).
-Each item in cache set is cache line size
+##### OS
 
-Optimiser allows for lexical scoping of stack variables, i.e. variable referenced inside of for loop
-However, to eliminate aliasing, try to use non-pointers
+log2(n) number of bits for decimal
+
 
 2.5bln * 8 (simd) * n (execution units) * 2 (cores)
 assuming instructions have throughput of 1
@@ -212,17 +177,15 @@ in general, not streaming from memory the entire time
 times when manual inlining is required (SIMD): 
 (discovered this only by looking at counters) 
 https://www.youtube.com/watch?v=B2BFbs0DJzw
+V2 is an array, compiler had to put x and y next to each other. 
+After inlining compiler was free to bail on recomputing y, which doesn’t change with iterations, and probably did some smart simd stuff for x
 
-floats will be twice as fast as doubles (more space, even though same latency and throughput)
-
-with pure compiler optimisations, i.e. code we have not optimised ourselves, a 2x increase is not unexpected.
+with pure compiler optimisations, 
+i.e. code we have not optimised ourselves, a 2x increase is not unexpected.
 Code we optimised not as much
 
 virtually never use lookup tables as ram memory is often 100x slower 
 so unless you can't compute in 100 instructions
-
-IMPORTANT: In programming, preface the suitability of something to a particular environment/context
-arrays are faster than linked lists (again, so dependent on what your usage patterns are)
 
 so, FMUL may have latency of 11, however throughput of 0.5, so can start 2 every cycle, (documentation gives inverse throughput)
 so throughput is more of what we care about for sustained execution, e.g. in a loop
@@ -261,10 +224,6 @@ uica.uops.info gives percentage of time instruction was on a port
 so, although best case say is issue instruction every 4 cycles, 
 this bottleneck will give higher throughput
 
-Hyper-threading useful in alleviating memory latency, e.g. one thread is waiting to get content from RAM, 
-the other hyper-thread can execute
-However, as we are not memory bound (just going through pixel by pixel and not generating anything intermediate; 
-will all probably stay in L1 cache), we are probably saturating the core's ALUs, so hyper-threading not as useful
 
 
 For multithreading, often have to pack into 64 bit value to perform single operation on it,
@@ -275,13 +234,30 @@ e.g. `delta = (val1 << 32 | val2); interlocked_add(&val, delta)`
 perhaps the sweet-spot for my machine in balancing context switching and drain out
 is to manually prescribe their size as oppose to computing them off the core count)
 
+1. know cache sizes to have data fit in it
+2. know cache line sizes to ensure data is close together (may have to separate components of structs to allow loops to access less cache lines) 
+i.e. understand what you operate on frequently. may also have to align struct 
+3. simple, linear access patterns (or prefetch instructions) for things larger than cache size 
 
 
-hyperthreading, architecture specific information becomes more 
-important when in a situation where memory is constrained in relation to the cache
-(hyper-threads share same L1-L2 cache)
+To avoid the compiler having to generate a large export table of all functions, 
+make them `static`
+To avoid large amounts of linking and ∴ increase compilation time, have a unity build. 
+
+Furthermore, garunteed ability to inline functions (as with multiple translation units, possible one might only have function declaration and not definition)
+(issues may occur with slower incremental builds when including 3rd party libraries; yet, can still work around this possibly using ccache)
+
+
 
 simd
+V2 v = pos + vel;
+1. change to scalar values
+BECOMES
+f32 x = ;
+f32 y = ;
+
+
+
 clamp can be re-written as min() and max() combination, which are instructions in SSE
 
 Although looking at the system monitor shows cpus maxed out, we could be wasting cycles, e.g. not using SIMD
@@ -346,16 +322,3 @@ SIMD allows divide by zeros by default? (because nature of SIMD have to allow di
 To get over the fact that C doesn't allow & floating point, reinterpret bit paradigm `*(u32 *)&a` as oppose to cast
 (IMPORTANT in SIMD cast is reinterpreting bits, so the opposite of cast in C)
 
-
-1. know cache sizes to have data fit in it
-2. know cache line sizes to ensure data is close together (may have to separate components of structs to allow loops to access less cache lines) 
-i.e. understand what you operate on frequently. may also have to align struct 
-3. simple, linear access patterns (or prefetch instructions) for things larger than cache size 
-
-
-To avoid the compiler having to generate a large export table of all functions, 
-make them `static`
-To avoid large amounts of linking and ∴ increase compilation time, have a unity build. 
-
-Furthermore, garunteed ability to inline functions (as with multiple translation units, possible one might only have function declaration and not definition)
-(issues may occur with slower incremental builds when including 3rd party libraries; yet, can still work around this possibly using ccache)
