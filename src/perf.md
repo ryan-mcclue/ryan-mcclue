@@ -1,5 +1,7 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
+We know that file will probably be in OS cache. So, effectively a memory read and memory write
+
 Not as simple to say if 4 add units then unroll 4 times. 
 To determine loop unrolling factor must analyse port usage
 ports perform multiple operations, e.g. add or cmp. but can only do 1 at a time
@@ -11,12 +13,62 @@ SLP (superword-level parallelism) a.k.a compiler auto-vectorisation optimisation
 loop unrolling can remove say `cmp` overhead, but may increase instruction cache usage
 
 # ASM
-Instruction decoding not as simple as looking at opcode and operand fields as they are, 
-as often control bits affect what operands mean 
-
 Think about what source language becomes as this is when can talk about speed.
 
-TODO: incorporate comp95.. into assembly understanding, e.g. overflow flag for signed jumps, cmp is a sub, etc.
+mul output in two registers
+signed/unsigned comparison instructions
+
+TODO: incorporate comp95.. 
+into assembly understanding, e.g. overflow flag for signed jumps, cmp is a sub, etc.
+
+carry flag if incorrect unsigned interpretation
+overflow flag if incorrect signed interpretation
+(common bits in a status register, as well as zero flag; perhaps also interrupts?)
+
+AVR is very close to actual Harvard, with instructions and data in separate address spaces.
+however, can read data from instruction address space with special instructions, 
+so still modified Harvard.
+
+section compile-time
+so, something like .text, .bss
+segment run-time
+so, something like .dseg (data), .eseg (eeprom) and .cseg (code/program)
+essentially will have loadable code segment and loadable data segment 
+which will comprise of sections
+
+caller clean-up of arguments through stack most common.
+epilogue conflict registers and stack
+
+The busy flag for LCD is a primitive form of synchronisation.
+A more advanced is an interrupt
+
+Interrupt signals can be level or edge triggered 
+IRQ-FF holds pending interrupt request until acknowledged by Sequence Controller.
+The Sequence Controller will acknowledge when current instruction has finished on CPU 
+
+does not save any registers when transferring control to ISR if done in assembly
+
+timer-period: ((timer-max)*(clock-prescaler))/(clock-hz)
+
+Pulse width directly proportional to output voltage.
+higher voltage means motor goes faster 
+fast-pwm 0-255 (higher frequencies; more commonly used) (count to max, then to 0)
+phase-correct-pwm 0-255-0 (half frequency of fast-pwm)  (count to max, then decrement to 0)
+(phase correct meaning timer slope up and slope down match as oppose to fast where slope up greater than vertical slope down)
+(there will be a threshold value on timer slope corresponding to active)
+
+Successive approximation vs parallel (faster; expensive) vs two stage (commonly used) ADC?
+n-bit ADC may have less than n-bits accuracy
+
+synchronous requires extra hardware to synchronise clocks to allow faster data rate
+asynchronous more common 
+UART is hardware
+RS-232-C common serial standard (defining handshake, data direction flow, signal levels, etc.)
+Connection types:
+  * simplex (one-way only)
+  * half-duplex (one-way at a time)
+  * full-duplex (each way same time)
+
 
 ## Overview
 Distinction between algorithmic optimisation and performance aware programming 
@@ -32,6 +84,7 @@ Binary bloat can lead to icache misses.
 Interpreters add at least 10x overhead in determining types etc.
 Polymorphic object vtables are roughly 1.5x slower than switch (akin to erasing 3-4 years of hardware gains)
 2. IPC from modern superscalar/overlapped CPUs:
+Means that the IP register is just a conceptual thing.
 CPU executes non-serially-dependent instructions at the same time.
 Can explicitly assist CPU analysing dependency chain, e.g. bi-directional summation
 This lookahead makes branch misprediction so costly.
@@ -50,83 +103,52 @@ Instrumentation adds timing code, sampling periodically interrupts.
 1. Run complete profiler and ascertain overall program profile/hotspots.
 2. Remove sections until just hotspots.
    Inspect hotspot assembly with -O1 flag to establish cycles per hotspot.
-Inspecting the assembly of our most expensive loop, we see that rand() is not inlined and is a call festival. This must be replaced
-Essentially we are looking for mathematical functions that could be inlined and aren't that are in our hot-path.
-When you want something to be fast, it should not be calling anything. If it does, probably made a mistake
-Also note that using SIMD instructions, however not to their widest extent, i.e. single scalar 'ss'. Want to replace with 'ps' packed scalar
-look at these steps for duplicated/unecessary work (may pollute cache). (perhaps even asking why was the code written the way it was)
-
-We know that file will probably be in OS cache. So, effectively a memory read and memory write
-
-how much CPU bring in, process and decode for this loop?
-how much are we asking the CPU to process each loop?
+   Want to see non-duplicated code, maximum inlining, widest SIMD,
+look at latency, throughput (how many jobs started per unit time) and dependency chains (independent n-steps)
+then general calculation:
 In assembly, see that loop is decoding 11 bytes of instructions per iteration
 Running loop under profiler know bandwidth
 Know each loop writing 8 bytes; so (bandwidth / 8) gives loop throughput
 So: machine-freq / (bandwidth / 8) = num-cycles per loop
-TODO: fractional cycle counts typical for superscalar cpus?
+fractional cycle counts typical for superscalar cpus
+
 
 Perform repetition testing on hotspots to know what practical peak performance is.
 
-when thinking about how fast instructions can occur are looking at:
-latency (from start to end for 1 job), 
-throughput (how many jobs started per unit time; reciprocal throughput often used in CPU context?) 
-and dependency chains (independent n-steps)
+adding more work units increases the throughput of the system
 
-adding more work units increases the throughput of the system (useful if bottleneck is throughput)
+look at longest dependency chain to ascertain order for work unit schedules see which work unit is most saturated
 
-look at longest dependency chain to ascertain order for work unit schedules
-see which work unit is most saturated
+CPU front-end is responsible for decoding instructions and scheduling/passing micro-op queue to back-end
+The front-end will see a loop iteration as one giant stream of instructions.
+It will analyse dependency chain and try and extract as much ILP. 
+So, extraneous instructions can throttle front-end.
+Often the `inc` is the bottleneck in a loop. 
+So, want this to be as wide as possible
 
-the CPU instruction decoder (front-end?) sees loop iteration as one giant stream of instructions.
-it will try and extract as much ILP by analysing loop iteration dependency chains
-IPC (instructions per clock) measure of how much IPC
-often, the `inc` is the bottleneck in a loop?
+ILP requires branch prediction to decode beyond a cmp and jmp
+After the back-end executes a cmp, it will look to see if the address matches what the front-end guessed
+If wrong, the back-end has to wait for front-end to refill uop queue.
+In this case, the front-end must flush its queue, costing about 10cycles
+Therefore, taking a comparison jump can be costly.
+So, can get better performance with more instructions and less ifs if takes less than 10 cycles
+Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
 
-threading and SIMD are explicit parallelism
-VLIW is a form of explicit ILP
+Front-end accesses L0 (micro-ops) and L1 cache (I$ and D$)
+Caches are 64-byte aligned.
+Don't won't say a 4byte integer to straddle D$ cache lines.
+Also code alignment important for larger code bases in I$.
+Ideally, front-end just pulling from uop-cache for your loop
 
-(ILP means that the IP register is really just a conceptual thing)
+Micro-ops are specific to back-end/architecture, e.g. zen 3, skylake all different
 
-front-end of CPU is responsible for decoding instructions and passing micro-op queue to back-end
-micro-ops are specific to back-end/architecture, e.g. zen 3, skylake all different
-so, front-end convert instructions to 0 (in case of NOP) or more micro-ops
-L1 cache is separated into two parts; I$ is instruction cache, D$ is data cache
-also have decoded micro-op cache
-inserting NOPs can throttle the front-end as it has to decode extraneous instructions to determine dependency chains (although should be removed by optimising compiler)
+
 
 TODO: after scheduling, front-end has ports?
-
-so, clearly can decode more than 1 instruction per cycle (and then execute)
-
-x86 instruction decoding tries to guess where instructions end (as variable lengthed) to acheive multiple decodes on a cycle
-
-the front-end schedules uops
-
-TODO: how does front-end know to decode beyond a cmp and a jmp? i.e. how does it sustain rate of multiple cycle decodes if encounters cmps?
-
-to facilitate ILP (requiring decoding instructions ahead of things affecting flags register), branch prediction is required on the front-ends part.
-after the back-end executes a cmp, it will look to see if the address matches what the front-end guessed
-if wrong, the back-end has to wait for front-end to refill uop queue, i.e. front-end must flush its queue (very costly, like 10 cycles)
-(sometimes, get better performance with more instructions and less ifs if takes less than 10 cycles)
-
-modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
-
-just taking a branch is costly?
-cost of a branch misprediction is size of architecture pipeline, so maybe 12 cycles?
 
 intel optimisation manual for specific microarchitecture, e.g. skylake client
 amd documentation hub "software optimisation guide" (sort by relevence)
 amd microarch numbers: https://en.wikipedia.org/wiki/List_of_AMD_CPU_microarchitectures
-
-placement of branches greatly affects front-end
-
-alignment of code can affect front-ends ability?
-
-cpu uses 64-byte alignment for caches.
-so, for data alignment, don't won't say a 4byte integer to straddle cache lines
-the front-end also accesses code via i-cache, so code alignment important (more so for large code bases)
-hopefully, front-end just pulling from uop-cache for your loop (loops are mainly what code is)
 
 
 ##### OS
