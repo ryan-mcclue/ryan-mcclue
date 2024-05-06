@@ -367,9 +367,9 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+Register files like SRAM but laid out differently then conventional SRAM with flip-flops, latches and multiplexing logic so as to optimise surface area
+
 No direct translation from AWG to metric as stranded and solid AWG different
-
-
 
 RoHs (restriction of hazardous substances) solid 22AWG ampacity of 7A  
 Lower gauge is thicker diametre, giving lower voltage drop and higher ampacity.
@@ -1089,6 +1089,12 @@ when saying complement, it's with respect to negative number handling:
 ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
+
+vDSO mechanism to export kernel functions without cost
+
+JIT debugging, is debugger automatically opening when program crashes
+JIT compilation compiles to bytecode and converts to machine language at runtime.
+This allows for varied codepaths for the same function based on run time conditions.
 
 Could use optocoupler board (EVAL-ADuM4160EBZ) 
 when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
