@@ -104,6 +104,22 @@ Instrumentation adds timing code, sampling periodically interrupts.
 2. Remove sections until just hotspots.
    Inspect hotspot assembly with -O1 flag to establish cycles per hotspot.
    Want to see non-duplicated code, maximum inlining, widest SIMD,
+
+(IMPORTANT save out configuration and timing information for various optimisation stages, e.g. ./app > 17-04-2022-image.txt)
+
+HAVE TO INSPECT/VERIFY ASSEMBLY IS SANE FIRST THEN LOOK AT TIMING INFORMATION
+inspecting compiler generated assembly loops, look for JMP to ascertain looping condition
+due to macro-op fusion (relevent to say Skylake), e.g. cmp-jmp non-programmable instructions could be executed by the cpu
+similarly, instructions that only exist on the frontend but exist programmatically e.g. xmm to xmm might just be a renaming in register allocation table
+also due to concurrent port usage, can identify parts of code as relatively 'free'
+struct access typically off a [base pointer]
+in assembly, 1.0f might be large number e.g. 1065353216
+in assembly loop, repeated instructions may be due to loop unrolling
+we might see:
+* superfluous loading of values off stack
+* more instructions required, e.g not efficiently using SIMD 
+(often this exposes the misconception that compilers are better than programmers; so better to handwrite intrinsics)
+
 look at latency, throughput (how many jobs started per unit time) and dependency chains (independent n-steps)
 then general calculation:
 In assembly, see that loop is decoding 11 bytes of instructions per iteration
@@ -142,6 +158,11 @@ Ideally, front-end just pulling from uop-cache for your loop
 
 Micro-ops are specific to back-end/architecture, e.g. zen 3, skylake all different
 
+execution ports execute uops.
+however, the days of assembly language registers actually mapping to real registers is gone.
+instead, the registers from the uops are passed through a register allocation table 
+(if we have say 16 general purpose registers, table has about 192 entries; so a lot more) in the back-end
+from execution port, could be fed back into scheduler or to load/store in actual memory
 
 
 TODO: after scheduling, front-end has ports?
@@ -200,32 +221,11 @@ Code we optimised not as much
 virtually never use lookup tables as ram memory is often 100x slower 
 so unless you can't compute in 100 instructions
 
-1. Optimisation (this is rarely done due to time involved)
-Do back-of-envelope calculations; look at algorithm to see if wasteful; 
-benchmark to see if hitting theoretical calculations and then use timings etc. 
-to isolate why our code isn't hitting these theoretical numbers
-Very importantly need to know what the theoretical maximum is, 
-which will be dependent on the program, 
-e.g bounded by number of bytes sent to graphics card, kernel stdout etc. 
-2. Non-pessimisation (do this all the time)
-Don't introduce unecessary work (interpreter; complex libraries; constructs like polymorphism/classes people have convinced themselves are necessary) for the CPU to do to solve the problem
-3. Fake optimisation (very bad philosophy)
-Repeating context-specific statements 
-e.g. use memcpy as it's optimised 
-(however the speed of something is so context specific, so non-statement), 
-arrays are faster than linked lists (again, so dependent on what your usage patterns are)
 IMPORTANT: In programming, preface the suitability of something to a particular environment/context
+arrays are faster than linked lists (again, so dependent on what your usage patterns are)
 
-branches can get problematic if they're unpredictable
-
-so, FMUL may have latency of 11, however throughput of 0.5, so can start 2 every cycle, 
+so, FMUL may have latency of 11, however throughput of 0.5, so can start 2 every cycle, (documentation gives inverse throughput)
 so throughput is more of what we care about for sustained execution, e.g. in a loop
-
-however, these numbers are all assuming the data is in the chip.
-it's just as important to see how long it takes to get data to the chip.
-look at cache parameters for microarchitecture; 
-how many cycles to get from l1 cache, l2 cache, etc. 
-when get to main memory potentially hundreds of cycles
 
 bandwidth of L1 cache say is 80 bytes/cycle, 
 so can get 20 floats per cycle (however, based on size of L1 cache, 
@@ -238,24 +238,9 @@ and give a rough estimate as to how long it could optimally take
 
 IT'S CRITICAL TO KNOW HOW FAST SOMETHING CAN RUN TO KNOW IF SLOW
 
-
-big oh is just indication of how it scales. could be less given some input threshold
+big-oh is just indication of how it scales. could be less given some input threshold
 (big oh ignores constants, hence looking at aymptotic behaviour, i.e. limiting behaviour)
 
-cpu front end is figuring out what work it has to do, i.e. instruction decoding
-
-e.g simd struct is 288 bytes, 4.5 cache lines, able to store 8 triangles
-
-branch prediction necessary to ensure that the front-end can keep going and not have to wait on the back-end
-
-execution ports execute uops.
-however, the days of assembly language registers actually mapping to real registers is gone.
-instead, the registers from the uops are passed through a register allocation table (if we have say 16 general purpose registers, table has about 192 entries; so a lot more) in the back-end
-this is because in many programs, things can happen in any order. so to take advantage of this, the register allocation table stores dependency chains of operations
-(wikichips.org for diagram)
-from execution port, could be fed back into scheduler or to load/store in actual memory
-
-when looking at assembly, when we say from memory, we actually mean from the L1 cache
 
 xmm is a sse register (4 wide, 16 bytes); m128 is a memory operand of 128 bits
 ymm is 8 wide
@@ -266,44 +251,24 @@ microop fusion is where a microop doesn't count for your penalty as it's fused w
 so, if a compiler were to separate this out into a mov and then a sub, not only does this put unecessary strain on the front-end decoder it also removes microop fusion as they are now separate microops
 (important to point out that I'm not the world best optimiser, or the worlds best optimisers assistant, so perhaps best not to outrightly say bad codegen, just say makes nervous)
 
+macrop fusion is where you have an instruction that the front-end will handle for you, e.g. add and a jne will merge to addjne which will just send the 1 microp of add through 
+
 godbolt.org good for comparing compiler outputs and possible detecting a spurious load etc.
 
-macrop fusion is where you have an instruction that the front-end will handle for you, e.g. add and a jne will merge to addjne which will just send the 1 microp of add through 
 
 uica.uops.info gives percentage of time instruction was on a port 
 (this is useful for determining bottle-necks, e.g. series of instructions all require port 1 and 2, so cannot paralleise easily)
 so, although best case say is issue instruction every 4 cycles, 
 this bottleneck will give higher throughput
 
-some levels of abstraction are necessary and good, e.g. higher level languages to assembly
-
-Optimise: gather stats -> make estimate -> analyse efficiency and performance
-
-more important to understand how CPU and memory work than language involved
-in an OS, you will get given a zero-page due to security concerns
-
-recording information:
-We want to understand where slow with vtune, amd uprof, arm performance reports 
-Next, determine if IO bound, memory bound etc.
-
-To determine performance must have some stable metric, e.g. ops/sec to compare to
-e.g measure total time and number of operations
 Hyper-threading useful in alleviating memory latency, e.g. one thread is waiting to get content from RAM, 
 the other hyper-thread can execute
 However, as we are not memory bound (just going through pixel by pixel and not generating anything intermediate; 
 will all probably stay in L1 cache), we are probably saturating the core's ALUs, so hyper-threading not as useful
 
-if we want to determine best possible time if all caches align etc. 'hunt for mininum', e.g. record mininum time execution in loop iteration or re-run if smaller time yielded
-alternatively, we could develop a statistical breakdown of values (could see moments when kernel switches us out etc.)
-
-(IMPORTANT save out configuration and timing information for various optimisation stages, e.g. ./app > 17-04-2022-image.txt)
-
 
 For multithreading, often have to pack into 64 bit value to perform single operation on it,
 e.g. `delta = (val1 << 32 | val2); interlocked_add(&val, delta)`
-
-When dividing a whole into pieces, an uneven divisor will give less than what's needed.
-so `(total + divisor - 1) / divisor` to ensure always enough.
 
 (the amount of threads to spawn would think should be equal to number of logical cores? however exceeding them may increase performance?)
 (this debate of manually prescribing the core count applies to the chunk size as well. 
@@ -382,24 +347,11 @@ To get over the fact that C doesn't allow & floating point, reinterpret bit para
 (IMPORTANT in SIMD cast is reinterpreting bits, so the opposite of cast in C)
 
 
-
 1. know cache sizes to have data fit in it
 2. know cache line sizes to ensure data is close together (may have to separate components of structs to allow loops to access less cache lines) 
 i.e. understand what you operate on frequently. may also have to align struct 
 3. simple, linear access patterns (or prefetch instructions) for things larger than cache size 
 
-HAVE TO INSPECT/VERIFY ASSEMBLY IS SANE FIRST THEN LOOK AT TIMING INFORMATION
-inspecting compiler generated assembly loops, look for JMP to ascertain looping condition
-due to macro-op fusion (relevent to say Skylake), e.g. cmp-jmp non-programmable instructions could be executed by the cpu
-similarly, instructions that only exist on the frontend but exist programmatically e.g. xmm to xmm might just be a renaming in register allocation table
-also due to concurrent port usage, can identify parts of code as relatively 'free'
-struct access typically off a [base pointer]
-in assembly, 1.0f might be large number e.g. 1065353216
-in assembly loop, repeated instructions may be due to loop unrolling
-we might see:
-* superfluous loading of values off stack
-* more instructions required, e.g not efficiently using SIMD 
-(often this exposes the misconception that compilers are better than programmers; so better to handwrite intrinsics)
 
 To avoid the compiler having to generate a large export table of all functions, 
 make them `static`
