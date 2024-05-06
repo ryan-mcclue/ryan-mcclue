@@ -1,6 +1,14 @@
 # Performance
 TODO: refer to 'perf' repo
 
+peripheral clock source can affect power.
+faster clock, more power.
+however, a 32KHz accurate crystal more voltage than less accurate oscillator
+
+Various synthetic benchmarks indicative of performace, e.g. 
+DMIPS (Dhrystone Million Instructions per Second) for integer and
+WMIPS (Whetstone) for floating point
+
 Timing:
 Often need to guarantee response in say 40ms. 
 Generally in embedded, 5ms is an eternity for an ISR.
@@ -113,6 +121,14 @@ run this on side (lm-sensors): https://superuser.com/questions/25176/how-can-i-m
 ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
 
 # Debugging
+Assume software bug, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
+
+TODO: POSTS tests like checking battery level, RAM R/W, CRC check? (castor-and-pollux test types)
+
+Serial console essential for embedded device for HIL, power analysis and problem reproducability
+
+Emulators for thorough HIL, e.g. aardvark spi/i2c, empro flash etc.
+
 ARM Debug Interface Architecture
 DAP (Debug Access Port) bus.
 Possible Debug Port are SW-DP, JTAG-DP, SWJ-DP
@@ -142,7 +158,6 @@ Need to be able give hardware/electrical engineer as much information as you can
 
 Debuggers should stop watchdog timer automatically (although firmware update will manually have to)
 
-
 Could bit-bash UART (require a timer to keep things aligned) over an LED with a phototransistor and RS232 driver to send to PC.
 
 tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
@@ -167,6 +182,12 @@ Expressing all possibilities is best done in a programming language not English.
 
 
 # Protocols
+Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
+Similar to Zigbee and Z-Wave
+
+5ATM is 5 atmospheres. 1 atmosphere is about 10m (however calculated when motionless)
+50m for 10 minutes
+
 ISM (Industrial, Scientific and Medical) bands (900MHz, 2.4GHz, 5GHz) occupy unlicensed RF band.
 They include Wifi, Bluetooth but exclude telecommunication frequencies
 
@@ -346,6 +367,25 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+No direct translation from AWG to metric as stranded and solid AWG different
+
+
+
+RoHs (restriction of hazardous substances) solid 22AWG ampacity of 7A  
+Lower gauge is thicker diametre, giving lower voltage drop and higher ampacity.
+Longer wire gives high voltage drop
+wire guage is diametre
+use solid wire as easier to work with than stranded 
+(which handles flexing better, so better for final projects)
+
+Spring contacts in breadboards give higher contact resistance than say a perfboard
+Therefore, breadboard only good for say 500mA-1A
+
+Polarised/keyed connectors ensure connect right terminals which is good for PSUs, 
+however want to reverse brushless dc motor direction.
+
+A motor's starting/stall current higher than run current due to torque generation to overcome intertia
+
 MEMS (Micro Electro Mechanical Systems) combines mechanical parts with electronics like some IC, i.e. circuitry with moving parts.
 e.g. microphone (sound waves cause diaphragm to move and cause induction), accelerometer, gyroscope (originally mechanical)
 
@@ -405,10 +445,9 @@ Combines FPGA and MCU
 breadboard: eeprom DIP (dual in-line package)
 smd-components: eeprom SOP (small outline package)
 mcus: QFN, QFP, BGA (better thermal)
-TODO: package information QFN 5*5, i.e. 5mmx5mm (QFN is fab process? this is small size so good for portable projects)
-(ultimately want balance of space efficiency and ease of manufacturing, thermal considerations
+QFN 5*5, i.e. 5mmx5mm (QFN is fab process? this is small size so good for portable projects)
+ultimately want balance of space efficiency and ease of manufacturing, thermal considerations
 
-Whenever some conversion, want to minimise power loss (so, think in watts?)
 Voltage regulators maintain constant voltage across input and load:
 - LDO (low drop-out): drop-out is minimum voltage difference for correct functionining 
 - buck converter/step-down (more complex, more efficient, wider range of input and load voltage)
@@ -433,9 +472,6 @@ They can be easily be recombined to create custom designs
 
 EMV (europay, mastercard, visa) chip implements NFC for payments
 
-Various synthetic benchmarks indicative of performace, e.g. 
-DMIPS (Dhrystone Million Instructions per Second) for integer and
-WMIPS (Whetstone) for floating point
 
 The polarity of the magnetic field created by power and ground wires will be opposite.
 So, having the same position in each wire line up will reduce outgoing noise as superposition of
@@ -447,23 +483,13 @@ Glass fibre optic does not have this issue.
 
 ASIC (Application Specific Integrated Circuit) MCU for specific task 
 
-On startup, copy from Flash to RAM then jump to reset handler address
-No real need for newlib, just use standalone mpaland/printf
 Some chips have XIP (execute-in-place) which allows for running directly from flash 
 
 Chrom-ART Accelerator offers DMA for graphics, i.e. fast copy, pixel conversion, blending etc.
 
 LED anode is positive longer lead
 
-5ATM is 5 atmospheres. 1 atmosphere is about 10m (however calculated when motionless)
-50m for 10 minutes
-
 FRAM (ferroelectric) is non-volatile gives same access properties as RAM
-
-Storage device sizes are advertised with S.I units, whilst OS works with binary so
-will show smaller than advertised (1000 * 10³ < 1024 * 2¹⁰)
-Also, storage device write speeds are sustained speeds.
-So, for small file sizes expect a lot less
 
 A flip-flop is a circuit that can have two states and can store state.
 Various types of flip-flops, e.g. clock triggered, data only etc.
@@ -605,9 +631,6 @@ to show contrasting colours.
 In order of ascending levels of audible frequencies 20Hz-20000Hz have devices
 woofer, subwoofer, speaker and tweeter.
 
-Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
-Similar to Zigbee and Z-Wave
-
 MOSFETs are a type of transistor.
 different transistors for say quick-switching, low signal, high frequency, amplifier etc.
 
@@ -620,27 +643,16 @@ quad pixel camera sensor combines four adjacent pixels in this array
 
 USB-4, PCI5, DDR5 emerging standards.
 
-hierarchy:topology
-p2p:(mesh, bus)
-client-server:star
-
 Silicon carbide power supplies more efficient
 
-Hardware subscription issues: lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
-
-Unfortunate that 'true security' makes things more complex and inconvenient, e.g. yubikey 
-
-Oh dear, Java is not dying out  (state of the octoverse)
-Frequent STMicroelectronics newsletter coverage of IoT (and the many, many protocols) and machine learning indicative of trend in industry
+Hardware subscription issues: 
+lack of connectivity no use, DDOS servers render inoperable, company liquidates and bricks
 
 Hi-fi audio. Newer terms to mean higher fidelity/data resolution 
 new OLED TVs (contrast, blacks). 
 QLED/QNED (brightness) is a adding a 'quantom dot' layer into the white LED backlight LCD sandwich
 
-5.1 means 5 speakers, 1 subwoofer
-woofer, subwoofer, speaker, tweeter
-
-Are we moving down the road of homogenous, e.g. specifically target CPU or GPU or hetereogenous programming, e.g. CUDA  
+Hetereogenous programming is CPU or GPU, e.g. CUDA
 
 Bitcoin is a Ponzi scheme as almost no one actually uses it in transactions, and is purely speculative.
 Does not create anything. Interesting manifestation of capitalism.
@@ -650,8 +662,6 @@ Proebsting's law states that compiler improvements will double program performan
 Therefore, cautious about the performance benefits a compiler brings. Focusing on programmer productivity is more fruitful
 In general, newer compilers take longer to compile, but produce slightly faster code maybe 20% faster.
 
-Amazing that certain old rpm harddrives were susceptible to crashing when 'Rhythm Nation' played as the resonant frequency was the same
-
 Although the open nature of RISC-V gives it some economical advantages, historically the ISA
 has not been the major driving factor in widespread adoption. Rather, who invests the most in
 R&D, e.g. many places will develop ARM, with RISC-V go on your own.  
@@ -660,15 +670,7 @@ Chiplets connection of chips. So, can build chiplets that aren't SoC, e.g. just 
 Intel R&D into chiplet technology stacking presents it as a future possibility (Apple already uses it with two M1 max chips to M1 ultra)
 
 ACM (Association for Computing Machinery) Turing Award is essentially Nobel Prize for Computer Science.
-Not applicable for me as awards largely for academic contributions like papers/reports published e.g data abstraction (Liskov substitution, Byzantine fault tolerance), parallel computing (OpenMP standard).
-In some sense, the modern day Booles and Babbages
-I'm more concerned with engineering feats in software products. 
-
-Read a Google research project on removing noise in photos. 
-Investigate source to test and am completely put off by the amount of
-dependencies involved: conda (why not just whole hog and docker), python, jax for TPU (python to tensor processing unit), external repositories
-This also applied to the 'amazing' AI image generator Stable Diffusion (I suppose high VRAM requirements also)
-Docker has uses in CI
+Largely academic contributions e.g data abstraction (Liskov substitution), parallel computing (OpenMP standard).
 
 As Moore's law is widening, i.e. was 2 years now 4 years, companies creating own hardware, e.g.
 YouTube chip to handle transcoding
@@ -771,13 +773,19 @@ position fundamental (e.g. 3D printers)
 
 RJ45 connector
 
+SATA: sustained speeds, so for small file sizes expect a lot less as seconds smaller
+
+so, ram frequency gives max. throughput
+however latency of ram also important
+In general:
+check if in L1. If not go check in L2 and mark least recently accessed L1 for
+move to L2. bubbles up to L3 until need for memory access which will go to memory
+controller etc.
 
 RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
 internal mcu oscillators typically RC, so subject to frequency variability
 
 ## Workflow
-No tests, doesn't work!
-
 Don't immediately delete new function implementation, rename to `func_old()`
 
 memory access is very slow. actual math operations etc. are very fast.
@@ -788,22 +796,13 @@ AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due
 
 value orientated removes aliasing, inlining candidate, arguments in registers anyway, etc.
 
-full fence is release and acquire, i.e cannot move up or down
+a write fence informs compiler to complete all writes before this point
 
 on a team, 'proper' commit should change one thing and have accompanying tests.
 So, write explorative code on branch and merge when done
 
 Linux shipping issues are the wide range of system configurability (xlib/wayland etc.) and glibc breaking abi (requiring multiple binaries)
 (or even if glibc present, e.g. muslc for alpine)
-
-SATA: sustained speeds, so for small file sizes expect a lot less as seconds smaller
-
-so, ram frequency gives max. throughput
-however latency of ram also important
-In general:
-check if in L1. If not go check in L2 and mark least recently accessed L1 for
-move to L2. bubbles up to L3 until need for memory access which will go to memory
-controller etc.
 
 Cpu try to guess what instructions ahead (preemptive). 
 Cost of incorrect reflushing expensive. 
@@ -834,8 +833,6 @@ Furthermore, most bugs appear in between systems not in units.
 Best way to test is to release on early access.
 This checks hardware and software, user may be running adobe acrobat which hogs cpu so instruct them to kill it before running your game. 
 Or maybe 20000 chrome plugins. This is something a hardware lab can't tell you
-
-my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
 
 Compiler works on file by file, so knows nothing about calls across files. 
 Therefore it generates object files which are partially executable machine code with unresolved symbols. 
@@ -894,65 +891,6 @@ to market app: I'm notified when keywords related to "human wants thing, my app 
 
 even parity is to make it even, i.e. so if 5 1's, even parity will add a 1 
 
-## Code
-// sha1 more bits than md5, so more complex?
-// really sha1 fine over more secure sha256 as 1 in 9quintillion
-// meow hash probably better for large data
-
-`!!` operator to 0 or 1: `t += ((F32)!!(flags & flag) - t) * rate;` 
-
-immediate mode and retained mode are about lifetimes. 
-for immediate, the caller does not need to know about the lifetime of an object.
-
-discovering for linux docs (xlib, alsa) are code and for 
-development may have to add to groups (uinput) 
-
-plugins just be .so files that are loaded with dlsym()
-
-being able to draw out debug information is very useful. 
-time spent visualising is never wasted (in debugger expressions also)
-
-Drawing have left_edge, top_edge
-Drawing charts, define chart_height, bar_width, bar_spacing etc. in pixels
-Can draw single pixel height reference line
-Cycle through colours with `arr[index % ARRAY_COUNT(arr)]`
-
-artist creates in SRGB space (in photoshop) 
-so if we do any math on it (like a lerp), 
-will have to convert it to linear space and then back to srgb for the monitor (if we were to just blit directly, it would be fine)
-to emulate complicated curves, could table drive it
-we compromise on r² and √2
-without gamma correction, resultant image will look very dim (due to nature of monitor gamma curve) 
-so with rgb values, preface with linear or srgb
-
-## Quantum
-RSA public key is two primes multiplied together. 
-These primes constitute private key.
-Qubit can be in multiple states. So, compute all bit combinations at once.
-However, result is a superposition, so can only read one of the state results
-Therefore, as difficult to extract meaningful information from superposition, quantum computing not useful for most algorithms 
-However, quantum fourier transform can be done on a periodic superposition
-So, if superposition has inherent periodicity, useful
-
-## Cosmic Rays
-single event upset; soft-error;
-trace elements of uranium releasing alpha particles that interfered with transistor in ram (electronics so small)
-cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running, plane system
-in fact, laboratories have neutron detectors for this
-so, could have duplicate computers to account for this, say on an airplane
-
-## Analog Computing
-Analog computers such as the antikythera mechanism can use gears, with each tooth representing a value (often mechanical devices) to measure orbits. Also tides
-Analog errors are easy to occur and can multiply, also as models of the real world, not general purpose.
-So, digital more noise-resilient, general-purpose and easily made as same components
-
-Multiplying 32bit numbers may require hundreds of transistors for digital
-Analog could just add two currents and apply resistor easily.
-So, in come cases, analog better as less components and less power.
-Success of neural networks is their size. So, require large amounts of power and memory to train
-In fact, neural networks effectively boil down to matrix multiplication
-By storing certain amount of electrons and applying a certain voltage, output currents can be added together
-Size of transistor approaching size of atom, so Moore's law ending
 
 ## Embedded Project Requirements 
 - what is the power source, battery or wall power?
@@ -965,6 +903,55 @@ Size of transistor approaching size of atom, so Moore's law ending
 - what are the compute resources required by your algorithm? 
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
+
+A single chip is often more expensive to develop/maintain and 
+less fault tolerant if one of its susbsystems fails than having external sensors
+
+MCU parametric selection using microchip/maps
+"I need the cheapest part I can get, for multiple 10K unit production runs with one SPI bus, one I2S  bus, DMA channels and a handful of GPIOs 
+with at least one ADC input. QSPI / SDIO is a nice to have, but I can get by with regular SPI if necessary."
+* I2S most obscure so select first
+* counting IO pins of protocols gives minimum
+* if looking for cheap, probably have low number of pins overall so set max. pin count
+(remove 'future' devices to not show unlisted prices)
+* add to side-by-side, e.g. cheapest might be MIPS, so compare with say ARM
+
+Small amount of RAM < 1MB, e.g. wanting to do some real-time processing on chip can use QSPI to use more flash and ram
+(So, most MCU with small number of memory, more can be added)
+
+less IO ports, bad ADC, higher power draw, tied to SDK for usage
+so not an option for control or most industrial applications
+
+* Automotive: car require wide temperature ranges
+* Aerospace: radiation hardening (backup mcus, physical shielding, etc.)
+* Underwater: pressure resistance
+* Military: shock and vibration resistance 
+
+Certifications:
+closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
+however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
+
+Going from devboard, e.g. Discovery to PCB:
+  * remove ICDI chip 
+    (replace with JTAG pins. could use Tag-Connect, i.e. springy pogo pin connector in plated holes or pads instead of headers)
+    (flash-bin && play banjo-kazooie.mp3 && sleep 1 && goto start)
+  * remove UART-to-Serial chip
+    (replace with FTDI cable)
+  * remove unused, e.g. ethernet, USB etc.
+    (replace with battery? wall wart?)
+  * for speed add codec, e.g. audio TLV320AIC
+  * smaller surface area, remove jumpers (IDD pin and actual GPIO pins), buttons, sensors, leds, plated holes, etc.
+    (add test pins where things can go wrong e.g. ground pins, power rails, communication busses)
+    (balancing act between how small product board is. could add an 'elephant board' concept)
+  * FCC/EMC for unintentional EM radiation (other certifications)
+    (can actually search for product on ffcid.io)
+
+
+
+Simplistically, arduino and ilk software bloated, minimal debug features, over charge 
+For monolithic things like PlatformIO, version maintenance of libraries is a nightmare (i.e. packaging problems)
+
+Select dev board middle of the road to account for changes down the road, e.g. want AI so more flash, want to optimise power etc.
 
 component selection is capabilities and then what environment for these components
 
@@ -1034,44 +1021,18 @@ What matters is to automate what can be automated and would bring value if it is
 
 
 ## Soldering
-UPS (uninterruptable power supply) sits between PSU and provides momentary power to allow for graceful powerdown 
-
-No direct translation from AWG to metric as stranded and solid AWG different
-RoHs does allow for small amounts of lead
-
-RoHs (restriction of hazardous substances) solid 22AWG ampacity of 7A  
-Concerned with voltage drop when wire is long, e.g. in a house
-Temperature rise that must also be considered (e.g. insulation rating, operating temperature etc.)
-Lower gauge is thicker diametre, giving lower voltage drop and higher ampacity.
-
-Spring contacts in breadboards give higher contact resistance than say a perfboard
-V = IR, so higher voltage drop. P = IV; P = V^2/R, higher voltage drop gives more power dissipated as heat
-Therefore, breadboard only good for say 500mA-1A
-
-Polarised/keyed connectors ensure connect right terminals which is good for PSUs, however don't want to reverse brushless dc motor direction.
-PSU could have built-in toggable circuit breaker or one-time fuse
-
-A motor's starting/stall current higher than run current due to torque generation to overcome intertia
-
-20mA across heart will cause cardiac arrest
-current flows due to potential difference, not necessarily a ground. 
-current can flow in a closed loop, as it does when you touch a wire
-AC causes greater muscle contractions, i.e. loss of muscle control and stop breathing
-
-most solder has flux core (typically rosin) to prevent oxidation (wets the metal?)
-if we were to leave a blob of solder on the iron whilst hot, it would oxidise and become visibly flaky
+most solder has flux core (typically rosin) to prevent oxidation
+if we were to leave a blob of solder on the iron whilst hot, 
+it would oxidise and become visibly flaky
 
 Sn/Pb (60/40) lower boiling point and shinier finish (cone shaped) then non-leaded.
 fumes are flux as boiling point of lead (≈1700°C) much higher 
 lead is if course bad if ingested
 lead-free developed due to landfill leeching of disposed electronics
+fume extractor at top
 
 like most metal products, the iron has core (Cu, Fe) and plating metals (Cr, Sn)
 
-fume extractor at top
-
-wire guage is diametre
-use solid wire as easier to work with than stranded (which handles flexing better, so better for final projects)
 
 when heated, oxidation of solder iron tip is greatly accelerated thereby losing conductivity, 
 wetting, etc.
@@ -1082,16 +1043,10 @@ however, other metals can corrode
 e.g. less reactive copper corrodes more slowly
 e.g. more reactive aluminium corrodes, however the oxide is tough and not flaky
 
-silicon mat, brass wool (routinely removing stuck solder debris and rust), 
-chisel-head (conical head other 10%),
-gloves, glasses
-
-Although boiling point of leaded solder is 180, 400 as wanting to transfer heat to junction as well
+Although boiling point of leaded solder is 180, 
+400 as wanting to transfer heat to junction as well
 450 for non-leaded
 
-soldering station has feedback/adjustable/regulated temperature
-
-## Tinning:
 First use tin by touching tip with solder and thrusting into wool. Repeat twice
 
 Future use tin whenever the iron starts looking anything less than clean.
@@ -1104,28 +1059,25 @@ IMPORTANT:
 A 'tip tinner' is something you want to avoid until there is no other option.
 They are a corrosive agent designed to corrode the oxides and expose the underlying metal
 
-## Cleaning:
 Use regularly to clean away contaminants (to remove dirt/grease will require cloth or steel brush)
 Stab the wool. Use after every solder application to remove excess solder on tip (this will happen always)
 You do not use brass wool as an abrasive in any way
 
-## Action:
 Heat materials you want to join with the iron.
 Apply solder to the junction/pad/leg. 
 Move solder away before moving the iron away.
 Don't apply solder to the iron. So, often have to angle the iron away (ok if gets on it indirectly)
 
-## THT
+THT:
 1mm gauges
 components typically higher thermal capacity, ∴ higher temperature
 
-## SMD
+SMD:
 flux pen (ensure it's a passive flux)
 0.6mm gauge
 
 grounding strap with 1Mohm resistor to ensure same potential as board for sensitive electronics
 (not really necessary for dev-boards)
-
 
 ## Common
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
@@ -1137,6 +1089,59 @@ when saying complement, it's with respect to negative number handling:
 ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
+
+Could use optocoupler board (EVAL-ADuM4160EBZ) 
+when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
+
+CMSIS (Common Microcontroller Software Interface Standard) is standard from ARM, so all vendors must implement.
+CMSIS has reference for neural networks, fft, etc.
+
+Euclidean geometry are a set of rules laid out by Euclid that follow for geometry on a flat surface
+
+RSA public key is two primes multiplied together. 
+These primes constitute private key.
+Qubit can be in multiple states. So, compute all bit combinations at once.
+However, result is a superposition, so can only read one of the state results
+Therefore, as difficult to extract meaningful information from superposition, quantum computing not useful for most algorithms 
+However, quantum fourier transform can be done on a periodic superposition
+So, if superposition has inherent periodicity, useful
+
+single event upset; soft-error;
+trace elements of uranium releasing alpha particles that interfered with transistor in ram (electronics so small)
+cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running, plane system
+in fact, laboratories have neutron detectors for this
+so, could have duplicate computers to account for this, say on an airplane
+
+Analog computers such as the antikythera mechanism can use gears, with each tooth representing a value (often mechanical devices) to measure orbits. Also tides
+Analog errors are easy to occur and can multiply, also as models of the real world, not general purpose.
+So, digital more noise-resilient, general-purpose and easily made as same components
+
+Multiplying 32bit numbers may require hundreds of transistors for digital
+Analog could just add two currents and apply resistor easily.
+So, in come cases, analog better as less components and less power.
+Success of neural networks is their size. So, require large amounts of power and memory to train
+In fact, neural networks effectively boil down to matrix multiplication
+By storing certain amount of electrons and applying a certain voltage, output currents can be added together
+Size of transistor approaching size of atom, so Moore's law ending
+
+immediate mode and retained mode are about lifetimes. 
+for immediate, the caller does not need to know about the lifetime of an object.
+
+discovering for linux docs (xlib, alsa) are code and for 
+development may have to add to groups (uinput) 
+
+plugins just be .so files that are loaded with dlsym()
+
+being able to draw out debug information is very useful. 
+time spent visualising is never wasted (in debugger expressions also)
+
+artist creates in SRGB space (in photoshop) 
+so if we do any math on it (like a lerp), 
+will have to convert it to linear space and then back to srgb for the monitor (if we were to just blit directly, it would be fine)
+to emulate complicated curves, could table drive it
+we compromise on r² and √2
+without gamma correction, resultant image will look very dim (due to nature of monitor gamma curve) 
+so with rgb values, preface with linear or srgb
 
 As floats are an approximation, when comparing to 0.0f (say for a denominator check) 
 or negative (say for a square root) use a tolerance/epsilon less-than/greater-than check.
@@ -1249,33 +1254,18 @@ client server (p2p unreliable as internet path optimised for cost/closest exchan
 Matchmaking,  host migration difficult as hard to measure what user has good connection,  
 e.g. Whats there NAT type?
 
-
 ## Security
- * Keep a software BOM. Actually update your dependencies when vulnerabilities are discovered and addressed.  
- * Using and verifying hashes of executables during updates
- * Actually test your software (e.g., fuzzing, to make sure you validate your inputs)  
-
-MCU control bits, e.g. read/write protection on flash, usage of SWD.
-Only removed with entire chip erase.
-
-General security:
-  * CI
-  * static analysers
-  * treat all external data as malicious:
-    - buffer overflows; generally from malformed user input (prevent stack frame overwrite for code execution)
-    (IoT chipset has more attack vectors than traditional embedded, so more careful) 
-
-Most dangerous form of buffer overflow is overwriting return address of function to external code.
-Can be solved by having a shadow stack, i.e. two stacks, one for variables, one for compiler stuff
-
-Euclidean geometry are a set of rules laid out by Euclid that follow for geometry on a flat surface
-
-- memory (overflow, free) (really an issue with ASLR, PIE, DEP?)
-- input sanitisation (injection), 
-- authentication (tokens)
-- read back protection to prevent IP theft (secure boot manager, flash encryption, jtag disabling)
-tamper response usually done with a button on the board that gets activated when case opens
-this will trigger an interrupt handled by RTC (real time clock)
+- Memory (overflow, free) (arenas, ASLR, PIE, DEP)
+  Most dangerous form of buffer overflow is overwriting return address of function to external code.
+  Can be solved by having a shadow stack, i.e. two stacks, one for variables, one for compiler stuff
+- Input sanitisation (injection) 
+  Treat all external data as malicious.
+  Fuzzing tests, to make sure you validate your inputs.
+- Authentication (tokens)
+- Read back protection to prevent IP theft (secure boot manager, flash encryption, jtag disabling)
+  Tamper response usually done with a button on the board that gets activated when case opens
+- Third party backdoors
+  Keep a software BOM and update when vulnerabilities are discovered 
 
 ## Bootstrap 
 UUID/GUID (universally/globally) 16 bytes. 
@@ -1534,6 +1524,10 @@ Public domain means no license, so could claim as yours
     Used for range checks
 
 ## Algorithms
+sha1 more bits than md5, so more complex?
+really sha1 fine over more secure sha256 as 1 in 9quintillion
+meow hash probably better for large data
+
 greedy algorithms memory efficient however not optimal, so balancing act
 greedy chooses next best option from what is available at the moment
 
@@ -1622,7 +1616,8 @@ backtracking
 vector math routines (obtaining cross product from column vector form)
 when drawing vectors in a physical sense, 
 keep in mind they are rooted at the origin (even if drawings show them across time)
-whenever doing vector addition/subtraction, remember the head-to-tail rule (their direction is determined by their sign).
+whenever doing vector addition/subtraction, 
+remember the head-to-tail rule (their direction is determined by their sign).
 could also think that subtract whenever you want to 'go away' from something
 dot product transpose notation useful for emulating matrix multiplication
 unit circle, x = cosθ
@@ -1637,17 +1632,6 @@ understanding dot product equivalence with circle equation
 for multiplication of vectors, be explicit with a hadamard function
 (IMPORTANT have reciprocal square root approximation which is there specifically for normalisation. 
 much faster cycle count and latency than square root)
-
-
-Simplistically, arduino and ilk software bloated, minimal debug features, over charge 
-For monolithic things like PlatformIO, version maintenance of libraries is a nightmare (i.e. packaging problems)
-
-Select dev board middle of the road to account for changes down the road, e.g. want AI so more flash, want to optimise power etc.
-
-CMSIS (Common Microcontroller Software Interface Standard) is standard from ARM, so all vendors must implement.
-CMSIS has reference for neural networks, fft, etc.
-
-
 
 
 ## Multidisciplinary
@@ -1779,52 +1763,11 @@ if storing known sizes, better to use circular buffer:
 
 internal flash on stm32 faster than SPI limited esp32 external flash
 
-## Deployment
-A single chip is often more expensive to develop/maintain and 
-less fault tolerant if one of its susbsystems fails than having external sensors
-
-
-MCU parametric selection using microchip/maps
-"I need the cheapest part I can get, for multiple 10K unit production runs with one SPI bus, one I2S  bus, DMA channels and a handful of GPIOs 
-with at least one ADC input. QSPI / SDIO is a nice to have, but I can get by with regular SPI if necessary."
-* I2S most obscure so select first
-* counting IO pins of protocols gives minimum
-* if looking for cheap, probably have low number of pins overall so set max. pin count
-(remove 'future' devices to not show unlisted prices)
-* add to side-by-side, e.g. cheapest might be MIPS, so compare with say ARM
-
-Small amount of RAM < 1MB, e.g. wanting to do some real-time processing on chip can use QSPI to use more flash and ram
-(So, most MCU with small number of memory, more can be added)
-
-less IO ports, bad ADC, higher power draw, tied to SDK for usage
-so not an option for control or most industrial applications
-
-* Automotive: car require wide temperature ranges
-* Aerospace: radiation hardening (backup mcus, physical shielding, etc.)
-* Underwater: pressure resistance
-* Military: shock and vibration resistance 
-
-Certifications:
-closed source for wifi/bluetooth drivers (meaning proprietary binary blobs filling unknown slots in RAM
-however, common for WiFi drivers due to precertification, i.e. don't allow users to output RF in unlicensed bands), 
-
-Going from devboard, e.g. Discovery to PCB:
-  * remove ICDI chip 
-    (replace with JTAG pins. could use Tag-Connect, i.e. springy pogo pin connector in plated holes or pads instead of headers)
-    (flash-bin && play banjo-kazooie.mp3 && sleep 1 && goto start)
-  * remove UART-to-Serial chip
-    (replace with FTDI cable)
-  * remove unused, e.g. ethernet, USB etc.
-    (replace with battery? wall wart?)
-  * for speed add codec, e.g. audio TLV320AIC
-  * smaller surface area, remove jumpers (IDD pin and actual GPIO pins), buttons, sensors, leds, plated holes, etc.
-    (add test pins where things can go wrong e.g. ground pins, power rails, communication busses)
-    (balancing act between how small product board is. could add an 'elephant board' concept)
-  * FCC/EMC for unintentional EM radiation (other certifications)
-    (can actually search for product on ffcid.io)
-
-
 ## Wireless
+hierarchy:topology
+p2p:(mesh, bus)
+client-server:star
+
   * heartbeat log (to show alive, e.g. power usage and battery life)
 
 Now, as scaling to 1million devices; will encounter 1 in a million problems
@@ -2024,7 +1967,6 @@ A display will be in nits as its a recieving object as oppose to the backlight L
 A higher nit display is more easily viewable in a wider array of lighting conditions,
 e.g. will combat the sun's light reflecting off the surface in an outdoor setting
 Brightness is subjective, and therefore does not have a value associated to it
-
 
 transistors -> logic gates -> adders/subtractors/multipliers -> ALU
 transistors -> logic gates -> flip-flops/latches -> memory
@@ -2234,25 +2176,6 @@ Error is when cannot possibly continue. Aim for early into callstack:
 Log warnings and errors:
  - dev: capture state of the device (heap, stacks, registers, firmware version, the works) and breakpoint
  - release: error code (everything if error)
-
-## Battery
-Battery monitor, to ensure within ADC limits, attach a voltage divider. 
-
-Could use optocoupler board (EVAL-ADuM4160EBZ) 
-when wanting to power MCU from USB but also power say LCD or motor from another PSU to prevent ground loops
-
-peripheral clock source can affect power.
-faster clock, more power.
-however, a 32KHz accurate crystal more voltage than less accurate oscillator
-
-## Testing
-Assume software bug, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
-
-TODO: POSTS tests like checking battery level, RAM R/W, CRC check? (castor-and-pollux test types)
-
-Serial console essential for embedded device for HIL, power analysis and problem reproducability
-
-Emulators for thorough HIL, e.g. aardvark spi/i2c, empro flash etc.
 
 # RTOS
 Provides:

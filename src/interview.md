@@ -1,5 +1,7 @@
 This is the portfolio I have, here is want I can bring.
 
+my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
+
 ## Stages
 1. Resume
 2. Phone Screens:
