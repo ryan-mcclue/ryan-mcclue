@@ -99,7 +99,50 @@ This allows to send parallel data, i.e. higher bandwidth in 5G
 Micro and monolithic kernel just features of kernel.
 A unikernel is primarily for hypervisors, in that doesn't need to support many drivers, process isolation etc.
 
+in uefi:
+- can set fan speed based on temperature
+- other frequencies to auto; inspect ram slot details; on-board leds etc.
+- set cpu overclock, e.g. 3.8GHz to 4GHz
+in grub can run memtest:
+- notice that having 8 sticks of ram at manufacturer recommended 3GHz does gives error in test 7, so set to 2.9GHz
+
+mandelbrot vanilla benchmarking?
+$(/usr/bin/time povray) for benchmarking
+run this on side (lm-sensors): https://superuser.com/questions/25176/how-can-i-monitor-the-cpu-temperature-under-linux
+
+ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
+
 # Debugging
+ARM Debug Interface Architecture
+DAP (Debug Access Port) bus.
+Possible Debug Port are SW-DP, JTAG-DP, SWJ-DP
+Possible Access Port are MEM-AP (access to CPU, flash etc.), JTAG-AP 
+Debugger handles transactions, e.g. request/ack/data phases etc.
+(attackers connect say a bus pirate two various pins and send signals hoping to get valid response)
+(boards implement different ways to prevent access to DAP)
+SWO is an extension of 2pin SWD interface SWDIO/SWDCK
+ITM (Instrumentation Trace Macrocell) typically connected to SWO
+Specific semihosting (reading a file) interrupt request also handled over SWO
+Programmers by default do not provide power
+
+Always use oscilloscope/logic analyser to verify signals make sense
+
+So, when reporting issue:
+  * verify signal
+  * supply console command
+  * mention datasheet info, e.g timing diagram
+  * (look for open-source drivers that perform similarly)
+
+Essentially with embedded, have lots of testing to mitigate issues so TEAM can solve problems
+hardware and software people need to be in it together
+shipping products is a team sport
+
+As problems not always software:
+Need to be able give hardware/electrical engineer as much information as you can to reproduce bug
+
+Debuggers should stop watchdog timer automatically (although firmware update will manually have to)
+
+
 Could bit-bash UART (require a timer to keep things aligned) over an LED with a phototransistor and RS232 driver to send to PC.
 
 tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
@@ -124,7 +167,6 @@ Expressing all possibilities is best done in a programming language not English.
 
 
 # Protocols
-
 ISM (Industrial, Scientific and Medical) bands (900MHz, 2.4GHz, 5GHz) occupy unlicensed RF band.
 They include Wifi, Bluetooth but exclude telecommunication frequencies
 
@@ -734,109 +776,43 @@ RC (resistor-capacitor) oscillator generates sine wave by charging and dischargi
 internal mcu oscillators typically RC, so subject to frequency variability
 
 ## Workflow
-IMPORTANT(Ryan): No tests, doesn't work!
+No tests, doesn't work!
 
-IMPORTANT: premature MICROOPTIMISATION (i.e. fine-tuning things) is root of all evil.
-overall optimisation should always be at forefront 
+Don't immediately delete new function implementation, rename to `func_old()`
 
-If wanting to create a new implementation of a function, 
-perhaps don't just delete it entirely, rather change its name to func_old()
-
-
-struct padding largest value wants to be on a byte boundary that is divisible by itself
-trailing members may have padding also to ensure consecutive structs in array are aligned as well
-
-IMPORTANT: memory access is very slow. actual math operations etc. are very fast.
-e.g. SIMD perform 4 multiplies in 1 cycle, reading something from memory 50 cycles
-So, when optimising, look at reducing memory accesses and see if those memory accesses are in the cache
-IN GENERAL, COMPUTE DON'T LOOKUP, e.g. store width, height: compute area  
-Remove values that can be computed. Reduces possibility of bugs
-As math is effectively 'free', we can reduce memory size also
-
-If value is very expensive to compute, 
-then wrap dependent values in function, e.g. set_width()
-
-IMPORTANT: BUFFER ITERATIONS, USE STRIDE FOR GREATER FLEXIBILITY
-`void colour_iterate(u8 *colours, u32 count, u32 stride);`
+memory access is very slow. actual math operations etc. are very fast.
+so, in general compute; don't lookup as math is effectively 'free'
 
 c compiler can reorder.
 AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due to reordering
 
-strive for value orientated (less pointers), 
-i.e. use structs by value; so return them and use as arguments.
-removes aliasing and x86 passes small structs into registers, so never hit memory
-and if optimised and inline function, goes away entirely
+value orientated removes aliasing, inlining candidate, arguments in registers anyway, etc.
 
 full fence is release and acquire, i.e cannot move up or down
-atomics are not just instructions to compiler to not reorder, but also hardware instructions related to cache flushing etc.
 
-C standard as at least 6 pages of undefined behaviour 
-could be more, in fact anything not explicit defined is undefined.
-there could be more undefined behaviour waiting to be noticed. 
-it's just because C is 50 year old language that many corner cases explored
-
-DIFFERENCE IN APPROACH TO WORKING ON TEAM AND STAGE OF PROJECT
 on a team, 'proper' commit should change one thing and have accompanying tests.
 So, write explorative code on branch and merge when done
 
-Linux issues: 1. runtime configurability (difficult part not API, but what to do when settings aren't exact, i.e. what to fall back on when abstraction not there). 2. multiple binaries
-Although possible to dynamically load core libraries like xlib/wayland/alsa and support
-a minimum set of APIs, this is essentially what SDL does.
-However, system/user configurability is huge in linux. There is simply too much
-runtime variability to test for all users.
-Furthermore, multiple CRT to support, e.g. muslc for Alpine
+Linux shipping issues are the wide range of system configurability (xlib/wayland etc.) and glibc breaking abi (requiring multiple binaries)
+(or even if glibc present, e.g. muslc for alpine)
 
-Linux desktop suffers from binary compatibility nightmare, e.g. 15 binaries to support all. 
-This is because libraries like glibc are happy to break abi to get minor improvements, e.g spec says this so let's do it even though no one cares
+SATA: sustained speeds, so for small file sizes expect a lot less as seconds smaller
 
-introducing negatives we effectively remove one bit
-numbers represented in twos complement to handle addition/subtraction of negatives and positives.
-not because of representation, e.g. sign bit would work fine
-when saying complement, it's with respect to negative number handling:
-ones ➞ invert all bits in positive number to get negative. therefore have -0
-twos ➞ adding a positive and its negative will get a 2 in each place. 
-think about the MSB as the negative place, hence why -1 is all 1s
-
-(Serial Advanced Technology Attachment)
-important that these are sustained speeds, so for small file sizes expect a lot less as seconds smaller
-note that storage space advertised with S.I units, whilst OS works with binary
-
-RAM potentially hundreds of cycles (CAS latency and cache retrieval process)
-(important to note that RAM CAS is only say 20% of total latency as will 
+so, ram frequency gives max. throughput
+however latency of ram also important
 In general:
 check if in L1. If not go check in L2 and mark least recently accessed L1 for
 move to L2. bubbles up to L3 until need for memory access which will go to memory
 controller etc.
 
-so, ram frequency gives max. throughput
-however latency of ram also important
-
-(cache latency from wikichip)
-
-generic is referencing Ubuntu specific kernel compilation (could also have -lowlatency etc.) 
-(generic does not include a lot of modules in kernel to alleviate RAM, so use modprobe)
-(-41 is build number, i.e how many times compiled)
-(the compiler, linker, libc are all specific to linux OS used, e.g. compiled with different settings, different versions, etc.)
-
-ost influential software written largely by one person, e.g Linux, Unix, git etc. Then a team is assigned to maintain it. Fallacy about solo programmer productivity requiring large teams.
-Design by committee pushes design to middle of bell curve as opposing views average out
-
 Cpu try to guess what instructions ahead (preemptive). 
 Cost of incorrect reflushing expensive. 
 So want to get rid of conditional jumps. 
 Ideally replace with conditional movs or arithmetic branch less techniques.
-Endianness (register view), twos complement (-1 all 1s)
 Branch less programming is essentially SIMD
 
-Flops calculated with best instruction set?
 Not memory bound is best case for hyper threading
 Intel speeds optimised for gpr arithmetic, boolean and flops
-
-You need to be self critical to be a good engineer
-
-Caches are a way of minimising roundtrip time of RAM by putting memory as close to the core that thinks will need it
-L1 closest, 1/2 cycles, 32k. Wikichip for more info
-Cpu will go to caches first
 
 L1 can supply 2 cache lines per clock
 Instructions per clock, number of work components, e.g. number of add components, cache line per cycles, cache latency, agu (address resolver units) impose restrictions
@@ -847,22 +823,17 @@ Can really only know if a cache miss incurs a performance penalty by looking at 
 So, due to complex overlapped/scheduling nature of modern CPUs can really only know if cache miss incurs penalty with vtune
 Uop website displays table for instructions
 
-Currently good that most things are little endian with 64 byte cAche lines, however some hardware guys Is going to come along and change it back to big endian
+An instruction of throughput 1 means issued every clock. 
 
-An instruction of throughput 1 means issued every clock. As many instructions take longer than 1 cycle, each core requires a scheduler to see if it can execute something.
-View cpu as sections where there is some distance to communicate.
-
-People become attached to a way of programming which doesn't focus on solving the problem. They want to build rube-goldberg machines
-Selectively attacking problems seriously means you have a functional program quicker, whereby you can actually decide if those other problems need to be addressed. 
-Can defer hard decisions later as they will be made better as you will have more technical expertise and more context to work with
-
-Testing is important. If you don't write tests, your software doesn't work. However, write higher level system tests, not excessive unit tests. 
+If you don't write tests, your software doesn't work. 
+However, write higher level system tests, not excessive unit tests. 
 More efficient and this is where bugs are likely to be. You often have to remove code, so having unit tests just increases the volume of code you have to write. 
 Huge drain on productivity. Maybe for NASA.
-
-Faster cpu like Apple's m1 are irrelevant if software bad
-
-Floating point math faster than integers
+Complete code coverage on the one hand is very thorough, however don't get a lot of engineering output. 
+Furthermore, most bugs appear in between systems not in units. 
+Best way to test is to release on early access.
+This checks hardware and software, user may be running adobe acrobat which hogs cpu so instruct them to kill it before running your game. 
+Or maybe 20000 chrome plugins. This is something a hardware lab can't tell you
 
 my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
 
@@ -870,38 +841,16 @@ Compiler works on file by file, so knows nothing about calls across files.
 Therefore it generates object files which are partially executable machine code with unresolved symbols. 
 Linker merges these object files and also adds extra header information so that the OS can load our executable (or more specifically a kernel, e.g. linux)
 
-Complete code coverage on the one hand is very thorough, however don't get a lot of engineering output. 
-Furthermore, most bugs appear in between systems not in units. 
-
-Best way to test is to release on early access.
-This checks hardware and software, user may be running adobe acrobat which hogs cpu so instruct them to kill it before running your game. 
-Or maybe 20000 chrome plugins. This is something a hardware lab can't tell you
-
 To make an installer just fwrite your executable and then data files appended with footer. 
-Inside the exe, fread the exe and fseek based on the static offset of the appended resources
-Bake resources in for reliability only really
 
-Packed files better as less OS operations performing expensive file handles etc.
+in terms of optimsations, const is useless as you can cast const away.
 
-const is only useful if you find it catches bugs for you (maybe for globals instead of using #defines)
-however, in terms of optimsations, const is useless as you can cast const away.
-therefore, for me, const is mostly just a waste of typing.
-
-good practice to assign variable for syntatical reasons, i.e. more readable, e.g
-`Controller *controller = &evdev_input_device.controller;`
-
-when programming some days you are off. this just means you're going to be debugging a lot. hopefully bugs are proximal
-
-we want it to be clear what our code can and cannot touch. global variables make this hard (however, can add _ to see where they are all used)
-however, as many OSs are rather janky and most code will live outside this, it is ok to have some globals here
-globals are fine in development. can repackage into a structure later.
-
-clock speed not as relevent as improvements in microarchitecture and number of cores means can be more efficient under less duress.
+clock speed not as relevent as improvements in microarchitecture 
+and number of cores means can be more efficient under less duress.
 also, lower clock speed may be because want to draw less power.
 
-short build times (under 10 seconds) are incredibly important to not decentivness making changes and testing them
-
-note that >> will typically (implementation defined) perform arithmetic shift (fill in with 1's) on signed, so not always the same as a divide.
+note that >> will typically (implementation defined) perform arithmetic shift (fill in with 1's) on signed, 
+so not always the same as a divide.
 similarly, sign-extension just fills in the new MSBs with 1's
 
 most modern cpus have a floating point unit, making them faster than ints (same latency), 
@@ -911,65 +860,24 @@ however, for multiplayer games, optimisers can give different results when using
 e.g a platform that has operator fusion like a MULADD may give different result when rounding then a 
 platform that has do it separate. (fixed point could solve this)
 
-asserts are part of debug program that are used to check that things work that should always work.
-use them for a condition that must be true that is not explicitly present
+the org chart is the asymptote, so it's the best case that we make a product as granular as our org chart. 
+e.g. if we assign teams for say audio, 2d, 3d we would expect individual APIs for each.
+it could be far worse and even more granular 
 
-it's not the programming practice but the dogma that gets you. 
-
-amdahls law gives the time taken for execution given a number of cogives the time taken for execution given a number of cores.
-for this formula (indeed any formula) we can obtain some property by seeing as function parameter approaches infinity. 
-in this case, the parallelising part drops out.
-brooks law says that simply adding more people to a problem does not necessarily make it faster. 
-if requires great deal of coordination/communication actually slows down.
-
-solving a problem: 
-1. decide what you are doing (this can't be open-ended.) 
-2. organise groups to achieve this
-by making these boundaries, we are presupposing that each part is separate, e.g tyres team and engine team; assume tyres and engine cannot be one piece.
-therefore, the boundaries define what products you can make, i.e. you produce products that are copies of yourself or how you are structured
-so, in software if we assign teams for say audio, 2d, 3d we would expect individual APIs for each.
-the org chart is the asymptote, so it's the best case that we make a product as granular as our org chart. it could be far worse and even more granular 
-
-therefore, communication between teams is more costly than communication within teams.
-takeaway is that low-cost things can be optimised, high-cost can't be (further away on the org chart)
-
-note that communication in code could just be someone checking something in and you pulling it
-
-what we are seeing now with modern software is the superposition of orgcharts due to use of legacy codebases
+modern software is the superposition of orgcharts due to use of legacy codebases
 now we see org charts in software, where people are artifically creating inheritence hierarcies that limit how the program works
 this is very bad. the reason it's done is for people to create mental models that help them solve the problem as they can't keep the complexity in their head. 
 it may be necesary to solve the problem, however it shouldn't be looked at as good.
-however, because it's done due to lack of understanding, the delegation/separation is not done with enough information. so you limit possibilities of the design space.
+because it's done due to lack of understanding, 
+the delegation/separation is not done with enough information. 
+so you limit possibilities of the design space.
 so although, libraries, microservices, encapsulation, package managers, engines may be necessary due to our brain capacity 
-WE MUST BE LEAN AND FLEXIBLE IN ORGCHARTS IN COMPANY AND IN SOFTWARE TO INCREASE DESIGN.
 some old codebases need to be retired
-
-some software is scaffolding, i.e. not shipped with the final product, e.g. editor for games
-
-Instead, if it's something that is actually an error, e.g. missing file, write the code to explicitly handle it.
-Handling the error in a sense makes it no longer an error, rather a feature of the program
 
 if function is expecting a range between, clamp it
 
-Refactoring is essential
-. You must know what you are trying to achieve so you have some notion of progress, e.g. adding a constraint to the system. 
-
-You can abstract/encapsulate anything at anytime, so why not do it later when you know what you are doing?
-
-if can go functional without sacrificing, saves you complexity down the road.
-oftentimes simply utilising elements of functional programming is good, e.g. no global state, only operating on parameters etc.
-
-writing code guides you to the right design, e.g. made same call -> put into function; 
-require args in function -> struct;
-many related functions together -> organise related functions into own file; (if thinking could be moved to another file, make comment sections outlining code blocks to ease this process later on)
-sections of single value interpreted differently -> pack 2 variables into 1 (_ technique useful here)
-same operations performed on pairs of variables -> vectors (as oppose to working with them as scalars)
-
 we don't want to orient our code around objects (if anything, algorithmic oriented). 
 its about how you arrive at some code that determines how good it is
-
-excessive pre-planning and setting waypoints is really only useful if you've done the problem before
-instead, we become a good pathfinder, learning to recognise the gradient of each day of the journey.
 
 only break into function when you know what you want, 
 e.g. called multiple times or 
@@ -977,27 +885,14 @@ e.g. called multiple times or
 Refactoring with usage code: just write out structures that satisfy the usage code.
 If major rewrite use #if 0 #endif to allow for successful compiling
 
-being able to draw out debug information is very useful. 
-time spent visualising is never wasted (in debugger expressions also)
-
 (mocking of syscalls for unit testing with file i/o)
 
 If the data being grouped can only exist together (e.g. points), use vectors.
 Put all structs related typedefs inside their own header file for easy access.
 
-As floats are an approximation, when comparing to 0.0f (say for a denominator check) 
-or negative (say for a square root) use a tolerance/epsilon less-than/greater-than check.
-In fact whenever dividing should always ask oneself "can the value be zero?"
-To be clear about float to int casting, use a macro like truncate/round (think about what if uneven divide)
-Due to mixed integer and float arithmetic going to float, calculate integer percentages `val * 100 / total`
-There is no need to overload the division operator as can do `(* 1.0f / val)`
-
-Endianness comes into play when reading/writing from disk (e.g. file type magic value) and working directly with `u8 *` (e.g. iterating through bytes of a u32) 
-
 to market app: I'm notified when keywords related to "human wants thing, my app can do thing" appear on HN, Reddit and Lobsters.
 
 even parity is to make it even, i.e. so if 5 1's, even parity will add a 1 
-
 
 ## Code
 // sha1 more bits than md5, so more complex?
@@ -1014,7 +909,8 @@ development may have to add to groups (uinput)
 
 plugins just be .so files that are loaded with dlsym()
 
-Visualising essential for debugging insidious problems...
+being able to draw out debug information is very useful. 
+time spent visualising is never wasted (in debugger expressions also)
 
 Drawing have left_edge, top_edge
 Drawing charts, define chart_height, bar_width, bar_spacing etc. in pixels
@@ -1045,13 +941,6 @@ cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running
 in fact, laboratories have neutron detectors for this
 so, could have duplicate computers to account for this, say on an airplane
 
-## Lightbulb vacuum triodes
-0 kelvin is absence of thermal energy. 247 kelvin is 0celsius
-thermionic emission is emission of electrons from a heated surface
-this led to vacuum diode, which could rectify AC
-signal amplification is increasing amplitude, so further distances and less noise
-vacuum diode was first electrical switch used in first digital computer ENIAC
-
 ## Analog Computing
 Analog computers such as the antikythera mechanism can use gears, with each tooth representing a value (often mechanical devices) to measure orbits. Also tides
 Analog errors are easy to occur and can multiply, also as models of the real world, not general purpose.
@@ -1065,15 +954,6 @@ In fact, neural networks effectively boil down to matrix multiplication
 By storing certain amount of electrons and applying a certain voltage, output currents can be added together
 Size of transistor approaching size of atom, so Moore's law ending
 
-
-# Ground
-Voltage is difference between two points. Ground is reference voltage (as in say a CPU, there is no literal ground)
-
-x11 requires window manager (from desktop environment like xfce, gnome (gtk), kde (qt)); compositor all in one
-x11 siphoned input, graphics, fonts and indirect communication etc. 
-wayland and mor are compositors
-
-
 ## Embedded Project Requirements 
 - what is the power source, battery or wall power?
 - are there any particular size requirements?
@@ -1085,6 +965,8 @@ wayland and mor are compositors
 - what are the compute resources required by your algorithm? 
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
+
+component selection is capabilities and then what environment for these components
 
 They might ask you how they work, 
 where they would be appropriate to use, 
@@ -1101,7 +983,7 @@ e.g. low-end fit bit, high-end fitbit
 
 A good rule of thumb is to pick hardware with at least twice the resources (RAM, flash, CPU cycles etc) you estimate will be required. 
 
-Often case thinking about what peripherals can be multiplexed to get more I/O pins.
+Often case thinking about what peripherals can be multiplex/charlieplex to get more I/O pins.
 I/O lines typically either control lines (SPI), IRQ line and power control line (for proper sequencing)
 Most I/Os don't involve a lot of CPU time:
 - IRQ or status I/Os polled a few times a second
@@ -1248,11 +1130,42 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 ## Common
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
 1 *     2² *      0.1234
+introducing negatives we effectively remove one bit
+numbers represented in twos complement to handle addition/subtraction of negatives and positives.
+not because of representation, e.g. sign bit would work fine
+when saying complement, it's with respect to negative number handling:
+ones ➞ invert all bits in positive number to get negative. therefore have -0
+twos ➞ adding a positive and its negative will get a 2 in each place. 
+think about the MSB as the negative place, hence why -1 is all 1s
+
+As floats are an approximation, when comparing to 0.0f (say for a denominator check) 
+or negative (say for a square root) use a tolerance/epsilon less-than/greater-than check.
+In fact whenever dividing should always ask oneself "can the value be zero?"
+To be clear about float to int casting, use a macro like truncate/round (think about what if uneven divide)
+Due to mixed integer and float arithmetic going to float, calculate integer percentages `val * 100 / total`
+There is no need to overload the division operator as can do `(* 1.0f / val)`
+
+Voltage is difference between two points. 
+Ground is reference voltage (as in say a CPU, there is no literal ground)
+
+struct padding largest value wants to be on a byte boundary that is divisible by itself
+trailing members may have padding also to ensure consecutive structs in array are aligned as well
+
+zero-copy just means less copys, e.g. DMA or direct to peripheral etc.
+
+A bootloader can also validate code.
+Really only use on-board bootloader if built into silicon for extremely resource constrained.
+At a minimum, OTA bundle include version, hash (no corruption), signature
 
 Software breakpoint requires modification of code to insert breakpoint instruction
 
 Goodhart's law (when a measure becomes target, fails to be useful as neglect other things)
 Dunning-Kruger effect (over confident from lack of experience) 
+amdahls law gives the time taken for execution given a number of cogives the time taken for execution given a number of cores.
+for this formula (indeed any formula) we can obtain some property by seeing as function parameter approaches infinity. 
+in this case, the parallelising part drops out.
+brooks law says that simply adding more people to a problem does not necessarily make it faster. 
+if requires great deal of coordination/communication actually slows down.
 
 Schematics useful for looking into electrical diagrams of board components, 
 e.g. mcu pins that are pull-up (will read 1 by default), 
@@ -1363,9 +1276,6 @@ Euclidean geometry are a set of rules laid out by Euclid that follow for geometr
 - read back protection to prevent IP theft (secure boot manager, flash encryption, jtag disabling)
 tamper response usually done with a button on the board that gets activated when case opens
 this will trigger an interrupt handled by RTC (real time clock)
-
-## Assembly
-compiler assembly inspection: https://coffeebeforearch.github.io/2020/08/12/clamp-optimization.html
 
 ## Bootstrap 
 UUID/GUID (universally/globally) 16 bytes. 
@@ -1522,39 +1432,7 @@ e.g no derivative, no financial, must share under same license.
 
 Public domain means no license, so could claim as yours
 
-## Data Structures
-
-## Matching Pairs
-A quadratically scaling solution is intuitive
-However, as we know every match is unique, linearly scaling solution obtained with a hash map.
-C++ STL implementation of hash tables are sets (just keys) and maps
-Unordered variants are raw hash maps
-Ordered use self-balancing red-black-tree yielding logarithmic time
-Simplest hashing function `(x >> 4 + 12) & (size - 1)`
-Important to keep in mind we are executing on a physical machine and that
-Big-Oh is a 'zero-cost abstraction' world.
-For example, the extra overhead of introducing a hashmap (memory allocations/copies) 
-will result in this being slower for small lists (also no dynamic memory allocations in ISR)
-This is why C++ STL uses hybrid introsort
-
-## Sorting Squared Array
-Quadratic insertion/bubble sort preferable for small lists
-Loglinear divide-and-conquer merge/quick for medium
-Linear radix for large
-
-
-In practice, you can solve efficiency by leaning on existing libraries/work.
-More important to write robust code with tests.
-Have knowledge of these rather than memorising implementations.
-You can investigate specific implementations on a per-problem basis.
-
-Big Oh is worst case.
-Amortised is average over a series of operations, i.e. worse case average over a series of operations
-It's an indication of how an algorithm scales, i.e. asymptotic limiting behaviour
-It operates in a zero-cost abstraction world:
-e.g. memory allocations involved in small input number for linear is slower than logarithmic (why C++ STL uses hybrid introsort)
-e.g. how arranged in memory; complete binary trees store in array, other trees store as list
-e.g. ignores constants like in Fibonacci heaps having large constants in their amortised linear cost, so often not actually better insertions than binary heap
+# Data Structures
 
 * Array: search O(n)
   - Heap:
@@ -1659,6 +1537,28 @@ e.g. ignores constants like in Fibonacci heaps having large constants in their a
 greedy algorithms memory efficient however not optimal, so balancing act
 greedy chooses next best option from what is available at the moment
 
+C++ STL implementation of hash tables are sets (just keys) and maps
+Unordered variants are raw hash maps
+Ordered use self-balancing red-black-tree yielding logarithmic time
+Important to keep in mind we are executing on a physical machine and that
+Big-Oh is a 'zero-cost abstraction' world.
+For example, the extra overhead of introducing a hashmap (memory allocations/copies) 
+will result in this being slower for small lists (also no dynamic memory allocations in ISR)
+This is why C++ STL uses hybrid introsort
+
+In practice, you can solve efficiency by leaning on existing libraries/work.
+More important to write robust code with tests.
+Have knowledge of these rather than memorising implementations.
+You can investigate specific implementations on a per-problem basis.
+
+Big Oh is worst case.
+Amortised is average over a series of operations, i.e. worse case average over a series of operations
+It's an indication of how an algorithm scales, i.e. asymptotic limiting behaviour
+It operates in a zero-cost abstraction world:
+e.g. memory allocations involved in small input number for linear is slower than logarithmic (why C++ STL uses hybrid introsort)
+e.g. how arranged in memory; complete binary trees store in array, other trees store as list
+e.g. ignores constants like in Fibonacci heaps having large constants in their amortised linear cost, so often not actually better insertions than binary heap
+
 TODO: add algos course notes
 dynamic programming is breaking a problem into subproblems and working way up
 This involves storing the results of smaller problems and using them for results on bigger problems 
@@ -1710,110 +1610,13 @@ Bellman-Ford (non-greedy), topological sort (for things with dependencies), Myer
 Disjoint-Set-Union-Find (minimum spanning trees), 
 Each A* node has local and global goals, i.e. how close to end result
 
-(simple hash, simple checksum, Huffman encoding, greedy, non-greedy, dynamic programming, backtracing?)
-
-TODO: multithreading!!!
-
-For embedded:
-* buffering techniques: zero-copy buffer (direct to peripheral buffer), circular/ring buffer, bipartite buffer
-* bit-twiddling tricks: 
-* Usage and problems with DMAs, DMAs with and without cache coherency
-* persistent logs  
-* Identify if it is HW or FW problem
-* debugging techniques for various peripherals
-* data structure dumps
-* TLB with MMU
-* state machines
-
-
-TODO: understanding how to benchmark algorithm.
-know about various cache misses
-
-
-* **Two arrays, find matching pairs between them**
-Intuitive solution with array: O(n²), O(n)
-Knowing uniqueness, can obtain linear solution with hashmap: O(n), O(2n)
-
-
-
-
-// remove root: swap with last, sift down (swap with minimum of child nodes)
-
-// insert: append, walk up/sift up swapping with parent
-
-// create: iteratively sift down on parent nodes starting from end
-
-
-## OS 
-in uefi:
-- can set fan speed based on temperature
-- other frequencies to auto; inspect ram slot details; on-board leds etc.
-- set cpu overclock, e.g. 3.8GHz to 4GHz
-in grub can run memtest:
-- notice that having 8 sticks of ram at manufacturer recommended 3GHz does gives error in test 7, so set to 2.9GHz
-
-mandelbrot vanilla benchmarking?
-$(/usr/bin/time povray) for benchmarking
-run this on side (lm-sensors): https://superuser.com/questions/25176/how-can-i-monitor-the-cpu-temperature-under-linux
-
-ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
-
-
-## Math
-
-### CRC
-STM32F1 implements the CRC32 from IEEE 802.3 (Ethernet). 
-Lots of other systems use that CRC32-IEEE, but there are a few other different CRC32 standards in common use. 
-MPEG2 also uses the same CRC32 version as Ethernet. CRC32C is probably the second most common CRC32 function used.
-CRC32 is a pseudorandom function family, there are many functions (mappings from {0,1}n→{0,1}32) in the family. 
-The parameters are the 32-bit input polynomial, the byte ordering, the bit ordering, whether there's padding, and whether there's an initial input value (and what it is if so).
-
-CRC32 isn't one standard algorithm. 
-It's 232 different possible algorithms, depending on which polynomial you pick. 
-There are a few dozen or so commonly used polynomials. 
-ST's AN4187 gives good documentation on how to compute them using the CRC peripheral. 
-The STM32F1 series is specialized to compute only the 0x4C11DB7 polynomial, with the initial value 0xFFFFFFFF. 
-That's a common one (used in 802.3 Ethernet), but isn't the only one.
-
-IIRC even the old STM32F1xx the CRC32 peripheral can process has a throughput of 8 bit per cycle (also 16 bit every two cycles or 32 bit every 4 cycles). That's hard to beat with anything more than add/shift/xor.
-
-78k cycles to compute a CRC for 256 words is some 300 cycles per word. That must be for the 1-bit at a time algorithm.
-I'ts possible to do CRC32 using a byte based algorithm using a 1k lookup table at a fraction of these cycles.
-
-ST manual will give polynomial used for CRC, so can check on PC:
-```
-class Crc32:
-    crc_table = {}
-
-    def __init__(self, _poly):
-        # Generate CRC table for polynomial
-        for i in range(256):
-            c = i << 24
-            for j in range(8):
-                c = (c << 1) ^ _poly if (c & 0x80000000) else c << 1
-            self.crc_table[i] = c & 0xFFFFFFFF
-
-    # Calculate CRC from input buffer
-    def calculate(self, buf):
-        crc = 0xFFFFFFFF
-
-        i = 0
-        while i < len(buf):
-            b = [buf[i+3], buf[i+2], buf[i+1], buf[i+0]]
-            i += 4
-            for byte in b:
-                crc = ((crc << 8) & 0xFFFFFFFF) ^ self.crc_table[(crc >> 24) ^ byte]
-        return crc
-    
-    # Create bytes array from integer input
-    def crc_int_to_bytes(self, i):
-        return [(i >> 24) & 0xFF, (i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF]
-        
-# Use it
-# Prepare CRC block
-crc = Crc32(0x04C11DB7)
-result = crc.calculate(your_input....)
-```
+simple hash, 
+simple checksum, 
+Huffman encoding, 
+greedy, 
+non-greedy, 
+dynamic programming, 
+backtracking
 
 ### Matrices
 vector math routines (obtaining cross product from column vector form)
@@ -1836,23 +1639,8 @@ for multiplication of vectors, be explicit with a hadamard function
 much faster cycle count and latency than square root)
 
 
-
-
-----------------------------------------------------------
-IMPORTANT: as esp32 comes with default bootloader, it may use peripherals already, e.g. bootloader uses UART0
-
-Common in embedded to overload terms, e.g. STM32 board
-
-while (1)
-{
-  throw_bone();
-  result = state_machine[state]();
-}
-
 Simplistically, arduino and ilk software bloated, minimal debug features, over charge 
 For monolithic things like PlatformIO, version maintenance of libraries is a nightmare (i.e. packaging problems)
-
-Multiplexing techniques used to control more loads with less ports, e.g. charlieplexing LEDs, buttons, etc.
 
 Select dev board middle of the road to account for changes down the road, e.g. want AI so more flash, want to optimise power etc.
 
@@ -1918,37 +1706,6 @@ If many people have encountered a common problem, will typically be an applicati
 
 In addition to HAL files, typically have example source code for particular MCU on github from vendor
 
-
-## Debug
-ARM Debug Interface Architecture
-DAP (Debug Access Port) bus.
-Possible Debug Port are SW-DP, JTAG-DP, SWJ-DP
-Possible Access Port are MEM-AP (access to CPU, flash etc.), JTAG-AP 
-Debugger handles transactions, e.g. request/ack/data phases etc.
-(attackers connect say a bus pirate two various pins and send signals hoping to get valid response)
-(boards implement different ways to prevent access to DAP)
-SWO is an extension of 2pin SWD interface SWDIO/SWDCK
-ITM (Instrumentation Trace Macrocell) typically connected to SWO
-Specific semihosting (reading a file) interrupt request also handled over SWO
-Programmers by default do not provide power
-
-Always use oscilloscope/logic analyser to verify signals make sense
-
-
-So, when reporting issue:
-  * verify signal
-  * supply console command
-  * mention datasheet info, e.g timing diagram
-  * (look for open-source drivers that perform similarly)
-
-Essentially with embedded, have lots of testing to mitigate issues so TEAM can solve problems
-hardware and software people need to be in it together
-shipping products is a team sport
-
-As problems not always software:
-Need to be able give hardware/electrical engineer as much information as you can to reproduce bug
-
-Debuggers should stop watchdog timer automatically (although firmware update will manually have to)
 
 
 ## Interrupts
@@ -2023,9 +1780,9 @@ if storing known sizes, better to use circular buffer:
 internal flash on stm32 faster than SPI limited esp32 external flash
 
 ## Deployment
-A single chip is often more expensive to develop/maintain and less fault tolerant if one of its susbsystems fails than having external sensors
+A single chip is often more expensive to develop/maintain and 
+less fault tolerant if one of its susbsystems fails than having external sensors
 
-component selection is capabilities and then what environment for these components
 
 MCU parametric selection using microchip/maps
 "I need the cheapest part I can get, for multiple 10K unit production runs with one SPI bus, one I2S  bus, DMA channels and a handful of GPIOs 
@@ -2066,29 +1823,6 @@ Going from devboard, e.g. Discovery to PCB:
   * FCC/EMC for unintentional EM radiation (other certifications)
     (can actually search for product on ffcid.io)
 
-## DFU
-A bootloader can also validate code.
-
-Really only use on-board bootloader if built into silicon for extremely resource constrained.
-
-Use CRC (hash is better) to ensure image sent is image recieved 
-Also, sign so we know where it came from
-Per-company keys is easier, however per device key is more secure
-At a minimum, OTA bundle:
-  * version
-  * hash
-  * signature
-  * (3x flash size to have a known 'factory' image?)
-
-Memory layout in Flash
-  * image header (serial number, keys)
-  * reset vectors (these could be in flash, i.e could be functions copied over to .ramfuncs in cstartup for speed?)
-  * .text
-  * .rodata/.consts
-  * .cinit
-  * ...
-  * nv storage? (could also have some storage system, file system etc.)
-  * bootloader?
 
 ## Wireless
   * heartbeat log (to show alive, e.g. power usage and battery life)
@@ -2120,10 +1854,6 @@ Otherwise, paying an unjustified premium
 
 Serverless is just a term for a caching server closer to clients
 
-https://github.com/icopy-site/awesome/blob/master/docs/awesome/Awesome-Game-Networking.md?plain=1
-
-Networking Chapter in the book Hacking The Art of Exploitation
- 
 Distinction between unicast (device to device), multicast (device to some devices) and broadcast (device to all devices) is at network layer 3. (the signals are all technically recieved)
 
 ### App-Device
@@ -2418,6 +2148,26 @@ e.g. one value changed in cache line invalidates it, even though another value i
 remains unchanged
 
 ## Peripherals
+CRC:
+High range of error detections with small checksum value.
+Treats data as a binary polynomial and performs modulo-2 division by a fixed/generator polynomial. 
+The remainder is the checksum.
+CRC32-IEEE in STM, Ethernet, MPEG (0x04C11DB7)
+CRC-32C in Btrfs (0x1EDC6F41)
+Different polynomials used to target particular errors, e.g. burst, random etc.
+
+CRC32 is a function family, i.e. isn't one standard algorithm.
+The parameters are the 32-bit input polynomial, the byte ordering, the bit ordering, whether there's padding, 
+and whether there's an initial input value.
+The STM32F1 series is specialized to compute only the 0x4C11DB7 polynomial, with the initial value 0xFFFFFFFF. 
+That's a common one (used in 802.3 Ethernet), but isn't the only one.
+
+STM32F1 implements the CRC32 from IEEE 802.3 (Ethernet). 
+Lots of other systems use that CRC32-IEEE, but there are a few other different CRC32 standards in common use. 
+MPEG2 also uses the same CRC32 version as Ethernet. 
+CRC32C is probably the second most common CRC32 function used.
+
+
 IMU:
 A MEMS IMU sensor giving 9DOF, should be pre-calibrated and hopefully digital to avoid analog noise:
 * accelerometer (90% of time tell us which way is down, i.e. what side are you facing)
