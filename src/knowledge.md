@@ -1043,6 +1043,9 @@ ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
 
+To prevent entering password, copy over ssh public key and store ssh password in memory with ssh-agent
+scp build/raspi2 ryan@raspi2:/home/ryan/prog/personal/example
+
 Inheritence is just putting the parent struct inside the child struct as its first member.
 In this way, the first element address is same as struct address. 
 In C++, the compiler does this automatically for us unlike in C where we would have to explicitly mention this member.
@@ -1752,6 +1755,24 @@ if storing known sizes, better to use circular buffer:
 internal flash on stm32 faster than SPI limited esp32 external flash
 
 ## Wireless
+GET /path?query_string HTTP/1.0\r\n
+
+POST /path HTTP/1.0\r\n
+Content-Type: text/plain\r\n
+Content-Length: 12\r\n\r\n
+payload
+
+  char html[] = {
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Type: text/html; charset=UTF-8\r\n\r\n"
+    "<style> body { background-color: #efefef; } </style>\r\n"
+    "<h1> Hi There! </h1>\r\n"
+    "<form method='post'>\r\n"
+    "  <button name='LED1' value='1'> LED ON </button>\r\n"
+    "  <button name='LED2' value='0'> LED OFF </button>\r\n"
+    "</form>\r\n"
+  };
+
 For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
 UDP much better as no 3-way handshake.
 Balance between compression for speed or resultant size. 
