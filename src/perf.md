@@ -18,8 +18,7 @@ Think about what source language becomes as this is when can talk about speed.
 mul output in two registers
 signed/unsigned comparison instructions
 
-TODO: incorporate comp95.. 
-into assembly understanding, e.g. overflow flag for signed jumps, cmp is a sub, etc.
+overflow flag for signed jumps, cmp is a sub, etc.
 
 carry flag if incorrect unsigned interpretation
 overflow flag if incorrect signed interpretation
@@ -174,19 +173,6 @@ so 64 / 4 gives how many floats per second from L1 cache
 in general, not streaming from memory the entire time
 (would probably hit a cache bandwidth limit)
 
-times when manual inlining is required (SIMD): 
-(discovered this only by looking at counters) 
-https://www.youtube.com/watch?v=B2BFbs0DJzw
-V2 is an array, compiler had to put x and y next to each other. 
-After inlining compiler was free to bail on recomputing y, which doesn’t change with iterations, and probably did some smart simd stuff for x
-
-with pure compiler optimisations, 
-i.e. code we have not optimised ourselves, a 2x increase is not unexpected.
-Code we optimised not as much
-
-virtually never use lookup tables as ram memory is often 100x slower 
-so unless you can't compute in 100 instructions
-
 so, FMUL may have latency of 11, however throughput of 0.5, so can start 2 every cycle, (documentation gives inverse throughput)
 so throughput is more of what we care about for sustained execution, e.g. in a loop
 
@@ -200,9 +186,6 @@ and give a rough estimate as to how long it could optimally take
 (will never hit optimal however)
 
 IT'S CRITICAL TO KNOW HOW FAST SOMETHING CAN RUN TO KNOW IF SLOW
-
-big-oh is just indication of how it scales. could be less given some input threshold
-(big oh ignores constants, hence looking at aymptotic behaviour, i.e. limiting behaviour)
 
 
 xmm is a sse register (4 wide, 16 bytes); m128 is a memory operand of 128 bits
@@ -250,14 +233,6 @@ Furthermore, garunteed ability to inline functions (as with multiple translation
 
 
 simd
-V2 v = pos + vel;
-1. change to scalar values
-BECOMES
-f32 x = ;
-f32 y = ;
-
-
-
 clamp can be re-written as min() and max() combination, which are instructions in SSE
 
 Although looking at the system monitor shows cpus maxed out, we could be wasting cycles, e.g. not using SIMD

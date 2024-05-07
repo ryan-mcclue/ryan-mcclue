@@ -1,13 +1,11 @@
 # Performance
 TODO: refer to 'perf' repo
 
-peripheral clock source can affect power.
-faster clock, more power.
-however, a 32KHz accurate crystal more voltage than less accurate oscillator
-
-Various synthetic benchmarks indicative of performace, e.g. 
-DMIPS (Dhrystone Million Instructions per Second) for integer and
-WMIPS (Whetstone) for floating point
+Big-O:
+Indication of scaling behaviour, i.e. ignores constants to look at asymptotic behaviour
+Scaling only matters if you actually scale.
+O(n^2) 25,000 more than O(n) 160, however if O(n) cache miss, could be as slow as O(n^2).
+Also O(c2*n^2 + c1*n + c0) constants might make it slower than O(n) for small n
 
 Timing:
 Often need to guarantee response in say 40ms. 
@@ -15,62 +13,18 @@ Generally in embedded, 5ms is an eternity for an ISR.
 Conceivable for 25us of work in an ISR.
 * ISR latency
 * Cycle count
-* Time I/O line gpio_high/low in oscilloscope 
+* Time I/O line gpio_high/low on oscilloscope 
   Combine several times to DAC output
 
 Power:
-Identify states of operation, how long in each and what active component current draw is.
-Better to use power monitor over just component datasheet
-
-For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
-UDP much better as no 3-way handshake.
-Balance between compression for speed or resultant size. 
-
-Perhaps variable power at 2V for 3.3V to test in low power situations
-
-Seems that common to sleep at end of superloop and wait for an interrupt to occur?
-
-For low power, sleep has to be at forefront (long and as deep as possible)
-We don't explicitly wait for things to happen
-More concerned with peripherals, rather than actual core
-
-Reduce power by reducing:
-  * Voltage, Resistance (component selection, e.g. less components in sensor)
-  * Current (less code)
-  * Time (slowly, sleep)
-
-Light sleep (low milliamp to microamp)
-Deep sleep (microamp)
-Hibernate (nanoamp; here things like cleanliness of board matter, e.g. flux)
-
-Low Power Questions (At Start):
-1. How big battery can fit and what price?
-11mm x 4mm ($5)
-Found 40mAh, 3.7V
-2. How long must unit work between charging?
-At least 24 hours
-System can average (0.004 / 24) mA
-3. What are estimated pieces of system?
-oled (12mA, 0), accelerometer (0.165mA, 0.006mA), battery
-on state last (), sleep state last ()
-We see that cannot be on all the time, as average current less than what battery can provide
-4. Resultant restrictions
-Tweak on percentage until average current usage is within bounds
-Screen only on 5% of time
-
-Low Power Questions (At End):
-1. Different states device can be in?
-on, light sleep
-2. How long in each state
-on 5 seconds every 5 minutes, i.e:
-on (5seconds, 0.02), sleep (300seconds, 0.98)
-3. How much current in each state
-on (12mA), sleep (0.14mA)
-4. How long device last on 40mAh battery?
-(0.004) / ((0.12 * 0.02) + (0.00014 * 0.98)) hours
-
-Always use internal pull-ups if possible (sometimes not because too weak),
-so can disable for lower power
+* Peripheral clock source can affect power.
+  Faster frequency and/or more accurate clock like a crystal over an oscillator, more power.
+* For low power, sleep for as long and deep as possible
+  Light/suspend-to-ram (low milliamp to microamp)
+  Deep (interrupts; microamp)
+  Hibernate (rtc; nanoamp)
+* Lower voltage component selection
+* Use internal pull-ups if possible so can disable for low power
 
 Size:
 * Map file for RAM/Flash contents
@@ -80,6 +34,8 @@ Math:
 
 Compiler:
 * Different compilers at end
+* Pure compiler optimisations, 2x not unexpected.
+* Helpful to unroll array, allowing non-continguous values to be lofted.
 
 Calculations:
 * Say a 10byte packet.
@@ -103,27 +59,10 @@ FFT converts from time-domain into frequency-domain to divide signal
 into various subcarrier frequencies.
 This allows to send parallel data, i.e. higher bandwidth in 5G
 
-# OS
-Micro and monolithic kernel just features of kernel.
-A unikernel is primarily for hypervisors, in that doesn't need to support many drivers, process isolation etc.
-
-in uefi:
-- can set fan speed based on temperature
-- other frequencies to auto; inspect ram slot details; on-board leds etc.
-- set cpu overclock, e.g. 3.8GHz to 4GHz
-in grub can run memtest:
-- notice that having 8 sticks of ram at manufacturer recommended 3GHz does gives error in test 7, so set to 2.9GHz
-
-mandelbrot vanilla benchmarking?
-$(/usr/bin/time povray) for benchmarking
-run this on side (lm-sensors): https://superuser.com/questions/25176/how-can-i-monitor-the-cpu-temperature-under-linux
-
-ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
-
 # Debugging
-Assume software bug, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
+Validation code, i.e run function and check value with #if VALIDATING #endif
 
-TODO: POSTS tests like checking battery level, RAM R/W, CRC check? (castor-and-pollux test types)
+Assume software bug, then build a case for hardware, e.g. errata, solder glob, psu failing etc. 
 
 Serial console essential for embedded device for HIL, power analysis and problem reproducability
 
@@ -166,9 +105,7 @@ tools/debug how to read a data sheet (wave form) and compare with an oscilloscop
 When flash programming, use journaling by checking PVD detector state.
 Also make sure BOR programmed.
 
-first step in embedded debugging commandments; thou shalt check voltage 
-
-Aardvark adapter essential for automated testing (so, an adapter of sorts should always be used for automated testing?)
+First step in embedded debugging commandments; thou shalt check voltage 
 
 # AI:
 1. General embedded systems that are capable of running simplified models for e.g. Edge-based inference (e.g. Tensorflow->TFLite)
@@ -179,7 +116,6 @@ Thermal imaging coupled with camera more 'deterministic/maintainable' than AI vi
 
 AI seems to address toy problems and not deal with permutations of problem, e.g. design, corner cases, performance, etc.
 Expressing all possibilities is best done in a programming language not English.
-
 
 # Protocols
 Thread is new low-power protocol for Matter (and therefore IoT devices, i.e. mesh network).
@@ -790,6 +726,8 @@ Don't immediately delete new function implementation, rename to `func_old()`
 
 memory access is very slow. actual math operations etc. are very fast.
 so, in general compute; don't lookup as math is effectively 'free'
+virtually never use lookup tables as ram memory is often 100x slower 
+so unless you can't compute in 100 instructions
 
 c compiler can reorder.
 AS-IF (a.k.a equivalence) rule means a bug may appear before it has happened due to reordering
@@ -1105,6 +1043,23 @@ ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
 
+Inheritence is just putting the parent struct inside the child struct as its first member.
+In this way, the first element address is same as struct address. 
+In C++, the compiler does this automatically for us unlike in C where we would have to explicitly mention this member.
+Now, if how you derive functionality from inheritance you would just inherit from tons of things. 
+So, when creating an inheritence hierarchy in an OO language, you are just putting things into a giant struct of the things you need.
+However for C++ to accomodate this, it will have to introduce extra code to handle pointer offsets.
+A big issue with this (for compiled languages) is that it does not allow for dynamic inheritance.
+
+on linux, pwm has sysfs interface. 
+so must read and write values to file paths in /sys/class/pwm/ etc.
+gpio has modern cdev interface so can open() and ioctl()
+
+Micro and monolithic kernel just features of kernel.
+A unikernel is primarily for hypervisors, in that doesn't need to support many drivers, process isolation etc.
+
+ESP32 more so Harvard, as actually has IRAM (e.g. to hold ISRs? just to ensure faster access than from Flash?) and DRAM?
+
 IMPORTANT: In programming, preface the suitability of something to a particular environment/context
 arrays are faster than linked lists (again, so dependent on what your usage patterns are)
 Saying one instruction is faster than the other ignores context of execution.
@@ -1204,7 +1159,6 @@ Schematics useful for looking into electrical diagrams of board components,
 e.g. mcu pins that are pull-up (will read 1 by default), 
 peripherals (leads to resistors, etc.), st-link, audio, eTc.
 
-NOTE: suspend to RAM is a type of sleep mode
 
 System boot time is typically around 600uS.
 This time is largely waiting for PSU to settle.
@@ -1451,7 +1405,6 @@ e.g no derivative, no financial, must share under same license.
 Public domain means no license, so could claim as yours
 
 # Data Structures
-
 * Array: search O(n)
   - Heap:
     The parent node is greater/less than all its child nodes
@@ -1588,9 +1541,13 @@ This involves storing the results of smaller problems and using them for results
 Informed search is when we have a way to estimate how far away are we from our goal, i.e. have domain knowledge
 
 * Sorting:
-  - O(n²) preferable for small lists or lists that are almost sorted
+Generally use bubble, merge, radix, psuedo-insertion
+Stable sort just don't swap same elements
+Sometimes prefer logn as safeguard knowing on worse case
+Sorting after inserting, i.e. during, is worse on cache
+  - O(n²)
     - Insertion
-      Used most often
+      If want to find top-n
       Working from left-to-right, develop an increasing 'sorted partition' as we move up an index 
       Each iteration, compare the element when elements to its left and swap if required
     - Selection
@@ -1599,13 +1556,16 @@ Informed search is when we have a way to estimate how far away are we from our g
     - Bubble
       Working from left-to-right, compare two elements and swap if out-of-order. 
       Do so until reach end. Repeat on next index.
-  - O(nlogn) divide-and-conquer (typically recursive) for medium
+  - O(nlogn) divide-and-conquer (typically recursive)
     - Merge
       Out-place
       Divide into sub-arrays until 1 element sized.
       Sort each sub-arrays and combine.
       Logarithmic as dividing into sub-arrays creates a binary tree structure 
     - Quick (qsort() is quick-sort)
+// c++ stdlib often uses O(n^2) quicksort as expected O(nlogn)
+// we are iteratively partitioning over a pivot (worse case rare to hit)
+// if we know our data, could pick pivots so that we never hit worse case 
       In-place meaning sorted items occupy same storage as original ones
       Involves pivot point, i.e. a point 
       When sorting, pivot point at end. 
@@ -1618,11 +1578,11 @@ Informed search is when we have a way to estimate how far away are we from our g
       First create max-heap and extract max.
       Then adjust existing max-heap, which as almost ordered, is logarithmic time.
       Repeat
-  - O(n) for large
+  - O(n)
     - Radix
-      Sort on element radix/base, e.g. ones unit, then tens unit etc.
-      On each pass, copy elements into buckets and then copy back out
-      Cost of memory operations reason for applicibility
+      Assumes fixed sort key size, so not going to help on arbitrary sizes like a sql sort
+      O(kn) where k is digits of size, i.e. buckets
+      To be better than merge sort, sort keys have to be small, e.g. 4-16bit
 
 * Search/traversing:
 for each algorithm, does it work on DAG?
@@ -1792,6 +1752,10 @@ if storing known sizes, better to use circular buffer:
 internal flash on stm32 faster than SPI limited esp32 external flash
 
 ## Wireless
+For low power, sometimes highspeed more power hungry WiFI better as active for shorter period of time than LoRa.
+UDP much better as no 3-way handshake.
+Balance between compression for speed or resultant size. 
+
 hierarchy:topology
 p2p:(mesh, bus)
 client-server:star
