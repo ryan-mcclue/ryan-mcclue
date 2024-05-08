@@ -1043,6 +1043,9 @@ ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
 
+Multithreading performance: no synchronisation primitives > atomics > locks 
+
+
 To prevent entering password, copy over ssh public key and store ssh password in memory with ssh-agent
 scp build/raspi2 ryan@raspi2:/home/ryan/prog/personal/example
 

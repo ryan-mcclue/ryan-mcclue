@@ -2,6 +2,13 @@ This is the portfolio I have, here is want I can bring.
 
 my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
 
+FIXING ERRORS:
+  - clone and work on that
+  - once bugs found, create branch, e.g. fix-something. Then make individual commits for each problem fixed
+  - fork on github and change origin to this. push to this
+  - then pull request on github UI
+
+
 ## Stages
 1. Resume
 2. Phone Screens:
@@ -235,6 +242,10 @@ The UL is to account for overflow on say a 16-bit machine
 (e) int *a[10]; // An array of 10 pointers to integers
 (f) int (*a)[10]; // A pointer to an array of 10 integers
 (g) int (*a)(int); // A pointer to a function a that takes an integer argument and returns an integer
+// cdecl.org to help out for statically, weakly typed C!
+// u32 channels = 2;
+// f32 (*fs)[channels] = (f32(*)[channels])bufferData;
+// accessed with fs[frame_i][0/1]
 
 * Const usage
 const int *a;
