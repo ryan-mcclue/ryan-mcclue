@@ -30,3 +30,39 @@ What type of role do you want?
 Pick 1-2 projects that you'll be able to explain strongly.  The more current, the better.  If they ask "So how are you, what have you been up to?  Tell me where you're at now..."  Prepare an answer for this.
 
 take notes. It's great to keep notes on the interviewer's name & role, so you can later ask questions about their position. 
+
+
+
+
+
+
+
+----------------------------------------------------------------
+lots of 'notify-me/pre-register' (seems june they open)
+sites with best listings
+gradconnection.com, prosple.com, indeed.com, linkedin.com
+
+Optiver (FPGA) and Hexagon Embedded on linkedin
+
+IMC (17/05/24; OO Java or C++)
+https://au.gradconnection.com/employers/imc/jobs/imc-software-engineer-intern-20242025-2/
+
+Cisco (27/05/24; scripting Python or Java)
+https://au.gradconnection.com/employers/cisco/jobs/cisco-network-engineer-intern-australia-2/
+
+Citadel (27/05/24; SQL and WebUI (js, css, react))
+https://au.gradconnection.com/employers/citadel-citadel-securities/jobs/citadel-securities-2024-2025-international-student-opportunities-site-reliability-engineering-int-2/
+
+Readygrad (20/05/24; Angular, postgres and postman tests)
+https://au.gradconnection.com/employers/readygrad/jobs/readygrad-software-engineer-internship-program-2024-2/
+
+Amazon (27/06/24; Java or C++)
+https://au.gradconnection.com/employers/amazon/jobs/amazon-2024-software-dev-engineer-intern-syd-aws/
+
+Capgemini (27/05/24;)
+https://au.gradconnection.com/employers/capgemini/jobs/capgemini-20242025-capgemini-summer-internship/
+
+GHD (27/06/24;)
+https://ejov.fa.ca2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/16007/?utm_medium=jobshare
+
+
