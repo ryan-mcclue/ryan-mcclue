@@ -8,7 +8,9 @@ O(n^2) 25,000 more than O(n) 160, however if O(n) cache miss, could be as slow a
 Also O(c2*n^2 + c1*n + c0) constants might make it slower than O(n) for small n
 
 Timing:
-Often need to guarantee response in say 40ms. 
+84MHz gives 84cycles/ns. 
+generally ms in most code and us in ISR.
+Often need to guarantee response in say 40ms.
 Generally in embedded, 5ms is an eternity for an ISR.
 Conceivable for 25us of work in an ISR.
 * ISR latency
@@ -101,6 +103,7 @@ Could bit-bash UART (require a timer to keep things aligned) over an LED with a 
 
 tools/debug how to read a data sheet (wave form) and compare with an oscilloscope plot/trace.
 (ie: is the i2c correct? are you using the correct spi mode?
+oscilloscope also has FFT function
 
 When flash programming, use journaling by checking PVD detector state.
 Also make sure BOR programmed.
@@ -197,6 +200,7 @@ FreePower technology allows QI charging mats to support concurrent device chargi
 
 * USART: 
 * SPI:
+necessarily full-duplex, i.e. must send to recieve
 * I2C:
 
 infrared is heat. LED can give of narrow band of infrared.
@@ -303,6 +307,8 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+Bypass capacitor for handling voltage spikes in a DC motor
+
 Register files like SRAM but laid out differently then conventional SRAM with flip-flops, latches and multiplexing logic so as to optimise surface area
 
 No direct translation from AWG to metric as stranded and solid AWG different
@@ -1042,9 +1048,19 @@ when saying complement, it's with respect to negative number handling:
 ones ➞ invert all bits in positive number to get negative. therefore have -0
 twos ➞ adding a positive and its negative will get a 2 in each place. 
 think about the MSB as the negative place, hence why -1 is all 1s
+IEEE 754 is in essense a compression algorithm, i.e. compressing all numbers from negative to positive infinity to a finite space of bits
+Therefore, 0.1 + 0.2 != 0.3 (0.300000004) as it can't represent 0.3
+epsilon is an allowable error margin for floating point
 
 Multithreading performance: no synchronisation primitives > atomics > locks 
 
+if say hardware spinlock, in reality, most likely implemented with atomic instructions
+
+soft reset doesn't undergo full powercycle, e.g. watchdog registers persist
+
+ease_in accelerates at end
+ease_out accelerates at start
+ease_in_out accelerates at middle
 
 To prevent entering password, copy over ssh public key and store ssh password in memory with ssh-agent
 scp build/raspi2 ryan@raspi2:/home/ryan/prog/personal/example
@@ -2106,6 +2122,14 @@ e.g. one value changed in cache line invalidates it, even though another value i
 remains unchanged
 
 ## Peripherals
+Clock:
+polarity refers to either high or low
+phase is rising or falling edge
+
+RTC:
+For instance, the SysTick timer, which is a 24-bit counter, has a maximum value that it can count to. Depending on the clock frequency, this might limit the maximum time interval it can measure directly. If the MCU system clock is, for example, 72 MHz, the SysTick can count up to 2^24 / 72 MHz = 233 milliseconds before it wraps around. Using prescalers, you can extend this, but usually not beyond several minutes to hours without complex software handling.
+
+TODO: include general parameters to init, e.g. clock phase, polarity, data width etc.
 CRC:
 High range of error detections with small checksum value.
 Treats data as a binary polynomial and performs modulo-2 division by a fixed/generator polynomial. 
@@ -2157,6 +2181,7 @@ So, DMA arbitration occurs on channels.
 In general DMA copies data from place to place
 CPU analyses data
 CPU should be used to analyse data
+32bit transaction per cycle?
 
 ADC:
 When using ADC, must know nature of signal:

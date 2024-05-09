@@ -2,6 +2,22 @@ This is the portfolio I have, here is want I can bring.
 
 my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
 
+IMPORTANT: web docs with hyperlinks are not present for embedded. 
+finding information can be more involved
+
+IMPORTANT: recognise that the datasheet is written for diverse group of people with different requirements
+e.g, if firmware engineer working on dev-board, not concerned with hardware engineer building board CPU-die package size, 
+electrical characteristics for power supply etc.
+more concerned with peripheral capabilities
+Reference manual is more targeted for firmware developers
+
+Working on a new MCU would peruse datasheet overview and SDK overview
+
+When you start working on your first embedded platform, I would urge you go thoroughly go through both the architecture reference manual for your processor (say ARM Cortex M series) and the specific datasheet/reference manual from you microcontroller manufacturer (say STM32F30X series datasheet).
+The first one will enable you to understand your processor, like how many registers it has, whether it uses pipelining, what instructions it supports, how it handles exceptions & interrupts etc. The second will help you understand your microcontroller and its peripherals, what is the flash/RAM size, what clock settings to use, how to program the peripherals, etc..
+Now, here you may not need to go through the detailed description of each peripheral. You will definitely need to understand the clock configuration, power control, GPIO peripheral etc. But after that, depending on what you are working on, you can choose to go through the other peripherals or not. For example, if you are writing a UART driver, you may need to go through the functional description of UART peripheral, but otherwise, you can skip that part. Most of the electrical characteristics will also be irrelevant to you unless you are also designing the hardware.
+
+
 FIXING ERRORS:
   - clone and work on that
   - once bugs found, create branch, e.g. fix-something. Then make individual commits for each problem fixed
