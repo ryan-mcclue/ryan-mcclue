@@ -31,6 +31,23 @@ Pick 1-2 projects that you'll be able to explain strongly.  The more current, th
 
 take notes. It's great to keep notes on the interviewer's name & role, so you can later ask questions about their position. 
 
+Onsite:
+how to ask about why I should work here, i.e. what can they offer me over competing places?
+Talk about languages, apis, protocols, how I got things to communicate, used in your projects
+Show you have fundamentals to grow into a leader in company
+1-2 technically interesting problems worked on in projects, with STAR
+white-boarding code do simplist thing first
+Prepare a strong response to "So, tell me about yourself.  What brings you here?"
+    Have a cordial, concise, and friendly self-introduction that piques curiosity.  Avoid arrogance!  Many interviewers will dive straight into a coding problem -- this is OK, but if you can pique their curiosity enough to have them ask you more about some project you've done, you will start off stronger.
+    2-3 technical projects you can talk about concisely.  Identify key points you've done (not what your team did).
+Start thinking about some interesting stories you can talk about that show technical challenge.
+Be prepared to talk about the top 2-3 points on your resume.  Re-arrange your resume a bit if you need to, or add projects to them so you can point to them.
+Show what is impressive about you with projects (perhaps even draw a diagram, how things communicated, api headers etc.)
+From projects, say you are passionate and ethusiastic about learning new things
+Willing to improve skills, hope job can better myself as a software engineer
+Whiteboard have pesudo-methods, e.g. validate_input(). 
+talk about space/time complexity, performance, readability, etc.
+
 
 
 
