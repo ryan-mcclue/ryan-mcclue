@@ -1,5 +1,14 @@
 This is the portfolio I have, here is want I can bring.
 
+focus on your skillset, degree, language skills, relevant coursework and anything else you developed while at university.
+Basically focus on all the things that you already have. 
+Good employers just want to see that you have the attitude and foundational skillset to develop your skills further at their company, 
+not work experience.
+
+Investigate company procedure in making a pull request
+
+TEAMWORK: git ethos 'one idea is one commit', i.e. squishing with git commit --amend
+
 my style of programming and problems enjoy solving found in embedded, e.g your constrained with the silicon not like in web where you just build another data centre
 
 IMPORTANT: web docs with hyperlinks are not present for embedded. 

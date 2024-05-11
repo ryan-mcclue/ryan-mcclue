@@ -82,6 +82,11 @@ ITM (Instrumentation Trace Macrocell) typically connected to SWO
 Specific semihosting (reading a file) interrupt request also handled over SWO
 Programmers by default do not provide power
 
+To save UART pins for application, can use SWO (single-wire-output) (kind of like a single TX pin?)
+SWO is part of the ARM CoreSight Debug block which usually is part of Cortex-M3, M4 and M7
+Segger RTT is faster and doesn't require more pins. However, uses more RAM on target
+
+
 Always use oscilloscope/logic analyser to verify signals make sense
 
 So, when reporting issue:
@@ -307,6 +312,22 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+Memory banks are highest hierarchy. Allow for parallel access.
+Flash memory blocks (erase) contain pages (read/write).
+Flash translation layer will implement wear-leveling, 
+i.e. don't actually erase if not required; just mark as invalid and write elsewhere.
+also, distribute writes across different blocks.
+Must erase before writing to page, otherwise won't update correctly.
+unlock() and lock() for writing to flash
+Blocks sometimes called sectors. Non-uniform sizes common, i.e. sectors of different sizes.
+
+Flash for high-density, low cost.
+More expensive EEPROM faster erase as only 1 byte.
+EEPROM for small, frequently updated data.
+
+
+ram banks are memory modules that access portion of memory, so might have four banks with 1GB each
+
 Bypass capacitor for handling voltage spikes in a DC motor
 
 Register files like SRAM but laid out differently then conventional SRAM with flip-flops, latches and multiplexing logic so as to optimise surface area
@@ -1051,6 +1072,8 @@ think about the MSB as the negative place, hence why -1 is all 1s
 IEEE 754 is in essense a compression algorithm, i.e. compressing all numbers from negative to positive infinity to a finite space of bits
 Therefore, 0.1 + 0.2 != 0.3 (0.300000004) as it can't represent 0.3
 epsilon is an allowable error margin for floating point
+
+If too many interrupts, NVIC will drop them
 
 Multithreading performance: no synchronisation primitives > atomics > locks 
 
@@ -2129,14 +2152,24 @@ phase is rising or falling edge
 RTC:
 For instance, the SysTick timer, which is a 24-bit counter, has a maximum value that it can count to. Depending on the clock frequency, this might limit the maximum time interval it can measure directly. If the MCU system clock is, for example, 72 MHz, the SysTick can count up to 2^24 / 72 MHz = 233 milliseconds before it wraps around. Using prescalers, you can extend this, but usually not beyond several minutes to hours without complex software handling.
 
+DAC:
+Analog mode want high input impedance, low output impedance so circuitry not disturbing analog values
+Could emulate a DAC with PWM at a high frequency and filters to smooth transitions
+
 TODO: include general parameters to init, e.g. clock phase, polarity, data width etc.
 CRC:
-High range of error detections with small checksum value.
+Offers high range of error detections with small checksum value.
 Treats data as a binary polynomial and performs modulo-2 division by a fixed/generator polynomial. 
 The remainder is the checksum.
 CRC32-IEEE in STM, Ethernet, MPEG (0x04C11DB7)
-CRC-32C in Btrfs (0x1EDC6F41)
+CRC-32C (Castagnoli) in Btrfs (0x1EDC6F41)
 Different polynomials used to target particular errors, e.g. burst, random etc.
+Checksum used for changes. CRC type of checksum.
+checksum simpler than hashes which are normally cryptographic
+number of flipped bits that can detected is Hamming distance
+generally, crc32 detect up to 14 bit-flips.
+if need larger, use 64bit
+
 
 CRC32 is a function family, i.e. isn't one standard algorithm.
 The parameters are the 32-bit input polynomial, the byte ordering, the bit ordering, whether there's padding, 
@@ -2189,6 +2222,7 @@ When using ADC, must know nature of signal:
 - If noisy, might need a low-pass filter
 - If high dynamic range (ratio to lowest/highest) will need higher bit depth (which in turn gives lower quantisation errors)
 - If pure signal should, low bit depth to save on data
+Often have internal channels, e.g. VREFINT is constant reference voltage for ADC, VBAT is voltage for backup power domain
 
 Reference voltage for analog sensors and ADCs is main source of noise, so it should be as stable as possible
 
