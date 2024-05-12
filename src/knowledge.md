@@ -15,7 +15,7 @@ Generally in embedded, 5ms is an eternity for an ISR.
 Conceivable for 25us of work in an ISR.
 * ISR latency
 * Cycle count
-* Time I/O line gpio_high/low on oscilloscope 
+* Time I/O line gpio_high/low on logic-analyser/oscilloscope 
   Combine several times to DAC output
 
 Power:
@@ -204,8 +204,13 @@ QI is a wireless charging standard most supported by mobile-devices for distance
 FreePower technology allows QI charging mats to support concurrent device charging
 
 * USART: 
+CAN and UART bus length a lot longer as asynchronous, each side having own clock
+
 * SPI:
 necessarily full-duplex, i.e. must send to recieve
+SPI has shared clock, so longer bus length causes issues
+SPI requires one dedicated signal for each device
+
 * I2C:
 
 infrared is heat. LED can give of narrow band of infrared.
@@ -324,6 +329,33 @@ Blocks sometimes called sectors. Non-uniform sizes common, i.e. sectors of diffe
 Flash for high-density, low cost.
 More expensive EEPROM faster erase as only 1 byte.
 EEPROM for small, frequently updated data.
+
+In USB, distinction between host (initiates communication) and peripheral
+OTG allows USB to be a host and a peripheral. 
+So, two phones could transfer files with an OTG cable.
+USB HID sends data in one direction, e.g. dongle, keyboard
+USB MSC is for file transfers, e.g. usb stick
+USB BC phone charging
+ESD protection is necessary for connector devices such as USBs.
+Can easily get 1000V on hand. If USB in hand, will be at same potential.
+So, plugging in, ESD event can occur.
+
+
+Always use switching regulators for high power applications, 
+because unlike linear regulator, switching regulators do not dissipate much heat and are highly efficient at high loads.
+
+regulator and converter same thing (prefer over Zener diode)
+  * load regulation (how much current draw affects output voltage)
+  * line regulation (how much input voltage affects output voltage)
+  * drop-out voltage (at least how much voltage above the output voltage the input voltage should be to not cause problems) 
+  * buck (step-down)
+  * boost (step-up)
+  * buck-boost
+linear regulator essentially dumps excess voltage
+switching has a PWM signal that essentially turns on and off; power-efficient
+look at efficiency curve to see optimal conditions
+a level shifter logic standards, e.g. TTL to CMOS.
+doesn't handle varying input voltages (so really only useful for 5V to 3.3V)
 
 
 ram banks are memory modules that access portion of memory, so might have four banks with 1GB each
@@ -2145,6 +2177,16 @@ e.g. one value changed in cache line invalidates it, even though another value i
 remains unchanged
 
 ## Peripherals
+Watchdog:
+only gracefully handle an error if it's likely to occur regularly; otherwise watchdog reset
+although can use multiple, safer to just have 1 
+could hang if waiting for a polling transaction to complete
+window watchdog (reset at specific time in interval)
+independent watchdog (reset at any time in interval)
+should keep even in debug builds, as always important to identify system hangs
+performing cleanup in watchdog reset ISR is often error-prone due to short amount of cycles available
+software watchdog would be repurposing a general purpose timer peripheral
+
 Clock:
 polarity refers to either high or low
 phase is rising or falling edge
