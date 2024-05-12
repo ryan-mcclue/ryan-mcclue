@@ -31,12 +31,13 @@ Pick 1-2 projects that you'll be able to explain strongly.  The more current, th
 
 take notes. It's great to keep notes on the interviewer's name & role, so you can later ask questions about their position. 
 
-Onsite:
+4. Onsite:
 how to ask about why I should work here, i.e. what can they offer me over competing places?
 Talk about languages, apis, protocols, how I got things to communicate, used in your projects
 Show you have fundamentals to grow into a leader in company
 1-2 technically interesting problems worked on in projects, with STAR
-white-boarding code do simplist thing first
+white-boarding code do simplist thing first. remember to communicate what doing.
+key areas: code, dalgo, communication/analysis, KISS
 Prepare a strong response to "So, tell me about yourself.  What brings you here?"
     Have a cordial, concise, and friendly self-introduction that piques curiosity.  Avoid arrogance!  Many interviewers will dive straight into a coding problem -- this is OK, but if you can pique their curiosity enough to have them ask you more about some project you've done, you will start off stronger.
     2-3 technical projects you can talk about concisely.  Identify key points you've done (not what your team did).
@@ -49,6 +50,68 @@ Whiteboard have pesudo-methods, e.g. validate_input().
 talk about space/time complexity, performance, readability, etc.
 
 
+Think about what type of role you are applying for.
+Am I protraying myself as generalist, specialist etc?
+
+What traits do you want to show?  We recommend:
+    Eagerness to learn
+    Friendly collaboration
+    Technical curiosity
+    Learning from mistakes
+    Willingness to accept feedback and improve oneself
+    Get-it-done attitude
+    Results-oriented
+My projects show I'm proactive and ready to hit the ground running
+e.g. for stm32 have to dig in driver codespace and docs
+I can learn things quickly
+e.g. bluetooth same etc.
+will need to complete somewhat, so can be results driven
+2-3 interesting technical stories.
+
+Show humble and able to listen to feedback
+Show got more to learn
+
+As embedded a lot of 'roll-your-own', I know it's important to be able to dig into a datasheet
+
+Question: why do you want to work here? what do you hope to accomplish
+people go to work, get paid to get work done, not share political ideologies etc.
+
+Thank them for their time.
+
+Referrals: (different to references)
+TODO: csesoc careers fair?
+- rooftop slushie?
+- message relevent linkedin recruiter saying would be good for job posting
+Hi there,
+I saw your job posting on Hacker News and it sounds like an interesting opportunity!
+To introduce myself a little, I'm a generalist full stack web developer and have been developing
+apps over the past several years. My most well known projects have been X, Y, and Z. X is a
+social network / dating site that I grew to 2 million users. Y is a social game that began on
+Facebook with 1.5 million users, which I later brought to iPhone. Z is an open source GitHub
+framework that I am developing. Most of my tech stack has been built on Python, React.js,
+MySql, HTML, and CSS so I feel my background would fit well with <your_company>.
+Here are the URLs of some of my previous work.
+http://x.com/
+http://y.com/
+Please let me know if you'd like to chat. I'll also attach a resume.
+Cheers,
+<your name>
+
+TODO: explain gaps in resume
+
+Illegal interview questions like married, age, etc.
+
+Resume:
+only purpose is to get interview; so tailor for specific interview
+don't get hung up on language; just put down and learn in 2-3weeks for interview.
+
+
+
+Coding questions:
+TODO: 50-100
+max. connected components in grid.
+autocomplete
+
 
 
 
@@ -58,6 +121,8 @@ talk about space/time complexity, performance, readability, etc.
 lots of 'notify-me/pre-register' (seems june they open)
 sites with best listings
 gradconnection.com, prosple.com, indeed.com, linkedin.com
+
+Numbers game; so apply to as many as possible
 
 Optiver (FPGA) and Hexagon Embedded on linkedin
 
