@@ -205,6 +205,7 @@ FreePower technology allows QI charging mats to support concurrent device chargi
 
 * USART: 
 CAN and UART bus length a lot longer as asynchronous, each side having own clock
+rs485 another serial standard for better long range transmission and better noise handling
 
 * SPI:
 necessarily full-duplex, i.e. must send to recieve
@@ -915,6 +916,14 @@ even parity is to make it even, i.e. so if 5 1's, even parity will add a 1
 - what are the compute resources required by your algorithm? 
 - If in C/C++ can extract flash and RAM requirements for that. 
   If python, probably need to run embedded Linux, pay a size cost power penalty for that if it's unnecessary.
+
+Super loop has weaknesses. Implication of say, a GPS module performing trigonometry in 10ms, means
+other modules have to wait 10ms before they can run.
+In an RTOS, we could have the GPS prempted.
+However, an RTOS brings in design issues that must be solved, i.e. accessing data from multiple threads
+
+When selecting raw-mcu, will come in different package sizes, i.e number of pins.
+So, a smaller package size might not have pins mapped to a peripheral on the MCU, e.g I2S
 
 A single chip is often more expensive to develop/maintain and 
 less fault tolerant if one of its susbsystems fails than having external sensors
@@ -1758,6 +1767,8 @@ In addition to HAL files, typically have example source code for particular MCU 
 
 
 ## Interrupts
+interrupts for efficiency and realtime response
+
 An exception is mechanism that changes the normal flow of a program.
 An interrupt is a type of exception that is triggered from an external source
 An exception will have a number (offset into vector table)
@@ -2272,6 +2283,8 @@ TODO: Have excel spreadsheet with these peripheral calculations
 
 Spreadsheet to encode state machine for QA.
 Often drivers are state machines
+FSMs are useful in times where you have to wait and don't have threads?
+FSMs good for reactive systems (of which embedded are)
 
 TODO: also have a power section (e.g. how many volts, does it have low-power mode?)
 

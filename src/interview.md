@@ -1,3 +1,5 @@
+
+
 This is the portfolio I have, here is want I can bring.
 
 focus on your skillset, degree, language skills, relevant coursework and anything else you developed while at university.
@@ -110,6 +112,7 @@ There is more than just technical things for an engineer like understanding and 
 * What is wrong with this code?
 If compiled with optimisations, will never return as no volatile keyword
 
+
 * Design intersection stoplight control
 Name lights NS and EW.
 States are NS green, EW red, etc. 
@@ -185,6 +188,8 @@ Compiler must reload the variable every time it is used instead of holding a cop
 (a) Hardware registers in peripherals (e.g., status registers)
 (b) Non-stack variables referenced within an interrupt service routine.
 (c) Variables shared by multiple tasks in a multi-threaded application.
+
+Should avoid volatile struct. Only use if literally all containg variables are volatile otherwise large performance declines
 
 (a) Can a parameter be both const and volatile? Explain your answer.
 Yes. An example is a read only status register. It is volatile because it can change unexpectedly. It is const because the program should not attempt to modify it.
