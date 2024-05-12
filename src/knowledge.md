@@ -22,9 +22,10 @@ Power:
 * Peripheral clock source can affect power.
   Faster frequency and/or more accurate clock like a crystal over an oscillator, more power.
 * For low power, sleep for as long and deep as possible
-  Light/suspend-to-ram (low milliamp to microamp)
-  Deep (interrupts; microamp)
-  Hibernate (rtc; nanoamp)
+  Lower power modes generally less clocks on and less wakeup possibilities:
+  Light/suspend-to-ram (CPUCLK off; low milliamp to microamp)
+  Deep (peripheral clocks off; interrupts; microamp)
+  Hibernate (SRAM lost; rtc/wakeup-pin; nanoamp)
 * Lower voltage component selection
 * Use internal pull-ups if possible so can disable for low power
 
@@ -318,6 +319,8 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+Classic RC circuit exponential discharge, 95% fall time 
+
 Memory banks are highest hierarchy. Allow for parallel access.
 Flash memory blocks (erase) contain pages (read/write).
 Flash translation layer will implement wear-leveling, 
@@ -359,9 +362,12 @@ a level shifter logic standards, e.g. TTL to CMOS.
 doesn't handle varying input voltages (so really only useful for 5V to 3.3V)
 
 
+Adding capacitor smooths signal, so no bouncing. However, delays signal peak time
+
 ram banks are memory modules that access portion of memory, so might have four banks with 1GB each
 
 Bypass capacitor for handling voltage spikes in a DC motor
+Capacitor can smooth out high frequency noise; typically uF range
 
 Register files like SRAM but laid out differently then conventional SRAM with flip-flops, latches and multiplexing logic so as to optimise surface area
 
@@ -1765,8 +1771,9 @@ If many people have encountered a common problem, will typically be an applicati
 In addition to HAL files, typically have example source code for particular MCU on github from vendor
 
 
-
 ## Interrupts
+An event (GPIO_MODE_EVT_FALLING) is an MCU implementation defined control line, e.g. might be an interrupt, bit flip, DMA
+
 interrupts for efficiency and realtime response
 
 An exception is mechanism that changes the normal flow of a program.
@@ -2203,7 +2210,15 @@ polarity refers to either high or low
 phase is rising or falling edge
 
 RTC:
-For instance, the SysTick timer, which is a 24-bit counter, has a maximum value that it can count to. Depending on the clock frequency, this might limit the maximum time interval it can measure directly. If the MCU system clock is, for example, 72 MHz, the SysTick can count up to 2^24 / 72 MHz = 233 milliseconds before it wraps around. Using prescalers, you can extend this, but usually not beyond several minutes to hours without complex software handling.
+For instance, the SysTick timer, which is a 24-bit counter, has a maximum value that it can count to. 
+Depending on the clock frequency, this might limit the maximum time interval it can measure directly. 
+If the MCU system clock is, for example, 72 MHz, the SysTick can count up to 2^24 / 72 MHz = 233 milliseconds before it wraps around. 
+Using prescalers, you can extend this, but usually not beyond several minutes to hours without complex software handling.
+rtc generally wider counter and on a separate power domain, so can be used for low-power and running continuously
+also generally more accurate readings as direct clock source not PLL
+lower frequency crystals less susceptible to drift 
+32.768KHz as 2^15 so can be divided to 1Hz in hardware and lower limit on what can be produced cheaply.
+
 
 DAC:
 Analog mode want high input impedance, low output impedance so circuitry not disturbing analog values
