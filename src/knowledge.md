@@ -1120,6 +1120,10 @@ IEEE 754 is in essense a compression algorithm, i.e. compressing all numbers fro
 Therefore, 0.1 + 0.2 != 0.3 (0.300000004) as it can't represent 0.3
 epsilon is an allowable error margin for floating point
 
+SREG not being saved in avr interrupt
+signed comparison/branching/add/sub specifics and code flow jumps in assembly
+mul instruction copying to r0, r1
+
 If too many interrupts, NVIC will drop them
 
 Multithreading performance: no synchronisation primitives > atomics > locks 
