@@ -17,10 +17,10 @@ So show the languages, frameworks, and technologies that you're using.
 Created a music visualiser in C/C++.
 Implemented an immediate mode UI from scratch (user experience)
 ui elements, panning, zooming, etc.
-SIMD of fft? (latency)
+Improved response time from .. to .. by converting fft implementation to SIMD, reducing lag-time?  (latency)
 CI and analyser basics (security)
+Host ppa on launchpad allowing for apt installations
 Deployment with debian packaging (deployment)
-
 
 **Robot Arm Controller**, 2024
 Developed a dual servo ... on an STM32 microcontroller in C/C++
@@ -32,15 +32,13 @@ wrote MISRA compatible state machine peripheral driver by reading datasheets etc
 Hardware testing with oscilloscope, logic analyser, power consumption, multimeter (verification)
 Used python to HIL testing
 
-**Marine Technician - Royal Australian Navy**, 2020
-lead team of 24 on activities ... 
-Strong communication skills, both oral and written
-
-worked in group of 6 to ...
-collaborative team environment
-
-performed early morning physical activities etc.
-challenging work
+**Marine Technician - Royal Australian Navy**, HMAS Cerberus, 2020
+Lead class of 24 by coordinating marching drills and other basic training fundamentals,
+demonstrating strong communication skills.
+Worked in a team of 6 to clean living areas, perform kit maintenance and provide peer support, 
+learning how to collaborate in a team environment.
+Performed weekly early morning activities at 4am and completed milestone events
+involving physical and mental evaluations resulting in an appreciation for challenging work.
 
 ## Education
 **Bachelor of Computer Science (Embedded Systems).** University of New South Wales. 2021-2024, WAM
@@ -54,7 +52,8 @@ challenging work
 Bash, html5/css/js, postgreSQL, java, vscode, ozone etc. 
 
 ### Volunteer Work
-**Guide Dogs NSW/ACT**
-end with memorable guide dogs volunteer
+**Guide Dogs NSW/ACT**, 2014-2022
+Assisted with puppy raising Labrador till 24months old. 
+Took dog on regular walks, performed obedience training and engaged in socialisation experiences.
 
 ### Referees
