@@ -9,6 +9,7 @@
 !README.md
 
 !src/**/*.md
+!src/**/*.odt
 
 !misc/build
 !misc/upload-google-photos

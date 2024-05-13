@@ -14,23 +14,19 @@ e.g: improved web application by writing unit tests resulting in increased relia
 So show the languages, frameworks, and technologies that you're using. 
 
 **Music Player GUI**, 2024 
-Created a music visualiser in C/C++.
-Implemented an immediate mode UI from scratch (user experience)
-ui elements, panning, zooming, etc.
-Improved response time from .. to .. by converting fft implementation to SIMD, reducing lag-time?  (latency)
-CI and analyser basics (security)
-Host ppa on launchpad allowing for apt installations
-Deployment with debian packaging (deployment)
+Created a cross-platform music visualiser in C/C++.
+Implemented an immediate mode UI from scratch using low-level graphics APIs resulting in a responsive user experience.
+Reduced FFT latency by converting algorithm to SIMD, lowering execution time from ... to ...
+Improved code integrity by incorporating a CI pipeline that performed static analysis, enhancing security.
+Hosted on a Launchpad PPA, setting up a packaging workflow allowing for easy installation and updates on Debian based systems.
 
 **Robot Arm Controller**, 2024
-Developed a dual servo ... on an STM32 microcontroller in C/C++
-
-cryptographic and updatable bootloader
- 
-wrote MISRA compatible state machine peripheral driver by reading datasheets etc.
-
-Hardware testing with oscilloscope, logic analyser, power consumption, multimeter (verification)
-Used python to HIL testing
+Developed a 2-joint stepper motor robot on an STM32 microcontroller in bare metal MISRA C/C++.
+Designed non-blocking I2C, SPI and UART drivers by reading datasheets and using interrupts, allowing for real time operations.
+Created a system bootloader that allowed signed firmware updates, providing system flexibility and integrity.
+Wrote a console subsystem that enabled device logging and interaction, facilitating python HIL testing to improve system reliability.
+Performed hardware debugging with JTAG, logic analyser, oscilloscope and multimeter, giving insight to signal timings to verify system.
+Reduced power usage by incorporating sleep modes, lowering average current usage from ... to ...
 
 **Marine Technician - Royal Australian Navy**, HMAS Cerberus, 2020
 Lead class of 24 by coordinating marching drills and other basic training fundamentals,
@@ -42,7 +38,7 @@ involving physical and mental evaluations resulting in an appreciation for chall
 
 ## Education
 **Bachelor of Computer Science (Embedded Systems).** University of New South Wales. 2021-2024, WAM
-- Data structures, algorithms, operating systems, object-orientation, databases, web programming, etc.
+- Data structures, algorithms, operating systems, microcontrollers, object-orientation, databases, web programming, etc.
 **Bachelor of Computer Science and Technology (Advanced).** University of Sydney. *Defered*
 - Dean's List of Excellence in Academic Performance
 - University of Sydney Academic Merit Prize
