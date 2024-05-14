@@ -32,6 +32,9 @@ Pick 1-2 projects that you'll be able to explain strongly.  The more current, th
 take notes. It's great to keep notes on the interviewer's name & role, so you can later ask questions about their position. 
 
 4. Onsite:
+design-aspect: big-oh, tradeoffs etc.
+communication-aspect: project stories: what you did, how you did it, result
+
 how to ask about why I should work here, i.e. what can they offer me over competing places?
 Talk about languages, apis, protocols, how I got things to communicate, used in your projects
 Show you have fundamentals to grow into a leader in company
@@ -47,8 +50,11 @@ Show what is impressive about you with projects (perhaps even draw a diagram, ho
 From projects, say you are passionate and ethusiastic about learning new things
 Willing to improve skills, hope job can better myself as a software engineer
 Whiteboard have pesudo-methods, e.g. validate_input(). 
-talk about space/time complexity, performance, readability, etc.
+essential to talk about space/time complexity, performance, readability, etc.
+talk about design options/ambiguity
+there is no 'one' design, so acknowledge this and the tradeoffs
 
+discuss some trending industry news to show 'eagerness'
 
 Think about what type of role you are applying for.
 Am I protraying myself as generalist, specialist etc?
@@ -97,9 +103,29 @@ Please let me know if you'd like to chat. I'll also attach a resume.
 Cheers,
 <your name>
 
+IMPORTANT: result part of story is most important!
+
+TODO: look at company culture, e.g. https://jobs.netflix.com/culture
+
 TODO: explain gaps in resume
 
 Illegal interview questions like married, age, etc.
+
+5. Behavioural:
+  1. Accept Feedback (performance review navy?)
+     - want to show accept changes to maintain an upwards trajectory
+  2. Recover From Failure (bug)
+     - want to implement safegaurds to not let it happen again
+  3. Develop a Consensus (how to get people to agree on something?)
+    + design doc discussion; have team write pros and cons of options
+    + ask questions instead of saying outwrite wrong so other person can learn
+    + take initiative and build a prototype to demonstrate idea; take responsibility for my actions
+  4. Eagerness to Learn
+    + ask interviewer about tech stack, challenges might expect 
+  5. Motivation
+    + have personal interest in improving myself on a technical level
+      put in reading blogs, videos to learn more
+  6. Leadership
 
 Resume:
 only purpose is to get interview; so tailor for specific interview
@@ -109,8 +135,37 @@ don't get hung up on language; just put down and learn in 2-3weeks for interview
 
 Coding questions:
 TODO: 50-100
+ObjectOrientation:
+class Solution:
+  def dfs(n):
+   ret = []
+   dfs_helper(n, ret)
+   return ''.join(ret)
+  def dfs_helper(n, ret):
+    ret.append(n) 
+print(Solution().dfs(n))
+
+interface Animal {
+  public bool eat(item);
+}
+class Dog implements Animal {
+  public bool eat(item) { return item == 'meat'; }
+}
+class Cafe:
+  public feed(Animal a) {
+    a.eat('meat')
+  }
+}
+
+def reverse(s):
+  if len(s) == 0:
+    return ""
+  else:
+    return reverse(s[1:]) + s[0]
+
 max. connected components in grid.
 autocomplete
+
 
 
 
