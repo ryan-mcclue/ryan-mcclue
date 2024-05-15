@@ -25,39 +25,44 @@ Follow programming style guide of company if possible, e.g. use OO etc.
 
 4. Onsite
 Icebreakers:
-Tell me about yourself
-Why are you here?
-What role going for?
-What makes you special? Why are you a fit for this company?
-Why do you deserve it?
-
-My projects show I'm proactive and ready to hit the ground running
+- Tell me about yourself.
+  + I'm a computer science student majoring in embedded systems and have an interest in low level software.
+    I've recently been working on a music visualiser with a UI system from-scratch and a bare metal robot arm controller.
+- What brings you here? 
+  + I looking for an opportunity to develop my software engineering skills and apply and learn
+  learn and excited to apply my skills in a professional setting
+- What makes you special? 
+  + My projects show I'm proactive and ready to hit the ground running
 e.g. for stm32 have to dig in driver codespace and docs
 I can learn things quickly
 e.g. bluetooth same etc.
 will need to complete somewhat, so can be results driven
-2-3 interesting technical stories.
+Also humble and know I have a lot to learn
+- Why are you a fit for this company?
+  + I share .... I have strong fundamentals to grow into a ...
+From projects, say you are passionate and ethusiastic about learning new things
+Willing to improve skills, hope job can better myself as a software engineer
+why do you want to work here? what do you hope to accomplish?
 
-Show humble and able to listen to feedback
-Show got more to learn
+- What will it be like to work with you?
+  + Someone who is colloborative, easy to work with
+- What are your weaknesses?
+  + “I’m bad at asking for help because I try to solve all my problems on my own first.” 
+    e.g. if googled on stackoverflow or driver example, could've saved time
+To counteract this I try to stay mindful and notice when I'm trying the same things over and over. I then reach out for help when I see I've been stuck in this way" 
+  + “Towards the end of my work day, my brain gets tired and I struggle with multitasking
+  I know my limitations and I also have processes in place to keep mistakes from happening because of them. (food, etc.)
+
+- What are your strengths? top 5 skills etc.
+- Do you want full-time or part-time?
+- Why did you leave the navy?
+  + looking for new challenges and want to grow
 
 IMPORTANT: result part of story is most important!
 
 Behavioural:
-Project Table
-- most challenging
-- best failures/learning from mistake
-- most interesting
-- conflict with teammate (will have to be university projects; or navy shakedown?)
-Can you tell me a time where you had a conflict with a teammate? How did you
-deal with it?
-
-- Talk about a time showed leadership
-
-TODO: go through worksheet
   0. Pain Points:
     - explain gaps in resume
-    - what are your weaknesses?
   1. Accept Feedback (performance review navy?)
      - want to show accept changes to maintain an upwards trajectory
      - (in interview, take feedback when talking through a problem)
@@ -74,34 +79,9 @@ TODO: go through worksheet
     + have personal interest in improving myself on a technical level
       put in reading blogs, videos to learn more
   6. Leadership
-What will it be like to work with you?
- - Someone who is colloborative, easy to work with
-What are your weaknesses?
-- talk about your techical challenges, projects your working on, your background etc.
-Why do you want to work here?
-What projects have you done?
-What is your visa status?
-Why did you leave your last job?
-What are you looking for?
-Do you want full-time or part-time?
-What type of role do you want?
-Why did you leave the navy?
- - looking for new challenges and want to grow
-Pick 1-2 projects that you'll be able to explain strongly.  The more current, the better.  
-If they ask "So how are you, what have you been up to?  Tell me where you're at now..."  Prepare an answer for this.
-communication-aspect: project stories: what you did, how you did it, result
-Talk about languages, apis, protocols, how I got things to communicate, used in your projects
-Show you have fundamentals to grow into a leader in company
-1-2 technically interesting problems worked on in projects, with STAR
-So, tell me about yourself.  What brings you here? 
- - friendly self-introduction that piques curiosity (mention projects)
-2-3 technical projects you can talk about concisely.  Identify key points you've done (not what your team did).
-Start thinking about some interesting stories you can talk about that show technical challenge.
-Be prepared to talk about the top 2-3 points on your resume.  Re-arrange your resume a bit if you need to, or add projects to them so you can point to them.
-Show what is impressive about you with projects (perhaps even draw a diagram, how things communicated, api headers etc.)
-From projects, say you are passionate and ethusiastic about learning new things
-Willing to improve skills, hope job can better myself as a software engineer
-why do you want to work here? what do you hope to accomplish?
+
+
+
 
 As embedded a lot of 'roll-your-own', 
 I know it's important to be able to dig into a datasheet
