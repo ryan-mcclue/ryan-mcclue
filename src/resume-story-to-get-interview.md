@@ -4,7 +4,9 @@ Conferral in Dec, graduate in May
 
 # Ryan McClue
 Sydney, NSW | 0404316124 | re.mcclue@protonmail.com | github.com/ryan-mcclue | linkedin.com/in/ryan-mcclue/
-OptionalObjective: Low-level programmer interested in embedded systems. 
+OptionalObjectiveForEntryLevel: Low-level programmer interested in embedded systems. 
+(will need project to show some of skills needed)
+(don't get hung up on language; just put down and learn in 2-3weeks for interview)
 
 (reading for 10 seconds, get grasp is strong)
 ### Skills Demonstrated 
