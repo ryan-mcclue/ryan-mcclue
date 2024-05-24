@@ -1,26 +1,26 @@
 # CPU
-**x86-64-TSO-MESIF Kaby Lake** *@2.5GHz*
-mod. Harvard CISC little, 2 cores, 2 hyper, 1 NUMA
-TDP: 15W, 64 byte cache line
-***L1d, L1i***: 2 x 32KiB (8-way, 4 cycle)
-***L2***: 2 x 512KiB (4-way, 12 cycle)
-***L3***: 3MiB (12-way, 42 cycle)
-***SSE4.2, AVX2, FMA3, VT-x***
+x86_64-TSO-MESIF Intel i5-7200U (Kaby Lake) @ 2.5GHz
+mod. Harvard CISC little
+2 cores, 2 hyper, 1 NUMA
+64 byte cache line
+L1d, L1i: 2 x 32KiB (8-way, 4 cycle)
+L2: 2 x 512KiB (4-way, 12 cycle)
+L3: 3MiB (12-way, 42 cycle)
+SSE4.2, AVX2, FMA3, VT-x
+14nm, U3E1 package (soldered BGA)
 Intel HD Graphics
-
-thinkpad carbon, custom form factor
 # RAM
-**2 * 4GB LPDDR3 DIMM** *@ 1867MHz*
+2 * 4GB LPDDR3 DIMM @ 1867MHz
 # Harddrive
-**128GB SATA M.2 SSD**
+128GB SATA M.2 SSD
 # Battery
 LiPo 51W/hr battery
 # Peripherals
+Thinkpad Carbon, custom form factor
 1080p LED IPS, 720p camera
 HDMI-A, USB-C, USB-A, 3-pole audio-barrel-jack
-
 # OS
 ext4 linux 5.15.0 (x86-64, SystemV, CFS, systemd, ELF)
 fat32 ESP (grub 2.04)
 gcc 9.4.0 (GPL), ld/glibc 2.31 (LGPL)
-**20.04** (xlib (MIT), xfce4, pulseaudio, no-RAID)
+ubuntu-20.04 (xlib (MIT), xfce4, pulseaudio, no-RAID)
