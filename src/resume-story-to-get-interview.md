@@ -19,7 +19,9 @@ So show the languages, frameworks, and technologies that you're using.
 Created a cross-platform music visualiser in C/C++.
 Implemented an immediate mode UI from scratch using low-level graphics APIs resulting in a responsive user experience.
 Reduced FFT latency by converting algorithm to SIMD, lowering execution time from ... to ...
-Improved code integrity by incorporating a CI pipeline that performed static analysis, enhancing security.
+Improved code integrity by incorporating a CI pipeline that performed static analysis and runtime analysis, enhancing security.
+(static analysis picked up on branch of mem_push returning NULL if requesting beyond arena capacity)
+(address sanitisier picked up memcpying from null address with zero size which is undefined)
 Hosted on a Launchpad PPA, setting up a packaging workflow allowing for easy installation and updates on Debian based systems.
 
 **Robot Arm Controller**, 2024

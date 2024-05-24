@@ -62,6 +62,66 @@ FFT converts from time-domain into frequency-domain to divide signal
 into various subcarrier frequencies.
 This allows to send parallel data, i.e. higher bandwidth in 5G
 
+Wavelength is distance wave shape repeats. Period is time between these
+Any signal can be represented as a sum of single-frequency components.
+Spectrum is frequency content of a wave.
+DFT (Discrete Fourier Transform) computes spectrum.
+This spectrum contains the magnitude/amplitude/voltage/energy and phase offset at that frequency.
+However, in audio signals, often only plot the magnitude as phase is not overly domineering in perception.
+FFT is an efficient algorithm that implements DFT.
+Have real FFT and complex FFT implementations.
+
+Harmonic is a wave with frequency that is integer multiple of a baseline frequency
+The FFT will show various harmonics, e.g. could be only even/odd or both
+
+Specifically, for a wave, DFT sees how much does a particular portion of that wave correlate to a sine wave of same frequency
+DFT all about this sine correlation, so only a sine wave will show a 'pure' frequency, e.g.
+square and triangle waves will be sum of many sine waves
+
+A signal is continuous, having frequency and period.
+Recording signal at evenly spaced intervals, we get samples.
+Example sample format is little-endian 16-bit mono.
+From samples, we can compute a spectrum.
+Conversely from a spectrum, we can convert, i.e. perform an inverse FFT
+
+An envelope (family of curves) describes the amplitude or changing level of the signal over time.
+So, could be thought of a smooth curve outlining wave's extremes
+
+Apodisation modifies a function.
+So, removing jagged discontinuities at start and end of wave is a form of apodisation.
+
+Low pass attenuates frequencies higher. 
+Although attenuate doesn't necessarily mean cutoff completely, this is normally ideal.
+Sounds muffled.
+Telephone lines use 3KHz-4KHz bandwidth low-pass filter
+
+RMS (Root Mean Square) is used when values can be positive and negative, e.g. average of sinusoid is 0
+
+Time-invariant is one whose behaviour (response to inputs) does not change over time.
+An alternate to this would be a linearly-increasing frequency, e.g. a chirp from say A3-A5
+So, if an LTI system is given the same input, will always give the same output 
+
+Nyquist/folding frequency is highest frequency that can be measured using sampled data
+It will be half of our sampling rate.
+Called folding as any harmonic above nyquist will 'fold' back into our range, e.g. if 5000Hz and is 6000Hz, will get 4000Hz
+Aliasing a form of undersampling resulting from converting something continuous into discrete, i.e. misidentify signal
+This is relevent for say a square wave, which may have 'base' frequency of 1KHz, but might have FFT up to 5KHz
+
+A window function will zero out at some interval, e.g. hamming window
+
+Convolution is combining functions. We can attain a degree of smoothing like this.
+Convolution theorem states that multiplication in frequency domain `DFT(signal) * DFT(window/filter)`, is equivalent to more involved convolution in time domain
+Good way to smooth out a noisy (random data not interested in actually recording) signal is to use a moving average
+Moving average has window size say of 30 days, so 1-30 average, then 2-31 average etc.
+
+Convolution is operation behind FIR filter. 
+Moving average is a type of FIR filter. FIR reponse won't go on for ever
+
+Gaussian is normal distribution, i.e. bell curve.
+It gets better smoothing. 
+
+
+
 # Debugging
 Validation code, i.e run function and check value with #if VALIDATING #endif
 
@@ -319,6 +379,18 @@ Will have clock sources, e.g. HSI, HSE, PLL. output of these is SYSCLK.
 SYSCLK is what would use to calculate cpu instruction cycles.
 
 # Hardware
+An op-amp is a voltage amplifying device. 
+It cannot output more than the supply voltage, i.e. it has a power supply (these are normally left off circuit diagrams)
+Very versatile analog logic operations, e.g. voltage adder, comparator; hence name 'operational'
+Can also amplify/invert/maintain signal
+
+Shift register adds additional output or inputs to be added, i.e. saves pins
+It does this via converting between serial and parallel, 
+e.g SIPO (Serial-In Parallel-Out; LEDs), PISO (buttons)
+Shift register will have chip enable pin
+
+
+
 Classic RC circuit exponential discharge, 95% fall time 
 
 Memory banks are highest hierarchy. Allow for parallel access.
@@ -329,6 +401,60 @@ also, distribute writes across different blocks.
 Must erase before writing to page, otherwise won't update correctly.
 unlock() and lock() for writing to flash
 Blocks sometimes called sectors. Non-uniform sizes common, i.e. sectors of different sizes.
+
+True ROM not really used. ROM now means that writing is slower and wears down chip
+OTP (one time programmable) memory (PROM)
+FMC (flexible memory controller) for SRAM (flexible in that it can also support SDRAM, Flash, etc.) 
+
+## Motors
+Phase refers to how many electromagnet bars in rotor, e.g. 3-phase each placed at 120°
+AC typically induction motor. Synchronous or asynchronous, i.e. whether the shaft rotates in sync with the polarity changes in the rotor 
+DC can be brushed or brushless. Brushes are connected to electrodes on the end of the shaft to magentise sections of the rotor as the shaft rotates.
+Brushless requires ESC to mimic AC pulses
+Stepper brushless most precise movement requiring stepper controller
+Servo motor can be AC or DC that provides feedback so can move to a particular position with PWM
+
+Robot kinematics is study of motion without considering potential fields blocking motion
+Inverse kinematics is determining motion to reach desired position (so just trajectory planning?)
+Planar joint is gliding joint?
+
+Require command queue to prevent motor stalling?
+i.e. queue required if commands run for a period of time
+
+Stepper motors don't move in a smooth and continuous way
+Open loop, as no feedback of motor position
+Therefore, it's possible motor might slip steps and software gets out of sync
+Also, will require calibration (possibly with a limit switch?)
+Stator coil current typically controlled with 4 GPIO pins
+Various patterns/sequences of activating stator coils to generate say normal full-step, half-step, 
+'wave-drive' (one stator energised at a time) less power less torque etc.
+
+Often driver boards needed for motors as power of GPIO signals is not enough.
+Furthermore, may require external power supply to prevent slipping steps on the motor.
+(If high inertia, must do slow-stop/starts to avoid slipping steps. Also if insufficient torque)
+Register specific to make GPIO setting as fast as possible, which equates to it being set on time.
+Furthermore, having all gpio pins be on same port would increase speed
+
+(two half bridges make up H-Bridge. half bridge is two switches connected to a power supply)
+For bipolar, require H-bridge (reverse voltage). More expensive driver chips include this
+If providing external power, probably want board to perform current overload
+FOC (field orientated control) another industry way of controlling?
+
+Is stepper motor reducing current at static positions unique to a stepper, i.e. will all motors have holding current?
+
+Just like on bicycle, higher speed, i.e. steps per second yields lower torque
+Torque required combination of load and static/kinetic friction
+Cheaper motors have worse backlash, i.e. when changing direction
+
+Say 32 steps per revolution, plus 64 time gear reduction, i.e. internal motor must rotate 64 times to get one external rotation
+(so a gear reduction of 64:1)
+torque is rotational equivalent of linear force
+gives total 2048 steps
+
+rotor has permanent magnet whose poles will line up with stator electromagnet coils
+stepper will have rotor and stator teeth, i.e. further subdividing magnets
+
+
 
 Flash for high-density, low cost.
 More expensive EEPROM faster erase as only 1 byte.
@@ -1107,6 +1233,10 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 (not really necessary for dev-boards)
 
 ## Common
+Q notation used for fixed point, e.g. Q23.8 has 23 bits for units, 8 bits for fractional part 
+IEEE also define special values Nan, Inf, -Inf etc. 
+These will be returned when a floating point exception occurs, e.g. divide by 0, square root of negative
+For cortexm4, FPU is optional. So, check between software `aeabi__dmul()` and hardware `vadd.f32`
 (sign 1bit)-(exponent 8bits)-(significand/mantissa 23bits)
 1 *     2² *      0.1234
 introducing negatives we effectively remove one bit
@@ -1131,6 +1261,8 @@ Multithreading performance: no synchronisation primitives > atomics > locks
 if say hardware spinlock, in reality, most likely implemented with atomic instructions
 
 soft reset doesn't undergo full powercycle, e.g. watchdog registers persist
+More complex devices can get stuck. So, some sensors may have reset pins. 
+Tie external devices reset lines to MCU reset pin (Might tie to a GPIO if require specific software reset)
 
 ease_in accelerates at end
 ease_out accelerates at start
@@ -1276,7 +1408,8 @@ A sensor channel is a quantity measured, e.g 3 channel, 3 axis accelerometer
 high impedence is floating as no good path for current to flow.
 have tri-state GPIOs for multi-bus controllers, i.e. all but one floating so as to not create short circuit.
 
-malloc and printf are not reentrant 
+malloc and printf are not reentrant (not prefixed with _r)
+rentrant functions add to .data section as require rentrancy structs
 coroutine is function that can be suspended at any point, and resume later
 
 Resistance is purely electric opposition to current flow.
@@ -1786,6 +1919,10 @@ An exception will have a number (offset into vector table)
 priority level (lower number, higher priority)
 synchronous (divide-by-zero, illegal instruction)/asynchronous (timer expiration, peripheral interrupt), 
 inactive (waiting to occur), pending (waiting for CPU to finish current instruction), active (being serviced), nested (priority prempted)
+IMPORTANT: If in C++, have to extern "C" exception handler functions
+HAL generated is not exactly performant, however useful for setting things up.
+However, probably use register direct for interrupts as want performance out of the box
+
 
 Before entering an interrupt, context is saved (e.g. PC, LR, PSR, SP)
 
@@ -2199,6 +2336,157 @@ e.g. one value changed in cache line invalidates it, even though another value i
 remains unchanged
 
 ## Peripherals
+SDHC (Secure Digital High Capacity, i.e. up to 32GB) card by 
+SDIO (secure digital I/O card adds wireless transmission to SD card?) in DMA 4bits mode
+DSI just display. Also, DSI use less power as HDMI is something extra the LCD controller
+
+TODO: For any hardware, understand basic signal patterns
+LOGIC:
+* TTL (Transistor-Transistor Logic) uses bipolar transistors
+Threshold voltage levels:
+  - Voh (minimum) 2.7V
+  - Vih 2V
+  - Vol (maximum) 0.4V
+  - Vil 0.8V
+* CMOS uses field effect transistors. Less power, more sensitive
+  - Voh (minimum) 2.4V
+  - Vih 2V
+  - Vol (maximum) 0.5V
+  - Vil 0.8V
+
+CAN:
+CAN (Controller Area Network) is a CSMA/CD (Carrier Sense Multiple Access/Collision Detection) to allow
+electronic subsystems to be connected and interact in a network.
+So, each node on the bus must wait for a period of inactivity before attempting to send a message
+CAN FD (flexible data-rate) allows for higher bandwidth
+
+GPIO:
+* Pin
+* Output/Input
+* Push-Pull
+* Alternate (uart, dac, xtal (clock-in say with function generator), clock-out, rtc, TODO: ...)
+* Pull up/down
+A current sink means current is flowing into the pin
+GPIO push-pull has the ability to both source and sink current
+open-drain/open-collector can only sink current, i.e. can only drive signal line low
+High-drive GPIO are push-pull pins capable of providing more current than typical pins, e.g. for LED
+
+ADC:
+* ENOB (Effective Number Of Bits)?
+* (common datasheet pin names, e.g. ADC123_IN3 means that this pin can connect to any of the three ADC units on the board via input 3, i.e channel 3)
+* Rank is the order in which channels are processed on the ADC
+* The sample time here is acquistion time
+
+TIMER:
+* Source
+* Direction
+* Resolution, i.e. Comparator value
+* One-shot/Reload
+
+SPI:
+Serial Peripheral Interface
+* Short distance
+* Synchronous
+* Full-duplex
+* SCK, MISO, MOSI, SS pins
+The SS active-low pin used to select particular slave. 
+Therefore, each slave has it's own separate SS line.
+This makes signal routing on a PCB more difficult
+
+I2C:
+(I2S uses 3 wires, less overhead bits, i.e. stop/start bits)
+Inter-Integrated Circuit
+(Intel released SMBus I2C variant 10KHz-100KHz)
+* Serial
+* Synchronous
+* Half-duplex
+* Short distance
+* Multi-master (i.e. multiple masters and multiple slaves) bus superiority over SPI. 
+* SCL, SDA lines
+more complex than SPI, less than UART
+modern I2C ultra-fast supports up to 5MHz, slave address size 10bit
+bus connections are open-drain, thereby faciliting each signal line having a pull-up resistor to
+restore signal to high when no device asserting it low
+(this may be built into sensor, however for multiple devices may have to manually add one)
+
+USART:
+Universal Synchronous Asynchronous Receiver Transmitter.
+UART subset (asynchronous means no clock signal to synchronise bits)
+Serial
+Full-duplex
+UART is a hardware protocol designed for asynchronous data streams.
+TX, RX lines
+Universal means various protocols
+The different protocols handled use different numbers of bits for detecting start and stop conditions, 
+presence or absence of a parity bit (and its polarity), and frame data lengths. 
+Typically you can specify 5,6,7 or 8 data bits per frame. 
+If someone were to insist that his/her data must be formatted into 4-bit frames, no existing UART chip would be able to handle it.
+FTDI is a semiconductor company.
+Prominent product is USB to UART chip 
+* Flow Control
+May implement hardware flow-control; how serial devices control amount of data transmitting, as often PC faster than MCU
+RTS (Request To Send), CTS (Clear To Send) will be wired to each other from opposite devices.
+When high, saying that can receive data, i.e. not busy with other tasks, buffer space available etc.
+
+Referring to single wire:
+* Simplex has data flowing in one way only. Therefore is unidirectional
+* Half-Duplex can have data flowing in both directions, but only one at a time. Therefore is bidirectional
+* Full-Duplex can have data flowing in both directions at the same time
+Data sending:
+* Serial sends bits one after another 
+  Serial offers space-economy, which also allows for better sheilding and cheaper, therefore better at long distances
+  - Synchronous pairs data lines with clock signal, often faster
+    Could sample on falling or rising edge 
+    Setting speed isn't important, although there is maximum speed
+  - Asynchronous requires more effort in sending data reliably, i.e. framing with 9600-8N1
+    No guarantee that both sides are running at the same rate
+    Extra hardware required, can result in garbage data if both sides baud doesn't match, doesn't scale for multiple devices
+* Parallel sends multiple bits at the same time. Typically involves a 'bus'
+
+USART has extra clock signal, so higher data rates as knows when to sample as oppose to having to inspect data
+
+9600-8N1 will have 9600 baud, 8 data bits, no parity bit, 1 start/stop bit
+Therefore, will have an effective data rate of 80%
+Typically LSB first
+* RS232 (-13V - 13V), TTL (0V - 5V) specify voltage levels, i.e. hardware
+RS232 has higher voltage range for less noise susceptibility over long distances
+(in reality no modern RS232 uses these high voltages)
+UART is protocol for sending/recieving bits. 
+* RS232 OSCILLOSCOPE DECODING: 
+When idle, 3.3V 
+Start bit is low, stop bit is high
+Can see is a software decoder via: utility -> options -> installed
+math -> decoder1 -> (evt. table)
+(oscilloscope gave ringing as period was way to low at ns, wanted µs)
+oscilloscope with memory depth of 54Mpts can record a total of 54mil samples in its memory
+by default, as alter time scale, memory depth and sample rate automatically adjusted so that capture fills the screen
+acquire -> mem-depth
+increasing memory depth to max. will slow down scope
+
+Use scope to check levels (logic analyser may just read 0), see if things look right,
+timing, noise, real-time, analogue
+
+DAC:
+DAC coupled with OpAmp can act as dynamically adjustable current source
+Pressure and flow control devices, e.g. 4-20 (range between 4-20mA), 0-10 
+As any current carrying conductor produces a magnetic field, can use DC in wire of solenoid to actuate central metal rod
+* Channels
+* Resolution (like 8bit?)
+* Voltage reference? e.g. is power supply 3.3v than output max. is 3.3v?
+wave/function generator might be tied to RTC? 
+attenuation is opposite of amplification, e.g. amplitude attenuation
+wave phase is position of wave at a point in time, i.e. where wave is positioned in its cycle
+
+ADC:
+Although Nyquist states double sampling rate, with DSP tricks can lower required sampling rate to reduce power
+* Sampling rate
+* Resolution
+* Noise?
+* SAR?
+
+DMA:
+Can move data from one memory location to almost anywhere in memory map, as long as permitted by MPU
+
 Watchdog:
 only gracefully handle an error if it's likely to occur regularly; otherwise watchdog reset
 although can use multiple, safer to just have 1 
@@ -2208,10 +2496,27 @@ independent watchdog (reset at any time in interval)
 should keep even in debug builds, as always important to identify system hangs
 performing cleanup in watchdog reset ISR is often error-prone due to short amount of cycles available
 software watchdog would be repurposing a general purpose timer peripheral
+helps maintain system health by ascertaining that critical code is being executed, not simply code
+e.g. watchdog for reading/writing input/output every 100ms
+must periodically 'feed', i.e. clear
+IMPORTANT: reset is not a power-cycle
 
 Clock:
+a clock is an oscillator with a counter that records number of cycles since being initialised
+RC (resistor-capacitor) oscillator generates sine wave by charging and discharging periodically (555 astable timer)
+internal mcu oscillators typically RC, so subject to frequency variability
+Crystal generates stable frequency
+PLL is type of clock circuit that allows for high frequency, reliable clock generation (setup also affords easy clock duplication and clock manipulation)
+So, PLL system could have RC or crystal input
+Feeding into it is a reference input (typically a crystal oscillator) which goes into a voltage controlled oscillator to output frequency
+The feedback of the output frequency into the initial phase detector can be changed
+Adding dividers/pre-scalers into this circuit allows to get programmable voltage.
+So, a combination of stable crystal (however generate relatively slow signal, e.g. 100MHz) and high frequency RC oscillators (a type of VCO; voltage controlled oscillator)
+CubeMX clock diagram helps find solutions of values of PLLs and dividers/scalers.
+Also shows how clocks laid out on the device and what busses etc. 
 polarity refers to either high or low
 phase is rising or falling edge
+
 
 RTC:
 For instance, the SysTick timer, which is a 24-bit counter, has a maximum value that it can count to. 

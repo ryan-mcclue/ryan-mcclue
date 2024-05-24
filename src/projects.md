@@ -43,4 +43,4 @@ UniMCU/UniWebsite:
     made me more conscious about how my code integrates with other people's code
 - Conflict Resolution
   + design doc discussion; have team write pros and cons of options
-  + take initiative and build a prototype to demonstrate idea; take responsibility for my actions
+    take initiative and build a prototype to demonstrate idea; take responsibility for my actions

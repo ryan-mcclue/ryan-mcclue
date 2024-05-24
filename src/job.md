@@ -4,6 +4,8 @@ Don't assume interviewer read your resume.
 TODO: perform mock interview; i.e. record yourself talking about problems
 TODO: have someone look over resume (as painful as it is)
 
+
+
 ## General Interview
 1. Homework assignments:
 Follow programming style guide of company if possible, e.g. use OO etc.
@@ -118,6 +120,12 @@ Questions:
 * perhaps open source something? 
 https://trac.ffmpeg.org/wiki/SmallASMTasks
 (https://www.youtube.com/watch?v=9FBvpKllTQQ)
+
+often real time (product may be released in regulated environment standardsd, e.g. automotive, rail, defence, medical etc.)
+challenges are testabilty and software/hardware comprimises for optimisation problem solving, 
+e.g. bit-banging or cheap mcu, external timer or in-built timer, adding hardware increases power consumption, 
+e.g. ray tracing card or just rasterisation, big.LITTLE clusters
+1/4 scalar performance for 1/2 power consumption good tradeoff
 
 This is the portfolio I have, here is want I can bring.
 

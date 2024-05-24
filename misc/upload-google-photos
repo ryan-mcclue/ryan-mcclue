@@ -2,6 +2,9 @@
 
 set -e
 
+# To upload to github.io repo
+# git clone https://${GH_TOKEN}@github.com/ryan-mcclue/ryan-mcclue.github.io musings
+
 # IMPORTANT(Ryan): Will be environment variables on CI machine
 if [ -z "$CLIENT_ID" ]; then
   CLIENT_ID=$(jq '.client_id' misc/credentials.json)

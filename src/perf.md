@@ -123,6 +123,8 @@ Perform repetition testing on hotspots to know what practical peak performance i
 adding more work units increases the throughput of the system
 
 look at longest dependency chain to ascertain order for work unit schedules see which work unit is most saturated
+(so, consider or(or(or(a, b), c), d) as oppose to or(or(a, b), or(c d)). look at assembly difference to see if
+compiler generates different serially dependencies. would also have to time though)
 
 CPU front-end is responsible for decoding instructions and scheduling/passing micro-op queue to back-end
 The front-end will see a loop iteration as one giant stream of instructions.
@@ -239,8 +241,8 @@ Although looking at the system monitor shows cpus maxed out, we could be wasting
 
 Define lane width, and divide with this to get the new loop count
 Go through loop and loft used values e.g. lane_r32, lane_v3, lane_u32
-(IMPORTANT at first we are only concerned with getting single values to work, later can worry about n-wide loading of values)
-(TODO the current code has the slots for each lane generated, rather than unpacked. look at handmade hero for this unpacking mode)
+(IMPORTANT at first we are only concerned with getting single values to work, 
+later can worry about n-wide loading of values)
 If parameters to functions, loft them also (not functions? just parameters? however we do random_bilateral_lane() so yes to functions?)
 If using struct or struct member references, take out values and loft them also, e.g. sphere.radius == lane_r32 sphere_r; 
 (group struct remappings together)
@@ -259,16 +261,13 @@ We may have situation where some items in a lane may finish before others.  So, 
 To indicate say a break, we can do (lane_mask = lane_mask & (hit_value == 0));
 For incrementing, will have to introduce an incrementor value that will be zeroed out for the appropriate lane item that has finished.
 Have horizontal_add()?
-Next once everything remapped create a lane.h. Here, typedef the lane types to their single variants to ensure working before adding actual simd instructions
+Here, typedef the lane types to their single variants to ensure working before adding actual simd instructions
 Also do simd helper functions like horizontal_add(), mask_is_zeroed() in one dimension first
 Wrap the single lane helper functions and types in an if depending on the lane width set
-(IMPORTANT any functions that we are to SIMD, place here. 
-if it comes that we want actual scalar, then rename with func_lane prefix) 
 
 for simd typically have to organically transition from AOS to SOA
 
 Debug in single lane, single threaded mode (easier and debugger works)
-However, can increase lane width as needed (threading not so much?)
 
 For bitwise SIMD instructions, the compiler does not need to know how we are segmenting the register, e.g. 4x8, 8x8 etc. 
 as the same result is obtained performing on the entire register at once.
