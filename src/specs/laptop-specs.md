@@ -6,12 +6,13 @@ TDP: 15W, 64 byte cache line
 ***L2***: 2 x 512KiB (4-way, 12 cycle)
 ***L3***: 3MiB (12-way, 42 cycle)
 ***SSE4.2, AVX2, FMA3, VT-x***
-HD Graphics 620, 300MHz, shared memory, opengl, HEVC + VP9 codecs
+Intel HD Graphics
 
+thinkpad carbon, custom form factor
 # RAM
 **2 * 4GB LPDDR3 DIMM** *@ 1867MHz*
 # Harddrive
-**128GB M.2 SATA SSD**
+**128GB SATA M.2 SSD**
 # Battery
 LiPo 51W/hr battery
 # Peripherals
