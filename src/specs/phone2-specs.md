@@ -1,48 +1,35 @@
 # CPU
-ARMv8-A-ARM-MOESI Cortex-A53 Kirin 655 @ 2.5GHz
 mod. Harvard RISC bi
-big.LITTLE 4 @ 2.1GHz, 4 @ 1.8GHz
-TDP: 5W, 64 byte cache line
-L1d, L1i: 8-64KiB (per core)
-L2: 128KiB-2MB (shared)
-VFPv4, NEON, DSP, virt
-Mali-T830, MMU, L2 cache, OpenGL ES, OpenCL, Vulkan, Renderscript
 
+armv9-a kyro cortex-x2;cortex-a710;cortex-a510
 
-qualcomm snapdragon 8 gen 1 @ 3GHz
+qualcomm snapdragon 8 (sm8450) @ 3GHz
 big.LITTLE 4 @ 1267MHz, 3 @ 1324MHz, 1 @ 806Hz
+VFPv4, NEON, SVE, Crypto, Hexagon-DSP, virt
+Adreno graphics
 4nm
-
-ARMv8-A kyro? (so not a cortex)
-
-sm8450 mcu?
-
-adreno graphics
-
-1080x2316p
-
-7GB ram
-104GB
-
-EMUI 5.0.4 (android 14.0 (Apache))   
+# RAM
+8GB LPDDR5 soldered SDRAM
+# Harddrive
+128GB UFS
+# Battery
+LiIon, 5000mAh 
+# Peripherals
+1080x2316p capacitance 
+bluetooth 5.2 (2.4GHz)
+Wifi 6 802.11ax (2.4GHz;5GHz)
+GNSS (GPS, Galileo, GLONASS, Beido)
+5G NR Cat-24 DL/Cat-18 UL
+NFC (13MHz)
+UWB 
+H.265 (l+ll), mp3 (l), vorbis (l), aac (l)
+eSIM
+# Camera
+108MP 23mm laser AF
+10MP 70mm (telephoto)
+10MP 230mm
+12MP 13mm (ultra-wide)
+# OS
+One UI 6.0 (android 14.0 (Apache))   
 linux 5.10 (aarch64, AAPCS64)
 Java VM ART 2.1.0
-
-LiIon
-
-# RAM
-3GB LPDDR3 microDIMM @ 933MHz
-# Harddrive
-32GB eMMC
-# Battery
-# Peripherals
-1080x1920p capacitance (LiPo, USB-B micro)
-Bluetooth 4.1 (BLE, approx. 2.4-2.483GHz)
-Wifi 802.11ab/g/n/ac (approx. 2.4-5GHz)
-GNSS (GPS, Galileo, GLONASS, Beido)
-4G LTE Cat-13 DL/Cat-7 UL (approx. 1800MHz)
-CODECS H.264 (l+ll), mp3 (l), mp4 (l), wav (ll)
-# OS
-EMUI 5.0.4 (android 7.0 (Apache))   
-linux 4.1.18 (aarch64, AAPCS64)
-ART 2.1.0

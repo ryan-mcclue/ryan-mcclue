@@ -6,9 +6,9 @@ mod. Harvard CISC little
 L1d, L1i: 2 x 32KiB (8-way, 4 cycle)
 L2: 2 x 512KiB (4-way, 12 cycle)
 L3: 3MiB (12-way, 42 cycle)
-SSE4.2, AVX2, FMA3, VT-x
-14nm, U3E1 package (soldered BGA)
+SSE4.2, AVX2, FMA3, AES, RdRand, VT-x
 Intel HD Graphics
+14nm, U3E1 package (soldered BGA)
 # RAM
 2 * 4GB LPDDR3 DIMM @ 1867MHz
 # Harddrive

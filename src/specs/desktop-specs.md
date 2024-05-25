@@ -7,7 +7,7 @@ L1d: 4x32KB, 8-way
 L1i: 4x64KB, 8-way
 L2: 4x512KB, 8-way
 L3: 4MB, 16-way
-SSE4A, AVX2, FMA3, AES, RdRAnd, AMD-V
+SSE4A, AVX2, FMA3, AES, RdRand, AMD-V
 Radeon Vega Graphics
 12nm, AM4 package (PGA)
 # RAM
