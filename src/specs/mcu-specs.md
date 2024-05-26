@@ -1,45 +1,42 @@
 # MCU
-**STM32F407VGT6** (Cortex-M4, 32-bit, ARM)
-Operating Frequency: 168MHz
-32-bit RISC ARM Cortex-M4 with FPU
-Thumb-2 Instruction Set
-armv7-m cortex-m4 STM32F429zi @ 180MHz
-DSP, FPU
-
-AXIM, AHB and APB busses (important to know what peripherals operate on what bus for power and performance)
-# Peripherals
-GPIO: Up to 82 I/O pins
-UART: 6 (up to 12 Mbit/s)
-SPI: 4 (up to 42 Mbit/s)
-I2C: 3 (up to 3.4 Mbit/s)
-CAN: 2 (up to 1 Mbit/s)
-USB: 1 (OTG FS)
-Ethernet: 1 (IEEE 1588v2)
-SDIO: 1 (SD/SDIO/MMC)
-Camera Interface: 1 (DCMI)
-DMA: 16 streams
-Timers: 14 (32-bit, up to 168MHz)
-ADC: 3 (16-bit, up to 7.2 Msps)
-DAC: 2 (12-bit)
-RTC: 1 (with backup domain)
-Watchdog Timers: 2 (Independent & Window)
-CRC: 1 (32-bit)
-Random Number Generator: 1 (True RNG)
-Debug: SWD, JTAG
+ARMv7-M-ARM-MOESI Cortex-M4 STM32F429ZI
+mod. Harvard RISC bi
+32-bit single core
+32 byte cache line
+only L1d (128bytes), L1i (1Kb), ART (a prefetch cache to flash)
+MPU, NVIC (16+91 maskable), EXTI (23 edge)
+Thumb-2, DSP (8-16bit SIMD), single-precision FPU
+16Mhz RC Oscillator to 180Mhz PLL
+180MHz AHB, 90MHz APB
+32KHz Crystal RTC, 4Kb Backup-SRAM, 20Vbat Backup-Registers
+–40C to +105C
+Power Supply: 3.3V or 5V
+Vdd 1.7-3.6V
+Normal (100mA), Sleep (5mA), Stop (50uA), Standby (5uA)
+4.5x5.5mm (143ball), 28x28mm (208pin)
 # Memory
-SRAM: 192KiB
-Flash: 1024KiB
-External Memory Controller: FSMC (SRAM, SDRAM, NOR, NAND)
-# Power
-Operating Voltage: 1.8V to 3.6V
-Low Power Modes: Sleep, Stop, Standby
-Power Supply: 5V or 3.3V
-# Packages
-LQFP100, LQFP100 (20x20mm)
-Temperature Range: -40°C to 85°C (Industrial)
+256Kb SRAM (64Kb of CCM)
+2MB Flash
+FMC (RAM/NOR/NAND)
+# Peripherals
+168x GPIO (fast 90MHz;V-tolerant)
+4xUSARTS/UART (5Mbps;11Mbps)
+3xI2C (100Khz;400Khz) 
+6xSPI (muxed I2S, 22.25Mbps;45Mbps)
+3x12bit, 2.4MSPS ADC, 23 channels
+2x32bit Advanced Timers (PWM, Pulse, Encoder)
+12x16bit Timers (1 Window, 1 Independent Watchdog)
+2x8-stream DMA (FIFO + burst)
+2x12bit DAC
+Chrom-ART (DMA for pixel/rectangle operations)
+2xCAN (1Mbps)
+Ethernet (10-100Mbps)
+USB (12Mbps;480Mbps) (OTG FS)
+CRC, 32bit-Random units
+LCD/DCMI parallel
+I2S
+SAI
+SDIO/MMC
+SWD, JTAG
 # OS
 arm-none-eabi-gcc, iccarm, armcc, armclang
-# Development Tools
-IDE: STM32CubeIDE, Keil MDK, IAR Embedded Workbench
-Compilers: ARM GCC, ARM Compiler 6
-Debugging: ST-LINK, J-Link, ULINK

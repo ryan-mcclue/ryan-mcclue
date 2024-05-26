@@ -1,5 +1,5 @@
 # CPU
-x86_64-TSO-MESIF Intel i5-7200U (Kaby Lake) @ 2.5GHz
+x86-64-TSO-MESIF Intel i5-7200U (Kaby Lake) @ 2.5GHz
 mod. Harvard CISC little
 2 cores, 2 hyper, 1 NUMA
 64 byte cache line
@@ -14,11 +14,11 @@ Intel HD Graphics
 # Harddrive
 128GB SATA M.2 SSD
 # Battery
-LiPo 51W/hr battery
+LiPo 13800mAh
 # Peripherals
 Thinkpad Carbon, custom form factor
 1080p LED IPS, 720p camera
-HDMI-A, USB-C, USB-A, 3-pole audio-barrel-jack
+HDMI-A, USB-C, USB-A, 3-pole Audio-Barrel-Jack
 # OS
 ext4 linux 5.15.0 (x86-64, SystemV, CFS, systemd, ELF)
 fat32 ESP (grub 2.04)

@@ -2251,12 +2251,14 @@ As we have no need for 16 exabytes (tera, peta, exa), the physical address size 
 39bits, and virtual size 48bits to save on unused transistors.
 
 Direct-mapped cache has each memory address mapping to a single cache line
-Lookup is instantenous, however high number of cache misses.
+fast-search;high-miss-rate
+e.g. 8 cache lines, 32 addresses, 32 % 8 gives cache
 Fully-associative cache has each memory address mapping to any cache line.
-The entire cache has to be searched, however low number of cache misses.
+slow-search;low-miss-rate
+e.g. 8 cache lines, any address can go in
 Set-associative cache divides cache into fully-associative blocks.
-An 8-way cache means the number of cache lines in a block.
-This is best in maintaining a fast lookup speed and low number of cache misses.
+e.g. 2-way 8 cache lines gives 4 sets.
+medium-search;medium-miss-rate
 
 Cache sizes will stay relatively small due to the nature of how computers are used.
 At any point, there is only a small amount of local data the CPU will process next.
@@ -2310,6 +2312,7 @@ A hardware memory model relates to the state of affairs as the processor execute
 * Sequential Consistency: 
 Doesn't allow instruction reordering, so doesn't maximise hardware speed
 * x86-TSO (Total Store Order):
+(writes cannot be reordered; reads can be reordered if no preceding write to same location)
 All processors agree upon the order in which their write queues are written to memory
 However, when the write queue is flushed is up to the CPU
 * ARM (most relaxed/weak)

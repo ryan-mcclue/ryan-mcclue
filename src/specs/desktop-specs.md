@@ -1,5 +1,5 @@
 # CPU
-x86_64-TSO-MOESI AMD Ryzen 5 3400G @ 3.7GHz
+x86-64-TSO-MOESI AMD Ryzen 5 3400G @ 3.7GHz
 mod. Harvard CISC little endian
 4 cores, 4 hyper, 1 NUMA
 64 byte cache line
@@ -16,7 +16,7 @@ Radeon Vega Graphics
 500GB NVMe PCIe M.2 SSD
 # Peripherals
 Inwin B1, Gigabyte Mini-ITX
-HDMI-A, USB-C, displayport, 3-pole audio-barrel-jack, rj45 ethernet
+HDMI-A, USB-C, DisplayPort, 3-pole Audio-Barrel-Jack, RJ45 Ethernet
 # Peripherals
 Ergodox EZ Cherry-MX Brown
 Evoluent Vertical Mouse
