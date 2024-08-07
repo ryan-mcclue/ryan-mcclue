@@ -102,10 +102,32 @@ Profiling:
 Instrumentation adds timing code, sampling periodically interrupts.
 
 1. Run complete profiler and ascertain overall program profile/hotspots.
+
+3. Perform repetition testing on hotspots to know what practical/asymptotic peak performance to 'squeeze' out CPU variability.
+   (Will most likely see that can achieve better throughput on repetition tester than in app)
+   Now we have numbers; but we don't know yet if the code can be done better etc.
+   We generally aiming for 60% of theoretical throughput
+
+   To get theoretical throughput, understand how:
+   CPU memory in -> CPU computation -> CPU memory out
+
+   cmp a, b
+   jb label (if cmp yeilds negative, will set carry flag)
+
+   function takes: `end_addr - start_addr` 215 bytes (get additional bytes from linux stack guard and intel branch protection)
+   writes: 8 bytes
+   (3.7 x 1000^3 machine) / (0.25 x 1024^3 bandwidth) = 13.78cyles function
+
+
+
 2. Remove sections until just hotspots.
+   TODO: ultimately want to enable full optimisation flags at start, however only when understand simd
    Inspect hotspot assembly with -O1 flag to establish cycles per hotspot.
    Want to see maximum inlining, registers over stack, widest SIMD, etc.
    (aggregates access off a [base pointer], floats large nums, e.g. 1065353216)
+
+
+
 
 (IMPORTANT save out configuration and timing information for various optimisation stages, e.g. ./app > 17-04-2022-image.txt)
 
@@ -118,7 +140,6 @@ So: machine-freq / (bandwidth / 8) = num-cycles per loop
 fractional cycle counts typical for superscalar cpus
 
 
-Perform repetition testing on hotspots to know what practical peak performance is.
 
 adding more work units increases the throughput of the system
 
@@ -153,8 +174,11 @@ back-end has execution ports that execute uops.
 execution port output could be fed back into scheduler or to load/store in actual memory
 
 intel optimisation manual for specific microarchitecture, e.g. skylake client
+
 amd documentation hub "software optimisation guide" (sort by relevence)
 amd microarch numbers: https://en.wikipedia.org/wiki/List_of_AMD_CPU_microarchitectures
+(software optimisation guide for amd 17h processors)
+(see xor/mov latency of 1, however smaller encoding for xor)
 
 Frequent context-switching will give terrible cache coherency
 

@@ -15,9 +15,10 @@ e.g: improved web application by writing unit tests resulting in increased relia
 
 So show the languages, frameworks, and technologies that you're using. 
 
-**Music Player GUI**, 2024 
+**Music Player GUI**, 2024
 Created a cross-platform music visualiser in C/C++.
 Implemented an immediate mode UI from scratch using low-level graphics APIs resulting in a responsive user experience.
+Hotreloading
 Reduced FFT latency by converting algorithm to SIMD, lowering execution time from ... to ...
 Improved code integrity by incorporating a CI pipeline that performed static analysis and runtime analysis, enhancing security.
 (static analysis picked up on branch of mem_push returning NULL if requesting beyond arena capacity)
@@ -39,6 +40,7 @@ Worked in a team of 6 to clean living areas, perform kit maintenance and provide
 learning how to collaborate in a team environment.
 Performed weekly early morning activities at 4am and completed milestone events
 involving physical and mental evaluations resulting in an appreciation for challenging work.
+(emu bopping)
 
 ## Education
 **Bachelor of Computer Science (Embedded Systems).** University of New South Wales. 2021-2024, WAM
