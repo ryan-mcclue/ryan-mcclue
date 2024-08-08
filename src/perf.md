@@ -101,44 +101,61 @@ Biggest speed decreases are waste, cache and threads
 Profiling:
 Instrumentation adds timing code, sampling periodically interrupts.
 
+TODO: ultimately want to enable full optimisation flags at start; 
+      however start with -O1 before understanding simd assembly
 1. Run complete profiler and ascertain overall program profile/hotspots.
-
-3. Perform repetition testing on hotspots to know what practical/asymptotic peak performance to 'squeeze' out CPU variability.
-   (Will most likely see that can achieve better throughput on repetition tester than in app)
-   Now we have numbers; but we don't know yet if the code can be done better etc.
-   We generally aiming for 60% of theoretical throughput
-
-   To get theoretical throughput, understand how:
+   Remove sections until just hotspots.
+   - Bandwidth: 0.19gb/s (./app-profile > perf-hotspot.txt)
+2. Perform repetition testing on hotspots to know what practical/asymptotic peak performance to 'squeeze' out CPU variability.
+   - Max Bandwidth: 0.74gb/s (./app-profile > perf-func-repeat.txt)
+   Now we have numbers which we want to compare to theoretical max. throughput.
+   To get theoretical throughput, must understand how:
    CPU memory in -> CPU computation -> CPU memory out
+   We generally aiming for 60% of theoretical throughput
+3. Inspect hotspot loop/function assembly 
+   - Function takes: `end_addr - start_addr`: 215 bytes 
+     Some additional code bytes from linux stack guard and intel branch protection inserted instructions
+   - Writes: 8 bytes
+   - (3.7 x 1000^3 machine) / (0.17 x 1024^3 bandwidth) = 20.26cyles function
+     fractional cycle counts typical for superscalar cpus
 
-   cmp a, b
-   jb label (if cmp yeilds negative, will set carry flag)
-
-   function takes: `end_addr - start_addr` 215 bytes (get additional bytes from linux stack guard and intel branch protection)
-   writes: 8 bytes
-   (3.7 x 1000^3 machine) / (0.25 x 1024^3 bandwidth) = 13.78cyles function
-
-
-
-2. Remove sections until just hotspots.
-   TODO: ultimately want to enable full optimisation flags at start, however only when understand simd
-   Inspect hotspot assembly with -O1 flag to establish cycles per hotspot.
    Want to see maximum inlining, registers over stack, widest SIMD, etc.
    (aggregates access off a [base pointer], floats large nums, e.g. 1065353216)
+   `-exec disassemble function`
+4. 
+now with 'optimal' assembly,
+we will break down a program to: 
+ - what tasks need to be done
+ - of these tasks, establish dependency chains
+   the longest dependency chain will limit our best latency, i.e. what is theoretical maximum
+   however, we need to look at our work units to know how much overlapping can be done
+   also, depends on the throughput of the work units
+
+   The `inc` is dependency, so should be able to be done in 1cycle
+   TODO: cmp and jb occur at same time?
+   simplistically, more independent chains, gives more ILP
+   so, doing more in the loop body is good
+   IMPORTANT: however, with 3byte NOP asm tests, see that mov causing 1.2cycle instead of 1
+   ```
+   loop:
+     mov [rbx + rax], al
+     inc rax
+     cmp rax, rcx
+     jb loop
+   ```
+   so, two possible bottlenecks:
+     1. latency: longest dependency chain (decrease by breaking up)
+     2. throughput: work unit (increase by adding more units)
+
+  IMPORTANT: For CPU to extract ILP, will need to look at entire/beyond instruction stream
+
+ - here's how many pieces and how many cycles they each take:
 
 
 
-
-(IMPORTANT save out configuration and timing information for various optimisation stages, e.g. ./app > 17-04-2022-image.txt)
-
-look at latency, throughput (how many jobs started per unit time) and dependency chains (independent n-steps)
-then general calculation:
-In assembly, see that loop is decoding 11 bytes of instructions per iteration
-Running loop under profiler know bandwidth
-Know each loop writing 8 bytes; so (bandwidth / 8) gives loop throughput
-So: machine-freq / (bandwidth / 8) = num-cycles per loop
-fractional cycle counts typical for superscalar cpus
-
+latency
+throughput (how many jobs can be started):
+dependency chains (independent n-steps):
 
 
 adding more work units increases the throughput of the system
@@ -154,6 +171,7 @@ So, extraneous instructions can throttle front-end.
 Often the `inc` is the bottleneck in a loop. 
 So, want this to be as wide as possible
 
+TODO: front-end fetches and translates instructions
 ILP requires branch prediction to decode beyond a cmp and jmp
 After the back-end executes a cmp, it will look to see if the address matches what the front-end guessed
 If wrong, the back-end has to wait for front-end to refill uop queue.
@@ -320,3 +338,6 @@ SIMD allows divide by zeros by default? (because nature of SIMD have to allow di
 To get over the fact that C doesn't allow & floating point, reinterpret bit paradigm `*(u32 *)&a` as oppose to cast
 (IMPORTANT in SIMD cast is reinterpreting bits, so the opposite of cast in C)
 
+Register contention:
+Internally the CPU has a register file which has more registers than actually exposed by the instruction set architecture. When you modify the contents of a register in a way that discards its previous value (like a mov), then internally that register will be remapped to a different one in the register file through a process called register renaming, and it can be used straight away even if some previous instruction hasn't yet completed (like a previous mov from this register to memory, as in your example).
+Relating back to this episode, what this does is it breaks _false_ dependency chains in the instruction stream that arise from not having enough register names in the ISA.

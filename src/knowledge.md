@@ -1233,6 +1233,8 @@ grounding strap with 1Mohm resistor to ensure same potential as board for sensit
 (not really necessary for dev-boards)
 
 ## Common
+`cmp a, b; jb label` (if cmp yeilds negative, will set carry flag)
+
 Q notation used for fixed point, e.g. Q23.8 has 23 bits for units, 8 bits for fractional part 
 IEEE also define special values Nan, Inf, -Inf etc. 
 These will be returned when a floating point exception occurs, e.g. divide by 0, square root of negative
