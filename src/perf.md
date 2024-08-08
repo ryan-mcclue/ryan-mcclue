@@ -107,35 +107,28 @@ TODO: ultimately want to enable full optimisation flags at start;
    Remove sections until just hotspots.
    - Bandwidth: 0.19gb/s (./app-profile > perf-hotspot.txt)
 2. Perform repetition testing on hotspots to know what practical/asymptotic peak performance to 'squeeze' out CPU variability.
+   IMPORTANT: must run to see what CPU microarchicture will do, e.g. might optimise something etc.
    - Max Bandwidth: 0.74gb/s (./app-profile > perf-func-repeat.txt)
    Now we have numbers which we want to compare to theoretical max. throughput.
    To get theoretical throughput, must understand how:
    CPU memory in -> CPU computation -> CPU memory out
    We generally aiming for 60% of theoretical throughput
 3. Inspect hotspot loop/function assembly 
-   - Function takes: `end_addr - start_addr`: 215 bytes 
-     Some additional code bytes from linux stack guard and intel branch protection inserted instructions
-   - Writes: 8 bytes
-   - (3.7 x 1000^3 machine) / (0.17 x 1024^3 bandwidth) = 20.26cyles function
-     fractional cycle counts typical for superscalar cpus
-
    Want to see maximum inlining, registers over stack, widest SIMD, etc.
    (aggregates access off a [base pointer], floats large nums, e.g. 1065353216)
    `-exec disassemble function`
-4. 
-now with 'optimal' assembly,
-we will break down a program to: 
- - what tasks need to be done
- - of these tasks, establish dependency chains
-   the longest dependency chain will limit our best latency, i.e. what is theoretical maximum
-   however, we need to look at our work units to know how much overlapping can be done
-   also, depends on the throughput of the work units
-
-   The `inc` is dependency, so should be able to be done in 1cycle
-   TODO: cmp and jb occur at same time?
-   simplistically, more independent chains, gives more ILP
-   so, doing more in the loop body is good
-   IMPORTANT: however, with 3byte NOP asm tests, see that mov causing 1.2cycle instead of 1
+   Now with 'optimal' assembly:
+   - Function takes: `end_addr - start_addr`: 215 bytes 
+     Some additional code bytes from linux stack guard and intel branch protection inserted instructions
+   - (3.7 x 1000^3 machine) / (0.19 x 1024^3 bandwidth) = 20.26cyles function
+     fractional cycle counts typical for superscalar cpus
+4. Develop dependency chains in assembly (see what serial dependencies the compiler has created)
+   The theoretical maximum is the number of cycles of longest dependency chain.
+   IMPORTANT: two possible bottlenecks:
+     1. latency: longest dependency chain (decrease by breaking up)
+     2. throughput: work unit (increase by adding more units)
+   However, we need to look at our work units to know how much overlapping can be done.
+   Also, depends on the throughput of the work units
    ```
    loop:
      mov [rbx + rax], al
@@ -143,35 +136,29 @@ we will break down a program to:
      cmp rax, rcx
      jb loop
    ```
-   so, two possible bottlenecks:
-     1. latency: longest dependency chain (decrease by breaking up)
-     2. throughput: work unit (increase by adding more units)
+   The `inc` is dependency, with all others being able to be overlapped.
+   Simplistically, more independent chains, gives more ILP.
+   So, doing more in the loop body is good.
+   So, theoretical maximum is 1 cycle.
+   TODO: cmp and jb occur at same time?
+5. Noticing 1.2 cycles, instead of theoretical maximum.
+   Experimenting with assembly, see that 3byte NOP asm tests, can get 1cycle
+6. CPU front-end is responsible for fetching/decoding instructions and scheduling/passing micro-op queue to back-end.
+   An instruction may translate to 0 or more uop's.
+   L1 cache is separated into instruction (I$) and data (D$) (all higher caches have instructions and data combined).
+   So, front-end will first go to L1 cache and up to get instructions.
+   Front-end also has L0 (micro-ops) cache.
+   IMPORTANT: The CPU will store next instruction to be executed to allow for I-cache.
+   To get ILP, front-end must be able to decode more than 1 instruction per cycle.
+   To do this, will need to look at entire/beyond instruction stream.
+   IMPORTANT: so, think of 'meanwhile' instead of 'ifthen' when programming.
+   So, extraneous instructions can throttle front-end, as can only decode a certain number of instructions per clock.
+   i.e. can be bottle-necked on the CPUs decoding stage, rather than processing stage (back-end)
+   It will analyse dependency chain and try and extract as much ILP. 
 
-  IMPORTANT: For CPU to extract ILP, will need to look at entire/beyond instruction stream
-
- - here's how many pieces and how many cycles they each take:
+7. Branch prediction most complicated part of front-end
 
 
-
-latency
-throughput (how many jobs can be started):
-dependency chains (independent n-steps):
-
-
-adding more work units increases the throughput of the system
-
-look at longest dependency chain to ascertain order for work unit schedules see which work unit is most saturated
-(so, consider or(or(or(a, b), c), d) as oppose to or(or(a, b), or(c d)). look at assembly difference to see if
-compiler generates different serially dependencies. would also have to time though)
-
-CPU front-end is responsible for decoding instructions and scheduling/passing micro-op queue to back-end
-The front-end will see a loop iteration as one giant stream of instructions.
-It will analyse dependency chain and try and extract as much ILP. 
-So, extraneous instructions can throttle front-end.
-Often the `inc` is the bottleneck in a loop. 
-So, want this to be as wide as possible
-
-TODO: front-end fetches and translates instructions
 ILP requires branch prediction to decode beyond a cmp and jmp
 After the back-end executes a cmp, it will look to see if the address matches what the front-end guessed
 If wrong, the back-end has to wait for front-end to refill uop queue.
@@ -180,7 +167,6 @@ Therefore, taking a comparison jump can be costly.
 So, can get better performance with more instructions and less ifs if takes less than 10 cycles
 Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
 
-Front-end accesses L0 (micro-ops) and L1 cache (I$ and D$)
 Caches are 64-byte aligned.
 Don't won't say a 4byte integer to straddle D$ cache lines.
 Also code alignment important for larger code bases in I$.
