@@ -106,8 +106,10 @@ TODO: ultimately want to enable full optimisation flags at start;
 1. Run complete profiler and ascertain overall program profile/hotspots.
    Remove sections until just hotspots.
    - Bandwidth: 0.19gb/s (./app-profile > perf-hotspot.txt)
-2. Perform repetition testing on hotspots to know what practical/asymptotic peak performance to 'squeeze' out CPU variability.
-   IMPORTANT: must run to see what CPU microarchicture will do, e.g. might optimise something etc.
+2. Perform repetition testing on hotspots to know what practical/asymptotic peak performance
+   to 'squeeze' out CPU variability.
+   IMPORTANT: must run to see what CPU microarchicture will do, 
+   e.g. might optimise something etc.
    - Max Bandwidth: 0.74gb/s (./app-profile > perf-func-repeat.txt)
    Now we have numbers which we want to compare to theoretical max. throughput.
    To get theoretical throughput, must understand how:
@@ -119,9 +121,11 @@ TODO: ultimately want to enable full optimisation flags at start;
    `-exec disassemble function`
    Now with 'optimal' assembly:
    - Function takes: `end_addr - start_addr`: 215 bytes 
-     Some additional code bytes from linux stack guard and intel branch protection inserted instructions
+     Some additional code bytes from linux stack guard and intel branch protection 
+     inserted instructions
    - (3.7 x 1000^3 machine) / (0.19 x 1024^3 bandwidth) = 20.26cyles function
      fractional cycle counts typical for superscalar cpus
+   IMPORTANT: must run to get cycles per function due to ILP
 4. Develop dependency chains in assembly (see what serial dependencies the compiler has created)
    The theoretical maximum is the number of cycles of longest dependency chain.
    IMPORTANT: two possible bottlenecks:
@@ -155,17 +159,30 @@ TODO: ultimately want to enable full optimisation flags at start;
    So, extraneous instructions can throttle front-end, as can only decode a certain number of instructions per clock.
    i.e. can be bottle-necked on the CPUs decoding stage, rather than processing stage (back-end)
    It will analyse dependency chain and try and extract as much ILP. 
-
 7. Branch prediction most complicated part of front-end
-
-
-ILP requires branch prediction to decode beyond a cmp and jmp
-After the back-end executes a cmp, it will look to see if the address matches what the front-end guessed
-If wrong, the back-end has to wait for front-end to refill uop queue.
-In this case, the front-end must flush its queue, costing about 10cycles
-Therefore, taking a comparison jump can be costly.
-So, can get better performance with more instructions and less ifs if takes less than 10 cycles
-Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
+   ILP requires branch prediction to decode beyond a cmp and jmp
+   After the back-end executes a cmp, it will look to see if the address matches 
+   what the front-end guessed
+   If wrong, the back-end has to wait for front-end to refill uop queue.
+   In this case, the front-end must flush its queue.
+   So, a longer uops queue would take longer to flush; e.g. 10-stage, cost 10cycles
+   Now, can do like 20 instructions in 10 cycles.
+   Therefore, taking a comparison jump can be costly.
+   TODO: So, better to get rid of badly mispredicted branch and do more work.
+   So, can get better performance with more instructions and less ifs if takes less than 10 cycles
+   Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
+   IMPORTANT: just taking jmp is more costly than not taking it, even if predictable
+   ```
+.start:
+   mov r10, [rbx + rax]
+   inc rax
+   test rbx, 1
+   jnz .skip
+   nop
+.skip:
+   cmp rax, rcx
+   jb .start
+   ```
 
 Caches are 64-byte aligned.
 Don't won't say a 4byte integer to straddle D$ cache lines.
