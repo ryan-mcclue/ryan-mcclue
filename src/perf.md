@@ -186,7 +186,9 @@ CPU front-end is responsible for fetching/decoding instructions and scheduling/p
    cmp rax, rcx
    jb .start
    ```
-8. Many parts of CPU zero out bits, e.g. 4k alignment implies bottom 12bits zeroed 
+8. Code alignment affects the front-end (the compiler should handle code alignment for us)
+TODO: code alignment front-end; data alignment back-end?
+Many parts of CPU zero out bits, e.g. 4k alignment implies bottom 12bits zeroed 
 (TODO: this is to have those bits be keys to lookup data in a mapping/cache data structure?)
 All read and writes in the core must first go through a cache. So, code and data.
 Cache deals in 64byte chunks, i.e. cache lines.
@@ -194,14 +196,37 @@ For data alignment, clear to see don't want say a 4byte value to straddle a cach
 The same things apply for pulling in code from I-cache.
 In fact, this straddling applies to any cache, e.g. uop cache.
 In a perfect world, just running straight from uop cache.
+TODO: testing in assembly is a form of A/B testing
+```
+xor rax rax
+align 64
+%rep 63
+nop
+%endrep
+.loop:
+  inc rax
+  cmp rax, rcx
+  jb .loop
+  ret
+```
+9. Backend normally the bottleneck (could also be front-end (code alignment/branch misprediction/extraneous instructions) or memory subsystem
+How fast uops are executed is back-end
+Micro-ops are specific to back-end/architecture, 
+e.g. zen 3, skylake all different
 
+Can have false dependencies, i.e. register name dependency?
+Only have dependency if read from something
+```
+mov rcx, rax
+add rcx, 1
+mov rcx, rax
+add rcx, 1
+```
+As soon as back-end gets uop, first looks at RAT to see where operand registers point to.
+RAT maps register names to register file slots.
+Register file holds many more data than register names can refer to (16 names, about 100-300 slots)
+When saying writing to a register, the RAT will move whatever that register's slot is to another slot
 
-Caches are 64-byte aligned.
-Don't won't say a 4byte integer to straddle D$ cache lines.
-Also code alignment important for larger code bases in I$.
-Ideally, front-end just pulling from uop-cache for your loop
-
-Micro-ops are specific to back-end/architecture, e.g. zen 3, skylake all different
 
 back-end has execution ports that execute uops.
 execution port output could be fed back into scheduler or to load/store in actual memory
