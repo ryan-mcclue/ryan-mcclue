@@ -147,7 +147,9 @@ TODO: ultimately want to enable full optimisation flags at start;
    TODO: cmp and jb occur at same time?
 5. Noticing 1.2 cycles, instead of theoretical maximum.
    Experimenting with assembly, see that 3byte NOP asm tests, can get 1cycle
-6. CPU front-end is responsible for fetching/decoding instructions and scheduling/passing micro-op queue to back-end.
+6. Front-end decodes->schedules->ports
+
+CPU front-end is responsible for fetching/decoding instructions and scheduling/passing micro-op queue to back-end.
    An instruction may translate to 0 or more uop's.
    L1 cache is separated into instruction (I$) and data (D$) (all higher caches have instructions and data combined).
    So, front-end will first go to L1 cache and up to get instructions.
@@ -172,6 +174,7 @@ TODO: ultimately want to enable full optimisation flags at start;
    So, can get better performance with more instructions and less ifs if takes less than 10 cycles
    Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
    IMPORTANT: just taking jmp is more costly than not taking it, even if predictable
+   can see in agner fog manual that throughput reduced if more than one branch instruction per 16bytes of code
    ```
 .start:
    mov r10, [rbx + rax]
@@ -183,6 +186,15 @@ TODO: ultimately want to enable full optimisation flags at start;
    cmp rax, rcx
    jb .start
    ```
+8. Many parts of CPU zero out bits, e.g. 4k alignment implies bottom 12bits zeroed 
+(TODO: this is to have those bits be keys to lookup data in a mapping/cache data structure?)
+All read and writes in the core must first go through a cache. So, code and data.
+Cache deals in 64byte chunks, i.e. cache lines.
+For data alignment, clear to see don't want say a 4byte value to straddle a cache line to cause 2 loads.
+The same things apply for pulling in code from I-cache.
+In fact, this straddling applies to any cache, e.g. uop cache.
+In a perfect world, just running straight from uop cache.
+
 
 Caches are 64-byte aligned.
 Don't won't say a 4byte integer to straddle D$ cache lines.
