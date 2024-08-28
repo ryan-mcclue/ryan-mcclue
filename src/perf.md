@@ -214,18 +214,33 @@ How fast uops are executed is back-end
 Micro-ops are specific to back-end/architecture, 
 e.g. zen 3, skylake all different
 
-Can have false dependencies, i.e. register name dependency?
-Only have dependency if read from something
+Only have dependency if read from something 
+(the RAT gets rid of register name dependencies; just looking at last slot written to)
 ```
 mov rcx, rax
 add rcx, 1
 mov rcx, rax
 add rcx, 1
 ```
-As soon as back-end gets uop, first looks at RAT to see where operand registers point to.
-RAT maps register names to register file slots.
+RAT maps register names to Register File slots.
 Register file holds many more data than register names can refer to (16 names, about 100-300 slots)
-When saying writing to a register, the RAT will move whatever that register's slot is to another slot
+This is to reduce instruction encoding
+As soon as uop gets to back-end, it first looks at RAT to see where operand registers point to.
+Will see where most recent read-slot for register is.
+For writing, will update register to new slot.
+This allows CPU to detect overwriting and do more things in parallel, i.e. break up serial dependencies
+So, always go through a redirection table when translating a uop.
+Therefore, a register to register mov is just a rename and so effectively free
+
+10. If done a good job with front-end branch prediction and memory operations (caching, bandwidth etc.)
+back-end often bottleneck for algorithm.
+The scheduler holds uops until they are ready to be executed
+Specifically, will unwind dependency chain and not let a uop execute until its dependencies executed
+Will then look for an execution port that has the capability to execute that uop
+Typically will have xor port, add/sub port, load/store port etc.
+`mov rax, [rbx]` and `mov [rbx], rax` will translate to different uops
+So, read and write can be executed by different ports.
+Therefore, common for CPUs to be unbalanced with number of reads and writes capable of
 
 
 back-end has execution ports that execute uops.
