@@ -241,6 +241,20 @@ Typically will have xor port, add/sub port, load/store port etc.
 `mov rax, [rbx]` and `mov [rbx], rax` will translate to different uops
 So, read and write can be executed by different ports.
 Therefore, common for CPUs to be unbalanced with number of reads and writes capable of
+Most algorithms read more than write, so cpu designed for these cases
+
+Will be gated by number of read uop ports
+```
+.loop:
+  mov rax, [rbx]
+  mov rax, [rbx]
+  mov rax, [rbx]
+```
+11.
+To overcome the limit of uops per cycle, can widen instruction 
+The read/write bandwidth of L1 cache is max width we can reach
+So have hard limit of uop read/writes per cycle and L1 cache bandwidth to satisify these
+
 
 
 back-end has execution ports that execute uops.
