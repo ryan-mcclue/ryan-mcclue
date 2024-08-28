@@ -251,9 +251,20 @@ Will be gated by number of read uop ports
   mov rax, [rbx]
 ```
 11.
-To overcome the limit of uops per cycle, can widen instruction 
-The read/write bandwidth of L1 cache is max width we can reach
+To overcome the limit of uops per cycle (resulting from number of ports), can widen instruction 
+The read/write bandwidth of L1 cache is max width we can reach per cycle
 So have hard limit of uop read/writes per cycle and L1 cache bandwidth to satisify these
+The process of decoding/scheduling instructions is expensive for CPU; so operate on more data for instruction
+SIMD is separate part of chip.
+Goes through its own RAT and vector register file 
+IMPORTANT: talk about register file width and register names separately
+Width of vector register file is size of largest supported instruction set
+IMPORTANT: still only have 16 register names; xmm0 would map the lower part of ymm0
+xmm0/15 SSE (128bit). x64 has atleast SSE register file
+ymm0/15 AVX (256bit)
+zmm0/31 AVX512 (512bit)
+`same as mov: vmovdqu ymm0, [rdx] (use this)`
+`faulting on unaligned: vmovdqa`
 
 
 
