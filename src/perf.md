@@ -265,6 +265,16 @@ ymm0/15 AVX (256bit)
 zmm0/31 AVX512 (512bit)
 `same as mov: vmovdqu ymm0, [rdx] (use this)`
 `faulting on unaligned: vmovdqa`
+12.
+IMPORTANT: when writing assembly tests, try to use volatile registers to avoid having to save them
+e.g. only some vector registers are volatile
+IMPORTANT: if many core machine, won't get full memory bandwidth on 1 core as 1 core cannot saturate memory bus 
+and with mask is `0<=mask` wheres mod is `0<mask`
+IMPORTANT: in loop, see have 3 cycle dependency chain. so, as 2 read ports, try to issue 8 reads per loop 
+
+
+
+
 
 
 
