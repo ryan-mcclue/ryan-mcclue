@@ -275,9 +275,6 @@ IMPORTANT: in loop, see have 3 cycle dependency chain. so, as 2 read ports, try 
 
 
 
-
-
-
 back-end has execution ports that execute uops.
 execution port output could be fed back into scheduler or to load/store in actual memory
 
