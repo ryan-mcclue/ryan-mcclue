@@ -271,7 +271,9 @@ e.g. only some vector registers are volatile
 IMPORTANT: if many core machine, won't get full memory bandwidth on 1 core as 1 core cannot saturate memory bus 
 and with mask is `0<=mask` wheres mod is `0<mask`
 IMPORTANT: in loop, see have 3 cycle dependency chain. so, as 2 read ports, try to issue 8 reads per loop 
-
+Looking a memory bandwidth, remember L1 cache is I$+D$, so half what listing on specs.
+L3 cache shared, so hard to discern with graph
+IMPORTANT: some caches might be designed for latency rather than throughput, so bandwidth of L2 and L3 might be similar
 
 
 
