@@ -272,8 +272,18 @@ IMPORTANT: if many core machine, won't get full memory bandwidth on 1 core as 1 
 and with mask is `0<=mask` wheres mod is `0<mask`
 IMPORTANT: in loop, see have 3 cycle dependency chain. so, as 2 read ports, try to issue 8 reads per loop 
 Looking a memory bandwidth, remember L1 cache is I$+D$, so half what listing on specs.
-L3 cache shared, so hard to discern with graph
+L3 cache shared, so hard to discern boundary with graph
+Would assume if 8MB, probably keep working set around 6MB to keep in L3
 IMPORTANT: some caches might be designed for latency rather than throughput, so bandwidth of L2 and L3 might be similar
+bandwidth: latency + bus-width + throughput
+latency and bandwidth separate on sustained rates (not a single/burst rate; in this case latency would dominate)
+IMPORTANT: distinction between issuing an instruction per cycle and saying can do this forever
+although say burst rate of 3 movs might be sustained at all levels of cache hierarchy, unlikely all could sustain this rate
+so, say latency of L2 is 14cycles, can issue 2 movs per cycle, but can only sustain say 8 movs. 
+therefore will issue 2 per cycle until stall at 8
+throughput related to number of queues core has for memory/cache type
+So, for sustained execution, throughput most important as can just add more buffers/queue-size/execution-ports to overcome latency
+
 
 
 
