@@ -284,6 +284,27 @@ therefore will issue 2 per cycle until stall at 8
 throughput related to number of queues core has for memory/cache type
 So, for sustained execution, throughput most important as can just add more buffers/queue-size/execution-ports to overcome latency
 
+13. As memory bandwidth is extremely high, if we keep algorithms in cache size and know how to interleave reads and operations effectively
+Unlikely to be memory-bound on a modern machine; more likely latency bound, i.e. constructed algorithm so cannot have many loads in parallel
+So, memory controllers have many 'memory buffers' that will hold results from cache/ram etc.
+Saying L1 and L2 are inclusive means every cache line in L1 is also in L2
+So, inclusive caches would reduce effective memory size
+Unaligned loads will require loading more cache lines and merging memory buffers.
+Due to ILP, if structure algorithm correctly, can afford to pay cost of unaligned loads as computation is bottleneck
+So, if have very little computation, might see this penalty.
+So, generally if have more compact data ok with unaligned.
+TODO: so should align arenas to page sizes 
+
+14. Take an x64 address. Know only 48bits. 
+Know bottom 6 bits ignored as cache line aligned, so no need to address bytes
+Have index bits which are what 'cache set' maps to.
+Then have tag bits which are used to identify what 'line' in set.
+So, really interacting with mini-caches within a cache.
+This is to avoid having the check many entries as want L1 cache lookup to be fast and predictable
+16-way cache means 16 slots in each cache set, i.e. width=16. So, looking at 16 entries
+Therefore, possible to have poor access pattern that only accesses same cache set
+
+
 
 
 
