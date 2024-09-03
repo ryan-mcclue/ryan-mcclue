@@ -315,6 +315,14 @@ TODO: do cortex-m4 do this automatically due to memory mapping?
 `movntdq`
 also have non-temporal loads `movntdqa`
 
+16. prefetching ...
+
+17. 
+notice that json parser dominates run-time
+however, for practice look at file reading first
+  - if in admin. mode could enable large pages to decrease page fault count
+  so, work in chunk sizes of L3 cache size with overlapped computation to maximise throughput
+
 
 
 
