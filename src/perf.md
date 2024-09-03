@@ -293,6 +293,7 @@ Unaligned loads will require loading more cache lines and merging memory buffers
 Due to ILP, if structure algorithm correctly, can afford to pay cost of unaligned loads as computation is bottleneck
 So, if have very little computation, might see this penalty.
 So, generally if have more compact data ok with unaligned.
+Really only pay an unaligned penalty in the L1 cache
 TODO: so should align arenas to page sizes 
 
 14. Take an x64 address. Know only 48bits. 
@@ -303,6 +304,16 @@ So, really interacting with mini-caches within a cache.
 This is to avoid having the check many entries as want L1 cache lookup to be fast and predictable
 16-way cache means 16 slots in each cache set, i.e. width=16. So, looking at 16 entries
 Therefore, possible to have poor access pattern that only accesses same cache set
+e.g. say stride of 256, then 1bit of index stays same, so effectively halving cache size
+so, strides of certain powers of 2 can expose set associativity
+
+15.
+non-temporal stores
+might want if say writing data that you know won't be using later
+e.g. reading in MB of data to generate GB textures, writing to a hardware register
+TODO: do cortex-m4 do this automatically due to memory mapping?
+`movntdq`
+also have non-temporal loads `movntdqa`
 
 
 
