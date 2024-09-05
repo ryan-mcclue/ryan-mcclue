@@ -331,6 +331,7 @@ notice that json parser dominates run-time
 however, for practice look at file reading first
   - if in admin. mode could enable large pages to decrease page fault count
   so, work in chunk sizes of L3 cache size with overlapped computation to maximise throughput
+  overlap file reads with computation. (linux io_uring asynchronous; so a file reader kernel thread more efficient than userspace implementation)
 
 
 
