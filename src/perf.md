@@ -308,14 +308,23 @@ e.g. say stride of 256, then 1bit of index stays same, so effectively halving ca
 so, strides of certain powers of 2 can expose set associativity
 
 15.
-non-temporal stores
+non-temporal/streaming stores
 might want if say writing data that you know won't be using later
 e.g. reading in MB of data to generate GB textures, writing to a hardware register
 TODO: do cortex-m4 do this automatically due to memory mapping?
 `movntdq`
 also have non-temporal loads `movntdqa`
+IMPORTANT: the repetition tester is required for a benchmarking test
 
-16. prefetching ...
+
+16. 
+normal operation populate cache line worth in cache and take probably 8bytes into register file
+due to out-of-order CPUs, stalling on cache pull not really an issue
+also if hardware prefetcher detects say linear access pattern, probably already there
+so a prefetch could help if say load a struct with many pointers that other operations depend on
+`prefetcht0/1/2 [rax]`
+data dependent prefetchers in apple m1 chips (so can look at data to predict, e.g. linked lists)
+
 
 17. 
 notice that json parser dominates run-time
