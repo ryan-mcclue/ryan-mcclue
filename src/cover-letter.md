@@ -21,17 +21,10 @@ At HMAS Cerberus, I both participated and led a class of 24 in training drills, 
 I also lived/worked collaboratively in a team of 6, tackling mentally and physically demanding daily tasks. 
 <This experience honed my ability to perform under pressure and excel in high-stakes environments.>
 
-During my university studies, I gained valuable experience in collaborative coding through various group projects. These projects, spanning diverse software disciplines, included:
-A custom object detection algorithm using ensemble learning
-A microcontroller-based traffic controller simulation
-A forum-style web application with full CRUD functionality
-These collaborative endeavors taught me <ability to code in a team> while exposing me to a wide range of technologies and methodologies.
-
-Throughout my academic journey, I have consistently maintained a High Distinction average, demonstrating <high standards> in both individual and team-based work across multiple software disciplines. This combination of practical experience and academic excellence reflects my ability to apply theoretical knowledge effectively in collaborative environments.
-
-I gained exposure to coding as a team during my university studies.
-Group projects such as a custom object detection algorithm, microcontroller traffic controller and forum-style web app taught me ...
-Throughout university, I have maintained a HD mark, shows that I'm able to work on a team in a diverse range of software disciplines.
+During my university studies, I gained valuable experience in <collaborative coding> through various group projects. 
+These projects included a custom object detection algorithm, a microcontroller traffic controller and a forum-style web application.
+These projects improved my <ability to code in a team>, while <exposing me to a wide range of technologies.>
+(Furthermore, my high distinction average mark demonstrates my ability to acheive at a high standard.)
 
 For these reasons, I feel my background would fit well with <Fujitsu>. 
 I look forward to the possibility of speaking with you further about this position.
