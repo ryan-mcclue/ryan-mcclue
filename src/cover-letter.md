@@ -1,15 +1,26 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
-Hi there,
-I saw your job posting on Hacker News and it sounds like an interesting opportunity!
-To introduce myself a little, I'm a generalist full stack web developer and have been developing
-apps over the past several years. My most well known projects have been X, Y, and Z. X is a
-social network / dating site that I grew to 2 million users. Y is a social game that began on
-Facebook with 1.5 million users, which I later brought to iPhone. Z is an open source GitHub
-framework that I am developing. Most of my tech stack has been built on Python, React.js,
-MySql, HTML, and CSS so I feel my background would fit well with <your_company>.
-Here are the URLs of some of my previous work.
-http://x.com/
-http://y.com/
-Please let me know if you'd like to chat. I'll also attach a resume.
-Cheers,
-<your name>
+To whom it may concern,
+I'm writing to be considered for <Graduate Role> job that was posted on <Hacker News>.
+To introduce myself a little, 
+I'm in my final year of a Computer Science degree at UNSW,
+and have an interest in low level programming.
+
+(TAILOR TO JOB OFFERING) <e.g. mentorship offered etc.>
+The opportunity to make an impact and learn as much as 
+possible about software engineering as a career is an exciting prospect.
+
+By applying my skills gained through previous academic and work experiences,
+I'm confident that I can make an immediate contribution to <dasd>.
+
+
+(MENTION ANY SKILLS LISTED)
+My most recent side project is a Music Visualiser app.
+It featured a graphical system for user experience, performance, etc.
+
+I also have experience in the Royal Australian Navy.
+At HMAS Cerberus, I ...
+
+For these reasons, I feel my background would fit well with <your company>. 
+I look forward to the possibility of speaking with you further about this position.
+Thank you for your time and consideration.
+Ryan McClue

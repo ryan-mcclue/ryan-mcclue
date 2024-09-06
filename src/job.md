@@ -170,7 +170,9 @@ FIXING ERRORS:
 2. Phone Screens:
   - Chat to talk to discuss your background, talk to you about the position, and gauge your interest.
   - They confirm your education, work experience, interest in the position.
-  - "So, any questions? No? Then I guess I can ask you, can you tell me about yourself? And also, why are you interested in this position? Oh you have experience in some tech stack on your resume thats cool because our position needs that."
+  - "So, any questions? No? Then I guess I can ask you, can you tell me about yourself? 
+    And also, why are you interested in this position? 
+    Oh you have experience in some tech stack on your resume thats cool because our position needs that."
   - https://www.indeed.com/career-advice/interviewing/phone-interview-questions-and-answers
 3. In Person:
   * Research:
