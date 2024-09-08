@@ -2,6 +2,15 @@
 To whom it may concern,
 I'm writing to be considered for the <Graduate Program 2025> opening that was posted on your <Careers Page>.
 
+The opportunity to work on your feet, contribute to team and ...
+varied day-to-day operations keeping you interested 
+stable work environment with opportunity to grow and learn.
+university problem solving and analytical skills
+navy ability to handle physically demanding situations
+
+pallet building?
+ringing up? need to know NLUs?
+
 Aldi's emphasis on good people and purpose
 The opportunity to make an impact and to learn as much as 
 possible about software engineering as a career at <Fujitsu> is an exciting prospect.
