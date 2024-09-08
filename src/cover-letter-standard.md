@@ -8,8 +8,6 @@ stable work environment with opportunity to grow and learn.
 university problem solving and analytical skills
 navy ability to handle physically demanding situations
 
-pallet building?
-ringing up? need to know NLUs?
 
 Aldi's emphasis on good people and purpose
 The opportunity to make an impact and to learn as much as 
