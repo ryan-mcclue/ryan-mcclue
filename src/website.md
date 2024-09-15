@@ -16,72 +16,47 @@ regarding price, say how much is a new client worth? brings in 1 client, worth i
    contact:
    (gallery/portfolio desirable) 
    (faq possible addition)
-- Give them google drive link to put photos in
-  I can generate a basic SVG logo with logomakr 
+ - send possible elementor start templates or feel free to let me choose one
+   with all information, should be up an running within a week
+ - Give them google drive link to put photos in
+   I can generate a basic SVG logo with logomakr 
 
 Once finished with design, share screen and go over site to see if you like it and make and changes.
 Then I'll send an email with your login details and video showing you how to make edits etc.
 
 ## CREATION
-pre-built template, no AI, no preset plugins
+(pre-built template, no AI, no preset plugins)
+  - plugins: elementor (astra), elementor starter template ('get started/build your website now')
+  - if add new page: ensure permalink, title and added to appearance->menu 
+  - under edit, attach domain name
+  - settings -> general (tagline and timezone)
+  - initially under 'coming soon' site, have to officially 'launch site'
+  - edit site: first login with godaddy account; add new wordpress account
 
-settings -> general (tagline and timezone)
-
-install a general theme like astra?
-
-elementor -> enable unfiltered file uploads
-elementor -> tools -> import/export kit
-
-starter templates plugin -> 'get started/build your website now'
-- select elementor page builder
-
-eddardwalter.com/wp-admin
-
-wordpress uses cloudflare (cdn), ssl
-
-wordpress astra theme
-
-godaddy managed wordpress site; 
- - used AI template with questions; 
- wordpress username: sangpak 
- - under edit, attach domain name
- - initially under 'coming soon' site
-
- - edit site: first login with godaddy account; add new wordpress account
-
-plugins:
-  - rankmath
-  - elementor (after page edited, adjust permalink, title and add page to menu)
-
-ensure permalink->postname
-
-page -> block editor
-
-TODO: have to officially 'launch site'
+Another email saying happy with design and will finalise login details etc.
 
 ## DELIVERING
-dashboard welcome for elementor - json template file
-1. logomakr low-res file
-2. alter link text: elementor home page edit link, wordpress dashboard link etc.
-3. settings: dashboard welcome elementor
+  - appearance -> customise -> site identity favicon
 
-appearance -> customise -> site identity favicon
+  - plugins: dashboard welcome for elementor - CPW client dashboard json template file
+  - appearance -> saved templates:
+    add logomakr, alter link text
+    settings->dashboard-welcome-elementor: enable pages
 
-white label cms - login page
-1. settings: white label cms 
-   (login: fullscreen image and white logo)
-   (branding: side menu image)
+  - plugins: white label cms
+  - settings->white-label-cms
+    (branding: side menu image)
+    (login: fullscreen image and white logo)
 
-google analytics:
-1. your email; clients name as account name; website as property
-2. google analytics dashboard monsterinsights
-   (connect monstersight to google analytics property)
-3. On dashboard drag monsterinsights up to top for client to see:
-   (sessions is unique user)
+  - plugins: google analytics dashboard monsterinsights
+  - register google analytics with our email; clients name as account name; website as property
+  - connect monstersight to google analytics property
+  - on dashboard drag monsterinsights up to top for client to see
+    (sessions is unique user)
 
-users add new editor user
+  - users add new editor user
 
-create video demonstration of website walkthrough unlisted on youtube
+  - create video demonstration of website walkthrough unlisted on youtube
 
 final email:
 SUBJECT: www.eddardwalter.com - Site is Live
@@ -117,3 +92,8 @@ Your Name
 youremail@yourwebsite.com
 yourwebsite.com
 (123) 456 - 7890+
+
+
+
+eddardwalter.com/wp-admin
+wordpress uses cloudflare (cdn), ssl
