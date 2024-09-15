@@ -6,9 +6,23 @@ regarding price, say how much is a new client worth? brings in 1 client, worth i
 ## SETUP
  - godaddy domain with your account under clients name
    PRICING (yearly invoice with paypal):
-   domain name (*.au requires ABN; could also pay for email address)
+   $21.95 for per year
+   cheapest rate: $47.90 for 3 years (first year being free)
+
+   to register under your name I will need your address, name, mobile
+
+   if going for a .au extension, also require:
+     - Entity Type (Company, Registered Business, Sole Trader)
+     - Legal Entity Name
+     - Identification type (ACN, ABN, ARBN)
+     - Identification number
+
+   TODO: have google forms sheet hold questionnaire.
+
+   (could also pay for email address)
  - managed wordpress site
    PRICING:
+   cheapest rate: $7.95 month for 12 months
  - design requirements
    home: e.g. hero image; why choose us; google map location?; reviews; footer (people remember first and last of page; so hero and reviews important)
    about:
@@ -62,7 +76,8 @@ final email:
 SUBJECT: www.eddardwalter.com - Site is Live
 Dear (Insert Client Name),
 
-Your website is complete and ready for you! You can now see your website live at (https://exampledomain.com).
+Your website is complete and ready for you! 
+You can now see your website live at (https://exampledomain.com).
 
 How to Login to Your Website:
 1. Open a new tab in your web browser, and type in (exampledomain.com/wp-admin)
@@ -83,15 +98,14 @@ How to Edit & Manage Your Website - Video Tutorial
 
 There is also a section on your dashboard where you can drop me an email any time you have a question.
 
-Feel free to leave me a review:
-If you'd like to leave a review of my services, you can do so on my website (yourwebsite.com/reviews). I appreciate every review and look forward to hearing your feedback!
-I hope you are completely satisfied with your website and thank you for working with me. Let me know if you need any assistance.
+Thank you for entrusting me with the opportunity to create your website. 
+This project has been invaluable in helping me gain practical experience in web development. 
+I sincerely appreciate your willingness to work with me and hope that the final product meets your expectations. 
+Please don't hesitate to reach out if you need any further assistance or have any questions. 
+I look forward to your feedback and am grateful for the chance to contribute to your business's online presence.
 
-Cheers,
-Your Name
-youremail@yourwebsite.com
-yourwebsite.com
-(123) 456 - 7890+
+Thanks,
+Ryan McClue
 
 
 
