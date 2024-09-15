@@ -4,6 +4,68 @@
 regarding price, say how much is a new client worth? brings in 1 client, worth it
 
 ## SETUP
+Hi [],
+As Mum mentioned,
+I'm doing a late career change and need something to stand out on my resume.
+I really appreciate the opportunity to create a website for your business.
+I'm sure it will improve your online presence and drive customer growth.
+
+Although I'm not charging for creating the website, there are ongoing fees for maintaining a website:
+  1. Registering website name ($47.90 for 3 years, $24 for 1 year) 
+  2. Server hosting ($7.95/month for 12 months)
+If you're comfortable with this, continue on.
+
+To register your website name, I'll need this information from you:
+- Desired Website Name (e.g. traceyhairdressers.com.au):
+- Your full name:
+- Address:
+- Mobile Number:
+- If you want a website name ending with '.au' 
+  - Entity Type (Company, Registered Business, Sole Trader):
+  - Legal Entity Name:
+  - Identification type (ACN, ABN, ARBN):
+  - Identification number:
+
+Regarding the website structure, I'm thinking of 4 pages: 
+1. Home page, e.g:
+Your Hair Colour Specialist
+Welcome to Nirvana Hair Studio in Springwood, NSW, where your style is our Passion. 
+Out team of dedicated experts specialise in not only delivering the best hair results, but ensuring an amazing customer service experience every time.
+	
+Why Choose Nivarna Hair Studio?
+Our stylists are seasoned professionals who stay ahead of the latest hair trends, ensuring each client receives exceptional expertise.
+Every service starts with a personalized consultation to tailor the experience to your unique needs. Recognized as one of the best hairdressers in Springwood and the Blue Mountains, we are committed to delivering outstanding results every time.
+
+Reviews
+dddd
+
+Google Map Location
+
+Footer
+2. About page, e.g:
+Where Creativity Meets Expertise
+Welcome to Nivarna Hair Studio, located in the beautiful Springwood, NSW, in the foothills of the stunning Blue Mountains. 
+Established in 1993, our salon is a hub of creativity where clients walk in as customers and leave as family. 
+Our passion for hair is only surpassed by our vision and dedication to delivering unparalleled hairdressing services.
+
+(perhaps photo of self)
+
+3. Services pagem, e.g: 
+services offered and pricing
+
+4. Contact page:
+google maps
+contact form
+
+Once I here back from you with the necessary information, I'll develop a preliminary design with placeholder text.
+I'll send you a link where you can explore the website and see if you like it.
+If all clear, I'll finalise everything and give you instructions on how to update the text and photos yourself for what you want.
+Or, you can send me the content and I can do the necessary changes. Whatever works for you.
+
+Looking forward to hearing from you,
+Ryan
+
+It costs money to register a website name a have to pay a 
  - godaddy domain with your account under clients name
    PRICING (yearly invoice with paypal):
    $21.95 for per year
@@ -24,12 +86,9 @@ regarding price, say how much is a new client worth? brings in 1 client, worth i
    PRICING:
    cheapest rate: $7.95 month for 12 months
  - design requirements
-   home: e.g. hero image; why choose us; google map location?; reviews; footer (people remember first and last of page; so hero and reviews important)
    about:
    services: 
    contact:
-   (gallery/portfolio desirable) 
-   (faq possible addition)
  - send possible elementor start templates or feel free to let me choose one
    with all information, should be up an running within a week
  - Give them google drive link to put photos in
