@@ -1,5 +1,7 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
+olivia dunham
+
 ## INFO
 regarding price, say how much is a new client worth? brings in 1 client, worth it
 
@@ -105,6 +107,8 @@ Then I'll send an email with your login details and video showing you how to mak
   - settings -> general (tagline and timezone)
   - initially under 'coming soon' site, have to officially 'launch site'
   - edit site: first login with godaddy account; add new wordpress account
+
+  - plugins:
 
 Another email saying happy with design and will finalise login details etc.
 
