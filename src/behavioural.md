@@ -21,10 +21,6 @@ I'm a computer science student studying my final year at UNSW.
 Prior to university I was a marine technician in the royal australian navy.
 In my spare time, I'm working on a music visualiser app that's written in C.
 
-* "Why do you want to work here? What gets you excited? What do you want to accomplish?"
-I looking for an opportunity to develop my software engineering skills and apply and learn
-learn and excited to apply my skills in a professional setting
-
 * "Why should we hire you?"
 I share Fujitsu's passion for innovation which I focus on via peformance programming.
 and writing things from scratch to realise innovation
@@ -32,6 +28,11 @@ music app...
 Looking up documentation and researching things shows I'm indepedent learner and learn things quickly.
 My experience in the navy also taught me humility, so I know I still have a lot to learn
 willing to improve skills and better myself as a software engineer through colloboration with more experienced developers.
+
+* "Why do you want to work here? What gets you excited? What do you want to accomplish?"
+I looking for an opportunity to develop my software engineering skills and apply and learn
+learn and excited to apply my skills in a professional setting
+
 
 * "What were your duties at the navy/previous-job?"
 individual responsibilties such as kit mainteance, knowledge testing, physical fitness
@@ -72,10 +73,13 @@ Discuss privately with coworker to understand any challenges they have, e.g. wor
 If persists I would bring it up with team lead, focusing on project needs rather than criticising.
 Goal is to maintain project trajectory, whilst supporting team dynamics.
  - Weakness:
-  “Towards the end of my work day, my brain gets tired and I struggle with multitasking
-  I know my limitations and I also have processes in place to keep mistakes from happening because of them. (food, etc.)
+  I'm a morning person, so towards the end of the work day, 
+  my brain gets tired and I sometimes struggle with multitasking.
+  However, I'm aware of this and to mitigate it I schedule complex tasks earlier in the day
+  and also have food pick-me ups like tea or snacks and talk to people face-to-face to become more alert.
  - Initiative:
    * developing queue data structure in assembly as people were storing in registers becoming unweildy
+   "During an assembly programming project, I noticed team members were inefficiently storing data in registers. I took the initiative to develop a queue data structure, which improved code organization and efficiency."
  - Most Challenging:
    * juggling various subjects and learning machine learning
      Time Management/Learning:
@@ -85,8 +89,10 @@ Goal is to maintain project trajectory, whilst supporting team dynamics.
      I'd develop practice projects in conjunction with a debugger and manual.
  - Feedback:
    * navy performance reviews
+"In the Navy, I received regular performance reviews. These evaluations helped me identify areas for improvement and reinforced my strengths, contributing to my personal and professional growth."
  - Adversity:
    * sleep deprivation; pressure of responsibility affecting other's outcome
+"During Navy training, I faced sleep deprivation and the pressure of responsibility affecting others' outcomes. This experience taught me to perform under stress and maintain focus even in challenging conditions."
  - Challenge:
    * overlay zsorting
  - Setback/Not-to-Plan:
@@ -95,14 +101,19 @@ Goal is to maintain project trajectory, whilst supporting team dynamics.
    * collating system metrics database was too slow, complicated/unweildy and not readily accessible
    remembered that the process failed, not necessarily me as a person.
    safeguards to not let happen again
+"I once created a system metrics database that was too slow and unwieldy. I learned to focus on efficiency and user accessibility in database design. I implemented safeguards to prevent similar issues in future projects, remembering that processes can fail without it being a personal failure."
  - Mistake:
    * hospital corner 15cm and structure; instructor simulated a sea-side event and messed everyone's belongings up
  - Team Influence:
    * recruit school marching etc.
+"During recruit school, I positively influenced my team during marching drills. By maintaining high standards and encouraging others, I helped improve our overall performance and unit cohesion."
  - Team Tough Decision:
    * waiting for navy class member to arrive so could leave as group
+"We once had to decide whether to wait for a late team member before leaving as a group. This taught me the importance of balancing individual accountability with team unity."
  - Team Disagreement/Personality Clash:
    * URE team building exercises moving log with rope
+"During a team-building exercise moving a log with ropes, disagreements arose. I learned to approach conflicts empathetically, address concerns directly, and focus on finding common ground. I now aim to maintain professionalism, ask questions instead of confronting, and demonstrate ideas by weighing pros and cons."
+
 Taking the time to consider what negative reaction they might have and making the effort to be empathetic allowed me to directly address their concerns and show them that this was the best way forward.”
 regardless of disagreements, important to act professional.
 treating them poorly often results in them returning the favour.
@@ -117,6 +128,7 @@ demonstrate idea getting pros and cons
      It took some careful listening on my part to understand he felt like it wasn’t the best use of his time given the workload he was juggling. I made sure to acknowledge his concern. 
  - Team Motivation:
    * swim with clothes off members struggling to swim
+I motivated them by breaking the task into manageable steps and offering encouragement. This experience taught me the value of empathy and positive reinforcement in team settings.
  - Team Perceptions of You:
    * proactive university group assignments creating git and project scaffold
      collaborative asking for advice in areas unfamilar with like machine learning
