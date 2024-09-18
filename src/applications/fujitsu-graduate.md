@@ -1,7 +1,9 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 Streams Applied:
  - Associate Software Developer Graduate 
+   Support development and maintanence of applications from a technical and business perspective.
  - SAP Graduate
+   SAP (systems applications and products) is company suite of software for ERP (enterprise resource management) centralising business functions
  - Technical Services Engineer Graduate  
 
 * Please specify the programming language(s) that you have experience in, including a brief description of how you have applied these.
@@ -22,12 +24,19 @@ Royal Australian Navy (2020): Teamwork, communication and resiliency.
 
 * Please describe your key skills and how you can apply these to help Fujitsu achieve its purpose which is: 
   to make the world more sustainable by building trust in society through innovation.
-My experience working on complex technical projects from scratch, such as a music visualiser GUI app, provides me with a strong knowledge base of various problem domains, e.g. UI, optimisation, algorithmic etc.
-I can use this versatility to help develop sustainable technologies that address complex societal challenges.
+My experience working on complex technical projects from scratch, 
+such as a music visualiser GUI app, 
+provides me with a strong knowledge base of various problem domains, 
+e.g. UI, optimisation, algorithmic etc.
+I can use this versatility to help develop sustainable technologies 
+that address complex societal challenges.
+
 I have strong problem solving skills that I developed working on various university projects, e.g. genetic algorithm, AI minimax solver etc.
 I can draw on these to help develop unique solutions that are essential for innovation.
+
 I developed teamwork and leadership skills through my time in the Royal Australian Navy.
-Using these soft skills, I can effectively collaborate with others to ensure that sustainable solutions are implemented effectively.
+Using these soft skills, I can effectively collaborate with others 
+to ensure that sustainable solutions are implemented effectively.
 
 * What does purpose mean to you? How do you translate your purpose into meaningful action in the community around you?
 Purpose means having a clear direction and motivation.

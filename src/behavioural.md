@@ -1,8 +1,17 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
-job requirements:
+company:
+sits in the market
+ - offers service solutions (SAP), software solutions (consultation), hardware
+business strategy/direction 
+ - sustainability through innovation
 
-understand where the company sits in the market and its business strategy/direction as well as how it differentiates itself from its competitors
+job requirements:
+ - Associate Software Developer Graduate 
+   Support development and maintanence of applications from a technical and business perspective.
+ - SAP Graduate
+   SAP (systems applications and products) is company suite of software for ERP (enterprise resource management) centralising business functions
+
 
 ## Essentials
 * "Tell me about yourself":
@@ -10,37 +19,38 @@ understand where the company sits in the market and its business strategy/direct
 
 I'm a computer science student studying my final year at UNSW. 
 Prior to university I was a marine technician in the royal australian navy.
-In my spare time, I'm working on a music visualiser app written in C where I'm exploring UI and peformance programming.
+In my spare time, I'm working on a music visualiser app that's written in C.
 
-* "Why do you want to work here? What gets you excited?"
+* "Why do you want to work here? What gets you excited? What do you want to accomplish?"
 I looking for an opportunity to develop my software engineering skills and apply and learn
 learn and excited to apply my skills in a professional setting
 
 * "Why should we hire you?"
-I share .... I have strong fundamentals to grow into a ...
-My projects show I'm proactive and ready to hit the ground running
-I can learn things quickly
-Also humble and know I have a lot to learn
-e.g. for stm32 have to dig in driver codespace and docs
-I can learn things quickly
-e.g. bluetooth same etc.
-Also humble and know I have a lot to learn
-From projects, say you are passionate and ethusiastic about learning new things
-Willing to improve skills, hope job can better myself as a software engineer
-why do you want to work here? what do you hope to accomplish?
+I share Fujitsu's passion for innovation which I focus on via peformance programming.
+and writing things from scratch to realise innovation
+music app...
+Looking up documentation and researching things shows I'm indepedent learner and learn things quickly.
+My experience in the navy also taught me humility, so I know I still have a lot to learn
+willing to improve skills and better myself as a software engineer through colloboration with more experienced developers.
 
 * "What were your duties at the navy/previous-job?"
+individual responsibilties such as kit mainteance, knowledge testing, physical fitness
+teamwork ordering class in drills, conducting team based activities, group cleaning
+quite simply learning to live with lots of people in close proximity
 * "Why did you leave previous job?"
-looking for new challenges and want to grow
+I'm incredidly appreciative of the opportunities provided to me and what I was able to learn,
+however it just wasn't a good fit for me and now I'm looking for new challenges and want to grow
 
 * "What's a typical day like?"
   "What are you favourite parts of the job?"
   "Opportunities for career advancement?"
 
 * "Top 5 strengths"
-
-play up how social you are and how open you are to collaboration
-willing to take some risks, given appropriate planning
+performace aware programming (multithreading, ILP, profiler)
+UI design (from scratch im-gui)
+data processing and analysis (streaming real-time audio, filtering and visualising in log scale)
+team collaboration (navy)
+quick learner (reading source code as documentation is applicable to many scenarios)
 
 No answer:
 At that point you think for a sec and if you can't think of anything just say 
