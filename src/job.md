@@ -74,7 +74,8 @@ Behavioural:
   3. Develop a Consensus (how to get people to agree on something?)
     + design doc discussion; have team write pros and cons of options
     + ask questions instead of saying outwrite wrong so other person can learn
-    + take initiative and build a prototype to demonstrate idea; take responsibility for my actions
+    + take initiative and build a prototype to demonstrate idea; 
+    take responsibility for my actions
   4. Eagerness to Learn
     + ask interviewer about tech stack, challenges might expect 
   5. Motivation
