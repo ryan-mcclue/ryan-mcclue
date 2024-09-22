@@ -144,7 +144,13 @@ remove blog with FAQ accordion widget
 google reviews on home page
 
 google business profile -> send google review link to user
-https://www.youtube.com/watch?v=U71txGAumVE
+https://www.youtube.com/watch?v=vSDdAWwn8LU
+
+TODO: business hours open (24/7?; as will appear higher searching at this time)
+TODO: work on more service options as what is important for searching
+TODO: if slow to respond to messages; disable
+TODO: add photos (keep photos updated);
+TODO: claim $500 ad credit
 
 plugin: reviews feed
 https://www.youtube.com/watch?v=53PiZlz9stU
