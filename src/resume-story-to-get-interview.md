@@ -15,14 +15,18 @@ e.g: improved web application by writing unit tests resulting in increased relia
 
 So show the languages, frameworks, and technologies that you're using. 
 
-**Hannah Alice Photography**, Web Developer, Present
-Creating website for maternity/newborn photos
+**Web Developer - Hannah Alice Photography** Present
+*Local small business focusing on maternity and newborn photography*
 - translated pixieset domain to .com.au domain with google business profile setup and verification, 
-  and monitor customer attainment 
+  and monitor customer attainment; startup-growth and clientele development
   allow verified reviews, improving SEO, branding
-- developed cloudspot crm to manage gallery, contracts and invoicing  
+- developed cloudspot crm to manage gallery, contracts and invoicing; Optimising business systems
 - wordpress parallax, responsive design for modernity and ease of client update elementor page builder
+   ; IT network support?
 - wordpress optimisation plugins? image compression?
+  wordpress image compression; 
+  wordpress site optimisation; WP rocket; https://www.youtube.com/watch?v=BrY6a-lsLp8
+  ;decreasing load time from; site performance 
 
 **Music Player GUI**, 2024
 Created a cross-platform music visualiser in C/C++.
