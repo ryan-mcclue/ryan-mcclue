@@ -90,7 +90,9 @@ Goal is to maintain project trajectory, whilst supporting team dynamics.
      I'd develop practice projects in conjunction with a debugger and manual.
  - Feedback:
    * navy performance reviews
-"In the Navy, I received regular performance reviews. These evaluations helped me identify areas for improvement and reinforced my strengths, contributing to my personal and professional growth."
+"In the Navy, I received regular performance reviews. 
+These evaluations helped me identify areas for improvement and reinforced my strengths,
+contributing to my personal and professional growth."
  - Adversity:
    * sleep deprivation; pressure of responsibility affecting other's outcome
 "During Navy training, I faced sleep deprivation and the pressure of responsibility affecting others' outcomes. This experience taught me to perform under stress and maintain focus even in challenging conditions."

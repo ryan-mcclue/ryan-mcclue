@@ -15,6 +15,15 @@ e.g: improved web application by writing unit tests resulting in increased relia
 
 So show the languages, frameworks, and technologies that you're using. 
 
+**Hannah Alice Photography**, Web Developer, Present
+Creating website for maternity/newborn photos
+- translated pixieset domain to .com.au domain with google business profile setup and verification, 
+  and monitor customer attainment 
+  allow verified reviews, improving SEO, branding
+- developed cloudspot crm to manage gallery, contracts and invoicing  
+- wordpress parallax, responsive design for modernity and ease of client update elementor page builder
+- wordpress optimisation plugins? image compression?
+
 **Music Player GUI**, 2024
 Created a cross-platform music visualiser in C/C++.
 Implemented an immediate mode UI from scratch using low-level graphics APIs resulting in a responsive user experience.
