@@ -1,5 +1,8 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
+situational:
+  - interrupted by customer already serving
+
 company:
 sits in the market
  - offers service solutions (SAP), software solutions (consultation), hardware
@@ -21,18 +24,15 @@ I'm a computer science student studying my final year at UNSW.
 Prior to university I was a marine technician in the royal australian navy.
 In my spare time, I'm working on a music visualiser app that's written in C.
 
-* "Why should we hire you?"
-I share Fujitsu's passion for innovation which I focus on via peformance programming.
-and writing things from scratch to realise innovation
-music app...
-Looking up documentation and researching things shows I'm indepedent learner and learn things quickly.
-My experience in the navy also taught me humility, so I know I still have a lot to learn
-willing to improve skills and better myself as a software engineer through colloboration with more experienced developers.
-
-* "Why do you want to work here? What gets you excited? What do you want to accomplish?"
-I looking for an opportunity to develop my software engineering skills and apply and learn
-learn and excited to apply my skills in a professional setting
-
+* "Why should we hire you? What do you want to accomplish?"
+My passion in programming is to write performant low-level software. 
+I believe that aligns with Fujitsu's goal to innovate, as optimal software is able to push the boundaries of what is possible on the hardware.
+In a personal project of mine, I worked on a music visualiser app that incorporated a from scratch UI system, overcoming a lot of bloat in common retained mode UI systems.
+In addition, it featured a multithreaded file parser that optimised 1million entries've done this with musiliaser
+However, I'm also willing to expand beyond just the technical side to provide business value whether that beand have an open mind work up front with clients.
+navy gave me teamwork experience effectively communication with people of various backgrounds
+Most of all, I'm willing to learn and better myself as a software engineer.
+gives me good experience that I believe I can apply at Fujitsu.
 
 * "What were your duties at the navy/previous-job?"
 individual responsibilties such as kit mainteance, knowledge testing, physical fitness
@@ -41,10 +41,6 @@ quite simply learning to live with lots of people in close proximity
 * "Why did you leave previous job?"
 I'm incredidly appreciative of the opportunities provided to me and what I was able to learn,
 however it just wasn't a good fit for me and now I'm looking for new challenges and want to grow
-
-* "What's a typical day like?"
-  "What are you favourite parts of the job?"
-  "Opportunities for career advancement?"
 
 * "Top 5 strengths"
 performace aware programming (multithreading, ILP, profiler)
@@ -58,6 +54,10 @@ At that point you think for a sec and if you can't think of anything just say
 "I can't think of one off the top of my head, 
 but in general in that situation my approach is xyz
 
+* "What's a typical day like?"
+  "What are you favourite parts of the job?"
+  "Opportunities for career advancement?"
+
 ## Base
  - Issue on Release:
   every team member was running windows model 
@@ -69,6 +69,7 @@ but in general in that situation my approach is xyz
   Regardless, transparency is eseential to maintain software quality and team trust.
  - Poor Teammate:
    website project
+   At standups, the members code did not pass integration tests and did not add any value to the system
 Discuss privately with coworker to understand any challenges they have, e.g. workload or clarity and offer help in a workflow or technical manner.
 If persists I would bring it up with team lead, focusing on project needs rather than criticising.
 Goal is to maintain project trajectory, whilst supporting team dynamics.

@@ -1,6 +1,36 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
-olivia dunham template
+### FAQ
+What should I wear?
+A.
+I will always suggest pastels, muted tones, light neutrals and/or earthy colours! Think beige, creams, whites, taupe, tan, navy, black, mossy greens! These colours and tones are timeless and work really well in photographs.
+However, I will never discourage you from wearing what you want to wear! So if you have a favourite outfit or theme you want to achieve with the shoot - 100% go for it!
+Think: simple is stunning! and wear something you feel comfortable in!
+
+What if I want something not covered in a package?
+A.I will happily cover a range of photo ideas you would like done! Including but not limited to pregnancy announcements, gender reveals, first birthday cake smashes and more! Please get in touch to discuss further.
+
+What area do you service?
+A.Greater Western Sydney including the Blue Mountains, Penrith & Hawkesbury areas.
+
+How long until I get my photos?
+2-6weeks!
+
+What time is golden hour?
+A.If you're wanting 'Golden Hour' photos, typically this is the last hour before sunset and the first hour after sunrise is best.
+Days where there is minimal cloud coverage give the best golden hour shooting conditions - simply magic!
+
+When should I get maternity photo's done?
+IN my opinion, maternity photo's are bet done in the third trimester - around 34-36 weeks!
+I would really like a studio session, is that possible with you?
+
+A.Yes! With notice, studio sessions can be organised. I often find these are ideal for newborn and maternity shoots! But are also perfect for whatever you are wanting!
+Studio sessions do incur an extra fee so get in touch and we can discuss further!
+
+Where can I get newborn photo's done?
+A.I will happily come and do newborn photo's at your house or we can organise a studio photo session!
+Either way, lots of natural lighting is best!!!! Sadly dark, dimly lit rooms without any natural lighting can make for poor images.
+
 
 ## INFO
 regarding price, say how much is a new client worth? brings in 1 client, worth it
@@ -107,6 +137,17 @@ Then I'll send an email with your login details and video showing you how to mak
 
 ## CREATION
 (pre-built template, no AI, no preset plugins)
+
+annie mccury template themeforest
+
+remove blog with FAQ accordion widget
+google reviews on home page
+
+google business profile -> send google review link to user
+https://www.youtube.com/watch?v=U71txGAumVE
+
+plugin: reviews feed
+https://www.youtube.com/watch?v=53PiZlz9stU
   - plugins: elementor (astra), elementor starter template ('get started/build your website now')
   - if add new page: ensure permalink, title and added to appearance->menu 
   - under edit, attach domain name
@@ -115,7 +156,32 @@ Then I'll send an email with your login details and video showing you how to mak
   - edit site: first login with godaddy account; add new wordpress account
 
   - cloudspot.io
+  TODO: logo photo
+  portfolio settings, email settings, etc.
+  plann integration to automatically send to social media post;
+
+  store->payment options (stripe?)
+  create catalog for certain event categories, e.g. wedding/maternity etc. (premium package, approval 3 days)
+  selling prints
+
+  create discount code (perhaps send out on holiday period?)
+
+  cloudspot studio for contract/invoicing
+
   (possibly embed on website; they also seem to offer print services)
+  Create collection; create folders; email download and gallery
+  $15/month for high-res downloads
+  (could add watermark so client doesn't download free)
+  (what is payment plan? pay on photos? pay on shoot?)
+  
+  TODO: contract
+
+ TODO: do you want to share other peoples photos?
+ could change to just a gallery instead of portfolio
+<iframe src="https://ryans-bus.client-gallery.com/?nav=false"  style="min-width: 405px; min-height: 412px; width: 100%; height: 100%;" frameborder="0"></iframe>
+
+
+
 
 Another email saying happy with design and will finalise login details etc.
 
