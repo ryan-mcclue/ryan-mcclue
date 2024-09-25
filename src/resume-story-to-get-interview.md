@@ -2,6 +2,48 @@
 
 Conferral in Dec, graduate in May
 
+As a final-year Bachelor of Computer Science student at the University of New South Wales, 
+I'm passionate about using programming to solve emerging problems.
+I believe I can apply this mindset to assist with delivering frontend and backend solutions for web based technologies.
+I operate with a colloborative mindset, ensuring that I will maximise the opportunity of an IT Internship to better myself as a software engineer.
+I'm excited to apply my technical skills developed through personal projects and university studies in a
+real world setting to help provide business value.
+
+Programming Languages: C/C++, C#-Mono, Python, Bash, SQL, Javascript, HTML/CSS
+Software Applications: git, vscode, vim, gdb, (react debugger), pgadmin, jira, figma
+Software Practices: Agile/Scrum, Unit Testing, Multithreading, Code Profiling
+Operating Systems: linux, windows
+
+Music Visualiser (github link)
+Objective: Develop a GUI application that plays and visualises a music file with the Fast Fourier Transform.
+Tools: C/C++, Bash, Git, Github Workflow
+Duties: Programmed animated immediate mode UI widgets, queue and merge sort push buffer, shared object loading and multithreaded file loading.
+Outcomes: Successfully developed an opensource hot-reloadable GUI app backed by CI runner with headless execution
+
+Web Forum App
+Objective: Design a new web forum for university students to create message boards, search information and join groups
+Tools: Python, HTML/CSS, Git, Jira
+Duties: Acted as Scrum Master for team of 5, contributing to unit testing REST API endpoints, user authentication and frontend template writing
+Outcomes: Successfully built a CRUD web app and presented to peers and instructors with a comprehensive presentation
+
+
+Guide Dogs NSW/ACT is the leading provider of Guide Dogs and mobility services that enable people with low vision to get around their communities safely and independently.
+I decided to volunteer there because of my father's work with visually impaired children and to help improve other people's lives.
+As a volunteer puppy raiser, my duties included taking the dog on regular walks, performing obedience training and engaging in socialisation experiences.
+
+Problem Solving:
+Team Colloboration:
+Attention To Detail:
+Leadership:
+
+Attention to detail: Carefully managed inventory and product presentation at Breadtop and ensured precise coding
+and debugging during the TOOHAK project.
+- Problem solving: Adapted teaching methods to address individual learning needs at Cluey and troubleshooted
+mechanical and programming issues for optimal performance in the SUMOBOT project.
+- Team collaboration: Effectively contributed to team projects such as TOOHAK and SUMOBOT, coordinating tasks
+and integrating components for project success.
+
+
 # Ryan McClue
 Sydney, NSW | 0404316124 | re.mcclue@protonmail.com | github.com/ryan-mcclue | linkedin.com/in/ryan-mcclue/
 OptionalObjectiveForEntryLevel: Low-level programmer interested in embedded systems. 
