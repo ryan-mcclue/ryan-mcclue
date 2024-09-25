@@ -14,34 +14,33 @@ Software Applications: git, vscode, vim, gdb, (react debugger), pgadmin, jira, f
 Software Practices: Agile/Scrum, Unit Testing, Multithreading, Code Profiling
 Operating Systems: linux, windows
 
-Music Visualiser (github link)
+Music Visualiser (May 2024 - Present github link)
 Objective: Develop a GUI application that plays and visualises a music file with the Fast Fourier Transform.
 Tools: C/C++, Bash, Git, Github Workflow
 Duties: Programmed animated immediate mode UI widgets, queue and merge sort push buffer, shared object loading and multithreaded file loading.
 Outcomes: Successfully developed an opensource hot-reloadable GUI app backed by CI runner with headless execution
 
-Web Forum App
+Web Forum App (May 2023 - Aug 2023)
 Objective: Design a new web forum for university students to create message boards, search information and join groups
 Tools: Python, HTML/CSS, Git, Jira
 Duties: Acted as Scrum Master for team of 5, contributing to unit testing REST API endpoints, user authentication and frontend template writing
 Outcomes: Successfully built a CRUD web app and presented to peers and instructors with a comprehensive presentation
+
+Navy (July - December 2020)
+• Leading a class of 24, coordinating marching drills and other basic training fundamentals.
+• Balancing individual responsibilities such as kit maintenance with group requirements such as unit readiness whilst adhering to military schedules and protocols.
+• Working in a team of 6 to clean living areas, stations and managing inventory.
+• Performing weekly early morning activities at 4am and completing intensive milestone events.
 
 
 Guide Dogs NSW/ACT is the leading provider of Guide Dogs and mobility services that enable people with low vision to get around their communities safely and independently.
 I decided to volunteer there because of my father's work with visually impaired children and to help improve other people's lives.
 As a volunteer puppy raiser, my duties included taking the dog on regular walks, performing obedience training and engaging in socialisation experiences.
 
-Problem Solving:
-Team Colloboration:
-Attention To Detail:
-Leadership:
-
-Attention to detail: Carefully managed inventory and product presentation at Breadtop and ensured precise coding
-and debugging during the TOOHAK project.
-- Problem solving: Adapted teaching methods to address individual learning needs at Cluey and troubleshooted
-mechanical and programming issues for optimal performance in the SUMOBOT project.
-- Team collaboration: Effectively contributed to team projects such as TOOHAK and SUMOBOT, coordinating tasks
-and integrating components for project success.
+Problem Solving: Developed a multithreaded asynchronous file loader in music visualiser app that reduced file processing time by 50%
+Team Colloboration: Effectively coordinated with team in the Navy to ensure high standards of cleanliness, unit readiness and presentation were met
+Attention To Detail: Programmed z-sorted push buffer for UI widgets in music visualiser app, preventing overlapping elements from both consuming input events 
+Leadership: Led class in the Navy during marching drills, ensuring all individuals were aligned with strict military schedule and protocols.
 
 
 # Ryan McClue
