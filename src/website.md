@@ -40,6 +40,9 @@ REQUIREMENTS:
 - 
 
 
+photos:
+https://support.google.com/business/thread/196016208/all-photos-not-approved?hl=en
+
 
 ## SETUP
 Hi [],
@@ -146,13 +149,21 @@ google reviews on home page
 google business profile -> send google review link to user
 https://www.youtube.com/watch?v=vSDdAWwn8LU
 
-TODO: business hours open (24/7?; as will appear higher searching at this time)
-TODO: work on more service options as what is important for searching
-TODO: if slow to respond to messages; disable
-TODO: add photos (keep photos updated);
+-> get more reviews link
+IMPORTANT: respond to reviews
+TODO: set opening hours on website to same as google page
+TODO: have people also like questions so they appear on page
+TODO: duplicate services and products
+TODO: send logo
 TODO: claim $500 ad credit
 
 plugin: reviews feed
+require google API key creation
+google cloud project creation; enable places API; restrict API usage to IP; place ID extraction
+copy 'embed code'; copy into a shortcode widget
+
+
+
 https://www.youtube.com/watch?v=53PiZlz9stU
   - plugins: elementor (astra), elementor starter template ('get started/build your website now')
   - if add new page: ensure permalink, title and added to appearance->menu 
