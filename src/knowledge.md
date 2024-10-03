@@ -1325,7 +1325,9 @@ cosmic rays can cause bit flips all the time, e.g. belgium voting, speed running
 in fact, laboratories have neutron detectors for this
 so, could have duplicate computers to account for this, say on an airplane
 
-Analog computers such as the antikythera mechanism can use gears, with each tooth representing a value (often mechanical devices) to measure orbits. Also tides
+Analog computers such as the antikythera mechanism can use gears, 
+with each tooth representing a value (often mechanical devices) to measure orbits. 
+Also tides
 Analog errors are easy to occur and can multiply, also as models of the real world, not general purpose.
 So, digital more noise-resilient, general-purpose and easily made as same components
 
