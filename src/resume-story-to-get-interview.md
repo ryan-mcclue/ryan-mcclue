@@ -64,7 +64,7 @@ So show the languages, frameworks, and technologies that you're using.
 - Established Google business profile via .au domain registrar,
   and integrated verified reviews with Google Cloud Places API
   improving SEO and clientele development.
-- Introduced CloudSpot CRM system to unify photo delivery, contract signing and invoicing,
+- Combined pixieset CRM system to unify photo delivery, contract signing and invoicing,
   optimising business systems to improve work efficiency.
 - Performed image compression and ... to reduce site load time from ...
   to ... 

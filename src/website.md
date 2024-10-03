@@ -193,9 +193,16 @@ https://www.youtube.com/watch?v=53PiZlz9stU
   - edit site: first login with godaddy account; add new wordpress account
 
   - cloudspot.io
-  TODO: logo photo
-  portfolio settings, email settings, etc.
-  plann integration to automatically send to social media post;
+  1. logo photo, portfolio settings, email settings, billing etc.
+  (could plan integration to automatically send to social media post)
+
+  2. (all attached to clients)
+     Create project 
+
+     Create contract (add sections)
+     Save contract as draft
+     Send contract as email.
+
 
   store->payment options (stripe?)
   create catalog for certain event categories, e.g. wedding/maternity etc. (premium package, approval 3 days)
