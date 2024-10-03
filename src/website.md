@@ -157,6 +157,26 @@ TODO: duplicate services and products
 TODO: send logo
 TODO: claim $500 ad credit
 
+speed:
+  - connectivity
+  - caching
+  - page size
+  - 
+pagespeed insights:
+  mobile score
+  desktop score
+pingdom website speed test:
+  861ms load time
+  13 requests
+  363kb page size
+
+migrated from godaddy domaincontrol to cloudflare DNS service,
+and implemented image compression (resolution reduction) and webp file format 
+https://www.youtube.com/watch?v=TngeYJmp5pU
+
+
+
+
 plugin: reviews feed
 require google API key creation
 google cloud project creation; enable places API; restrict API usage to IP; place ID extraction
