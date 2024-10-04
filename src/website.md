@@ -1,11 +1,10 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
 
-
-
-
-
-
-
+better logo quality from canva?
+specific gallery 
+services text
+photo ordering on all pages
+instagram feed at end of gallery
 
 
 
