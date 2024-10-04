@@ -25,24 +25,20 @@ I believe I can contribute a unique skillset to make an immediate contribution t
 Developing a C/C++ Music Visualiser app as a personal project, I learned a great deal about low level programming.
 It featured a from-scratch immediate mode GUI, multithreaded file loader, hot reloadable system and CI workflow.
 Acheiving these features required foundational knowledge about data structures, algorithms, memory management and underlying system architecture.
-This project demonstrates I can work in a conscientous manner and understand how to program with minimal dependencies, as many embedded systems dictate.
+This project demonstrates I can work in a conscientous manner and understand how to program with minimal dependencies, as many of Boeing's systems require.
 
-My experience in the Royal Australian Navy taught me the importance of serving (work affects others) and working as a team.
-At HMAS Cerberus, I both participated and led a class of 24 in training drills, <requiring strong leadership and communication skills.>
-I also lived/worked collaboratively in a team of 6, tackling mentally and physically demanding daily tasks. 
-I believe this provides me a greater understanding of the context of deployment of Boeing's systems 
-me to greater empathise with the users of the software than a traditional software graduate.
+My experience in the Royal Australian Navy taught me the importance of service and teamwork.
+At HMAS Cerberus, I participated and led marching drills as well as worked collaboratively to tackle mentally and physically demanding tasks on a daily basis.
+These experiences honed my soft skills and instilled in me a deep appreciation for hard work, providing a solid foundation 
+to thrive in Boeing's diverse and multidisciplinary teams.
+Furthermore, this gives me a unique perspective of Boeing's end user's needs.
+The importance of reliable, efficient and easy to use defence systems is something I greatly appreciate. 
 
-My experience in the Royal Australian Navy taught me the importance of service and teamwork, understanding that my work affects others. 
-At HMAS Cerberus, I both participated in and led a class of 24 in training drills, which honed my leadership and communication skills. 
-These abilities are crucial when working in Boeing's diverse, multi-disciplinary teams to deliver innovative solutions to the Australian Defence Force.
-
-
-My web development work for Hannah Alice Photography, learned about client discussion and requirements management.
-Manage project scope and client expectations.
-Deliver solutions that balance technical considerations with user needs.
-
-
+My web development work for Hannah Alice Photography provided me with valuable experience in requirements management.
+Conducting client consultations, I had to convert the client's vision into concrete technical requirements. 
+In addition, I had to manage scope and effectively estimate the website's progress.
+This developed my ability to actively listen and understand complex needs.
+I can draw upon these skills to help transform broad mission objectives into specific software features for Boeing's defence systems.
 
 For these reasons, I feel my background would fit well with Boeing. 
 I look forward to the possibility of speaking with you further about this position.
