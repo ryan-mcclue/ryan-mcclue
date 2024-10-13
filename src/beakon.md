@@ -4,7 +4,31 @@ CMS specialising in risk and compliance management.
      company/admin will create audits/assessments for workers
      so, document upload, managing statuses, time of checkins
      workers have accounts to fill these in
-     TODO: main clients are contractor management, e.g. coca-cola security guards 
+
+so 4 and half weeks of 3days per week
+20th November free 5 days a week (minus exams)
+exams  November - 5 December
+
+
+
+day1:
+  - bring id etc.
+  - take notes even on admin things (bring notepad, headphones)
+  - perhaps bring an ergonomic keyboard later
+  - ask what systems I'll need access to and get access
+  - no harm asking questions, however google it first
+  - give a daily status report of work done
+  - ask clarifying questions, don't just be a yes man
+  - git pull; ide; look through codebase; UI; rest API; 
+    look at any long files for potential refactoring
+  - look at ticket PRs and try and add some comments
+
+
+
+what is principle that gives distinct edge over competitors?
+what is tech stack?
+
+TODO: main clients are contractor management, e.g. coca-cola security guards 
 
 REST:
   urls are resources
