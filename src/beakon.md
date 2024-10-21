@@ -5,9 +5,16 @@ CMS specialising in risk and compliance management.
      so, document upload, managing statuses, time of checkins
      workers have accounts to fill these in
 
+18th November free 5 days a week (minus exams)
+
 so 4 and half weeks of 3days per week
-20th November free 5 days a week (minus exams)
-exams  November - 5 December
+exams 22 November - 5 December
+
+what is principle that gives distinct edge over competitors?
+what is tech stack?
+what's an average day like?
+TODO: main clients are contractor management, e.g. coca-cola security guards 
+
 
 
 
@@ -25,10 +32,7 @@ day1:
 
 
 
-what is principle that gives distinct edge over competitors?
-what is tech stack?
 
-TODO: main clients are contractor management, e.g. coca-cola security guards 
 
 REST:
   urls are resources
