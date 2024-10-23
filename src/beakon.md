@@ -17,6 +17,23 @@ TODO: main clients are contractor management, e.g. coca-cola security guards
 
 
 
+## Figma
+iOS safe points image.
+create these on iOS frame with magenta.
+then move out to a frame and then a component.
+drag components from assets onto iOS frame.
+change selection colours to black and white.
+IMPORTANT: normally, would just download an iOS ui toolkit
+
+IMPORTANT: have device prototype view open all the time to check
+
+font sizes experiment with 'e' divisor
+
+
+
+
+
+
 
 day1:
   - bring id etc.
