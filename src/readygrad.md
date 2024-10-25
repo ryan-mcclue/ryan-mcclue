@@ -36,14 +36,15 @@ host company aims to complete objectives:
 prior to commencing, host company must give intern workplace induction
 (notify readygrad if haven't had one)
 
-
 do assessments in first few weeks
 
 make up for sick days; (medical certificate for 2days or more)
 
-
-
 10min early 10min late; 
 if sick tell host mentor and lizzy;
 
+## LMS
+If see hazard report. (1 is fatality; so lower is severe)
+
+### Work Effectively in Business Environments
 

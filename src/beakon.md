@@ -1,4 +1,28 @@
 <!-- SPDX-License-Identifier: zlib-acknowledgement -->
+## Training
+Every module is a table in database
+reflected in url `?rid_TableName ... &record-guid`
+
+Users (Employees, Contractors)
+A user can login with credentials or SSO, octo, SAML?
+A user has modules assigned to them.
+A user has Roles which determine access to modules (edit, list, view).
+A user has Skills module which contains:
+     Documents
+     Audits (corrective action?) 
+     Courses (creation of Q/A section) (SCORM?)
+Required Skills overlap like a Venn diagram
+
+Workflow module is a trigger system generally for sending emails on events, e.g. on workplace incident
+
+Email templates use php variables. 
+Hyperlinks may require utilising url, e.g url:$record_number_variable
+
+
+
+
+
+
 CMS specialising in risk and compliance management.
   - contractor management:
      company/admin will create audits/assessments for workers
