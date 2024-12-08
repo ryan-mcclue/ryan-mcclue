@@ -89,7 +89,7 @@ draw diagram and realise might not understand certain parts.
   - how would you design twitter? how would database look like to aggregate feeds from all people following efficiently?
   - for mobile how to perform caching? offline access? how to fetch data?
 
-how does user uthentication work?
+how does user authentication work?
 how does offline access work?
 how is data being fed from server and how does it propagate?
 TODO: graphQL is one-way and immutable?
@@ -109,7 +109,7 @@ Scaling Connectivity (web server):
 Load balancer:
   Introduce a server in between DNS and actual server.
   This server just redirects requests to a number of servers to actually handle request.
-  e.g. NGINX, AWS Elastic Load Balancer (round-robin, least load algorithms)
+  e.g. NGINX (async as oppose to per-process like Apache), AWS Elastic Load Balancer (round-robin, least load algorithms)
   Could also do this at the application level, e.g. the app talks to say a db server, a chat server etc.
 Scaling Data (database server):
 Caching:
