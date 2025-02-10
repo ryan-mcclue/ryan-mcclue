@@ -175,6 +175,7 @@ CPU front-end is responsible for fetching/decoding instructions and scheduling/p
    Modern branch predictors utilise perceptrons and can in-fact guess CRT randomness
    IMPORTANT: just taking jmp is more costly than not taking it, even if predictable
    can see in agner fog manual that throughput reduced if more than one branch instruction per 16bytes of code
+   Therefore, when looking at assembly, want minimum cmps
    ```
 .start:
    mov r10, [rbx + rax]
@@ -333,8 +334,17 @@ however, for practice look at file reading first
   so, work in chunk sizes of L3 cache size with overlapped computation to maximise throughput
   overlap file reads with computation. (linux io_uring asynchronous; so a file reader kernel thread more efficient than userspace implementation)
 
+18. 
+The bottom bits of floating point sensitive to rounding, and what affects rounding is order of operations. So, if epsilon 0, would have to recreate generation steps exactly.
+Larger epsilon values give more flexibility for optimisation.
 
+If we just measure the cost of streaming from main memory and computation operations see getting
+0.9GB/s.
+As we know memory bandwidth, we know we're not memory limited (in fact, very rarely are).
 
+Want to measure theoretical performance for computation. 
+Notice that libc calls occur (in fact any external libraries), which have numerous edge cases they have to handle (e.g. have to set errno if input is -1 etc.)
+So, if we ascertain input ranges for our functions, can eliminate edge cases (do this by testing min/max for value)
 
 
 back-end has execution ports that execute uops.
